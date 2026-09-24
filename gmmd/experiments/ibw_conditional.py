@@ -65,7 +65,8 @@ def _build_teacher(run_dir, device):
                                        allow_tf32=bool(tc.get("allow_tf32", False))), cfg
 
 
-def _fit_one(target, K, step_size, n_iterations, n_grad_samples, seed, log, tag=""):
+def _fit_one(target, K, step_size, n_iterations, n_grad_samples, seed, log, tag="",
+             init=None):
     """One IBW fit on the GPU backend.
 
     :mod:`gmmd.ibw_gpu` rather than the NumPy reference: at d = 196 608 the reference spends
@@ -78,7 +79,7 @@ def _fit_one(target, K, step_size, n_iterations, n_grad_samples, seed, log, tag=
     noise floor at a stationary point, and a rising trace means the step size is too large.
     """
     rng = np.random.default_rng(seed)
-    init_means, init_vars = target.initial_mixture(K, rng)
+    init_means, init_vars = target.initial_mixture(K, rng) if init is None else init
     res = ibw_gpu.fit(target, n_components=K, method="ibw", n_iterations=n_iterations,
                       step_size=step_size, n_grad_samples=n_grad_samples,
                       init_means=init_means, init_variances=init_vars, seed=seed,
@@ -90,6 +91,34 @@ def _fit_one(target, K, step_size, n_iterations, n_grad_samples, seed, log, tag=
         f"mean |m - x_t| = {np.abs(res['means'] - target.x_t[None]).mean():.4f}"
         + (f"  STOPPED: {res['stopped_early']}" if res["stopped_early"] else ""))
     return res
+
+
+def teacher_mode_init(teacher_raw, teacher_denoised, K, variance, feature_extractor, device,
+                      batch_size, seed, log):
+    """Initial means placed ON the teacher's own conditional modes.
+
+    The decisive diagnostic for a collapse.  If IBW merges components because every one of them
+    started in the same basin, then starting them in DIFFERENT basins -- at K representative
+    teacher samples, chosen by k-means in feature space -- should keep them apart.  If they merge
+    anyway, the target itself is unimodal, and the mismatch against the teacher's samples is the
+    discretisation gap rather than an optimisation failure.
+
+    The initial variance is the one the free fit converged to, so the ONLY thing that differs
+    from the prior-free run is where the components start.
+    """
+    from sklearn.cluster import KMeans
+
+    F = Fe.extract(feature_extractor, teacher_denoised, device=device, batch_size=batch_size)
+    if K == 1:
+        idx = [int(np.argmin(np.linalg.norm(F - F.mean(0), axis=1)))]
+    else:
+        km = KMeans(n_clusters=K, n_init=10, random_state=seed).fit(F)
+        # the real teacher sample closest to each cluster centre, so every mean is on the manifold
+        idx = [int(np.argmin(np.linalg.norm(F - c, axis=1))) for c in km.cluster_centers_]
+        log(f"[ibw_conditional] mode-init K={K}: cluster sizes "
+            f"{np.bincount(km.labels_, minlength=K).tolist()}, representative samples {idx}")
+    means = teacher_raw[idx].reshape(len(idx), -1).astype(np.float64)
+    return means, np.full(len(idx), float(variance))
 
 
 def _evaluate(res, target, teacher, teacher_raw, teacher_denoised, n_eval, seed, batch_size,
@@ -138,7 +167,8 @@ def _evaluate(res, target, teacher, teacher_raw, teacher_denoised, n_eval, seed,
 
 def run(run_dir, target_time="near", components=DEFAULT_COMPONENTS, step_sizes=DEFAULT_STEP_SIZES,
         n_iterations=300, n_grad_samples=4, n_eval=64, n_perm=500, seed=0, device=None,
-        batch_size=16, feature_extractor="dinov2_vitb14", feature_device="cpu", log=print):
+        batch_size=16, feature_extractor="dinov2_vitb14", feature_device="cpu",
+        init="prior_free", log=print):
     run_dir = Path(run_dir)
     z = np.load(run_dir / "samples.npz")
     device = device or _run_config(run_dir)["teacher"]["device"]
@@ -167,26 +197,38 @@ def run(run_dir, target_time="near", components=DEFAULT_COMPONENTS, step_sizes=D
     log(f"[ibw_conditional] selected gamma = {best:g} (lowest MMD^2 in {feature_extractor} at K=1)")
 
     # ---- the sweep -------------------------------------------------------------------------
-    log(f"[ibw_conditional] --- K sweep at gamma = {best:g} ---")
+    log(f"[ibw_conditional] --- K sweep at gamma = {best:g}, init = {init} ---")
+    fitted_variance = float(np.mean(scan[best]["fit"]["variances"]))
     results, denoised = {}, {}
     for K in components:
-        r = _fit_one(tgt, K, best, n_iterations, n_grad_samples, seed, log)
+        init_kw = None if init == "prior_free" else teacher_mode_init(
+            teacher_raw, teacher_den, K, fitted_variance, feature_extractor, feature_device,
+            batch_size, seed, log)
+        if init_kw is not None:
+            from scipy.spatial.distance import pdist
+            d0 = pdist(init_kw[0])
+            log(f"[ibw_conditional] K={K} mode-init separation / sigma: "
+                f"{(d0.min() / np.sqrt(fitted_variance)):.2f}" if K > 1 else
+                f"[ibw_conditional] K={K} mode-init (single representative)")
+        r = _fit_one(tgt, K, best, n_iterations, n_grad_samples, seed, log, init=init_kw)
         ev, den = _evaluate(r, tgt, teacher, teacher_raw, teacher_den, n_eval, seed, batch_size,
                             feature_extractor, feature_device, n_perm, log, tag=f"K={K} ")
         results[K] = dict(fit=_slim(r), eval=ev)
         denoised[K] = den
 
-    _figures(run_dir, results, denoised, teacher_den, components, feature_extractor, target_time, log)
+    _figures(run_dir, results, denoised, teacher_den, components, feature_extractor,
+             target_time if init == "prior_free" else f"{target_time}_{init}", log)
     out = dict(run=str(run_dir), target=tgt.describe(), target_time=target_time,
                teacher_n=int(len(teacher_raw)), step_size_scan={str(k): v for k, v in scan.items()},
                selected_step_size=best, components=list(components),
-               results={str(k): v for k, v in results.items()},
+               results={str(k): v for k, v in results.items()}, init=init,
                settings=dict(n_iterations=n_iterations, n_grad_samples=n_grad_samples,
                              n_eval=n_eval, n_perm=n_perm, seed=seed,
                              feature_extractor=feature_extractor),
                n_score_calls=int(tgt.n_score_calls), provenance=Pv.snapshot(None, device))
-    Pv.dump_json(out, run_dir / f"ibw_conditional_{target_time}.json")
-    log(f"[ibw_conditional] -> {run_dir / f'ibw_conditional_{target_time}.json'}")
+    suffix = target_time if init == "prior_free" else f"{target_time}_{init}"
+    Pv.dump_json(out, run_dir / f"ibw_conditional_{suffix}.json")
+    log(f"[ibw_conditional] -> {run_dir / f'ibw_conditional_{suffix}.json'}")
     return out
 
 
@@ -256,13 +298,16 @@ def main(argv=None):
     ap.add_argument("--device", default=None)
     ap.add_argument("--batch-size", type=int, default=16)
     ap.add_argument("--feature-device", default="cpu")
+    ap.add_argument("--init", default="prior_free", choices=["prior_free", "teacher_modes"],
+                    help="where the components start: the prior-free conditional (default), or "
+                         "ON the teacher's own modes (the collapse diagnostic)")
     a = ap.parse_args(argv)
     return run(a.run_dir, target_time=a.target,
                components=tuple(int(v) for v in a.components.split(",")),
                step_sizes=tuple(float(v) for v in a.step_sizes.split(",")),
                n_iterations=a.iterations, n_grad_samples=a.grad_samples, n_eval=a.n_eval,
                n_perm=a.n_perm, seed=a.seed, device=a.device, batch_size=a.batch_size,
-               feature_device=a.feature_device)
+               feature_device=a.feature_device, init=a.init)
 
 
 if __name__ == "__main__":

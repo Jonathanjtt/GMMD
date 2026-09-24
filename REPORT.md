@@ -129,13 +129,91 @@ coherent, and a much shorter transition from the same `x_t` is not.
 5. Diagnostics run on the teacher's own denoised view `E_θ[x₀ | x_s]`. Denoising is deterministic,
    so it cannot invent modes, but it does change the metric.
 
+---
+
+# IBW against the conditional: how many components?
+
+The target is the closed-form conditional score of the continuous-time reversal,
+`s_θ(x_s, s) + (x_t − x_s)/(σ_t² − σ_s²)`, which for a VE SDE is exact given the score network.
+It is **not** the discretised sampler's kernel, which has no score. Its log-density is unavailable,
+so the objective can be descended but not evaluated, and model order is chosen by an MMD
+permutation test of the fitted `q`'s samples against the teacher's own 64 conditional samples.
+See [`gmmd/conditional_target.py`](gmmd/conditional_target.py).
+
+Two convergence checks hold everywhere below: the mean-gradient norm falls by two orders of
+magnitude, and the fitted variance matches the analytic posterior variance a Gaussian marginal
+would give, to 0.2% (short: 6.3284 against 6.3146; long: 1.1775 against 1.1751).
+
+## Short transition: K = 1, and IBW merges the rest by itself
+
+| K | MMD² vs teacher (DINOv2) | p | MMD² (pixel) | p | component separation / σ |
+| --- | --- | --- | --- | --- | --- |
+| 1 | 0.01216 | 0.030 | −0.00002 | **0.529** | — |
+| 2 | 0.01126 | 0.016 | +0.00007 | 0.367 | 2.03 |
+| 4 | 0.01130 | 0.016 | +0.00007 | 0.373 | 2.19 |
+| 8 | 0.01144 | 0.014 | +0.00007 | 0.369 | 2.34 |
+
+One component already passes in pixel space, extra components change nothing, and IBW collapses
+them on its own: initialised ~600 σ apart, which is simply what independent draws are at
+d = 196 608, they finish 2 σ apart with identical variances to four decimals. That reproduces H1's
+verdict — the 40-step transition is unimodal — from the optimiser rather than from clustering.
+
+## Long transition: no K works from the natural initialisation
+
+| K | MMD² (DINOv2), prior-free init | MMD² (DINOv2), started at the teacher's modes |
+| --- | --- | --- |
+| 1 | 0.4612 | 0.3452 |
+| 2 | 0.4699 | **0.2108** |
+| 4 | 0.4693 | 0.2113 |
+| 8 | 0.4691 | — |
+
+From the natural (prior-free) start, every K is rejected at p = 0.002, at 35× the null, and **K
+is irrelevant** — the four values are flat within noise. The components merge exactly as in the
+unimodal case, ending 4.4–5.5 σ apart. IBW converges to a single isotropic Gaussian however many
+components it is given.
+
+This is the locality of Bures–Wasserstein transport: a W-type flow moves components downhill
+locally and cannot carry mass across a low-density valley, so each one falls into whichever basin
+it started nearest. It is the same phenomenon the sibling GMMVI project exists to address.
+
+## The collapse is an optimisation failure, not a unimodal target
+
+Restarting the components **on** the teacher's own modes — the k-means representatives in DINOv2
+space, with the variance the free fit converged to, so the only change is where they start —
+separates the two explanations:
+
+* **K = 2 now beats K = 1**, 0.2108 against 0.3452, a 39% reduction. From the prior-free start the
+  two were indistinguishable. So the target does carry structure that a second component captures.
+* **Initialisation changes the answer even at K = 1** (0.3452 against 0.4612), so the objective is
+  non-convex and the fits below are local optima, not the global one.
+* The components stay much further apart, 18.3 σ against 5.5 σ, though still far from their
+  638 σ start.
+
+So the conditional that IBW is optimising is not unimodal; plain IBW simply cannot find its
+second mode from a naive start. That is positive evidence for this project's premise — a mixture
+does beat a single Gaussian — obtained without assuming it.
+
+## What is still unexplained
+
+Even the best configuration is rejected decisively: K = 2 with mode initialisation sits at 0.2108
+against a null of 0.0108, twenty times over. So an isotropic mixture, however initialised and
+however many components, does not reproduce this conditional. Two candidates remain, and nothing
+here separates them:
+
+1. **Isotropy.** The true conditional's covariance is presumably anisotropic, stretched along the
+   data manifold; spherical components cannot represent that at any K. Note the short-transition
+   fit failed in DINOv2 while passing in pixels, which already pointed this way.
+2. **The discretisation gap.** The target is the continuous-time conditional; the teacher samples
+   come from a 299-step discretisation of it, and a corrector would change it again.
+
+A further caution specific to this dimension: two isotropic components 18 σ apart still overlap
+almost completely, because samples sit on a shell of radius √d σ ≈ 443 σ around each mean.
+"Separated modes" in raw pixel space at d = 196 608 does not mean what it means in two dimensions,
+and the component-separation column should be read as a relative diagnostic only.
+
 ## Next
 
-The obvious follow-ups, in order of value: fix the representation in the config and re-run on
-fresh seeds; sweep `(t, s)` to find where the conditional stops being bimodal; repeat on several
-`x_t` and several images. Only then does the comparison this project exists for — one Gaussian
-against an IBW mixture — mean anything.
-
-Fitting that mixture is still blocked on a separate problem: reverse-KL variational inference
-needs `∇_{x_s} log p_θ(x_s | x_t)`, and the teacher supplies only the marginal score plus a
-sampler. See the module docstring of [`gmmd/vi.py`](gmmd/vi.py).
+In order of value: fix the representation in the config and re-run H1 on fresh seeds, since the
+DINOv2 choice was made after seeing a null; test full-covariance or low-rank components against
+the isotropy hypothesis; measure the discretisation gap directly by fitting the same target at
+matched step counts; sweep `(t, s)`; repeat on several `x_t` and several images.
