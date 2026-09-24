@@ -32,7 +32,8 @@ import numpy as np
 from scipy.spatial.distance import pdist
 
 __all__ = ["spread_stats", "pca_scores", "gmm_model_selection", "bootstrap_lrt",
-           "clustering_stability", "analyze", "summarize"]
+           "clustering_stability", "analyze", "summarize", "median_bandwidth",
+           "mmd2_unbiased", "mmd_permutation_test"]
 
 
 def _2d(Z):
@@ -215,3 +216,62 @@ def summarize(res, label=""):
                      f" (Gaussian null {st['null_ari_mean']:.2f}, p = {st['p_ari']:.3f}); silhouette "
                      f"{st['silhouette']:.3f} (null {st['null_silhouette_mean']:.3f}, p = {st['p_silhouette']:.3f})")
     return lines
+
+
+# ======================================================================================
+# two-sample testing -- "does this fitted q produce the teacher's conditional samples?"
+# ======================================================================================
+def median_bandwidth(X, Y=None, seed=0, max_points=512):
+    """Median pairwise distance of the pooled sample: the standard Gaussian-kernel heuristic."""
+    Z = _2d(X) if Y is None else np.concatenate([_2d(X), _2d(Y)])
+    if len(Z) > max_points:
+        Z = Z[np.random.default_rng(seed).choice(len(Z), max_points, replace=False)]
+    d = pdist(Z)
+    m = float(np.median(d[d > 0])) if np.any(d > 0) else 1.0
+    return m if m > 0 else 1.0
+
+
+def _gaussian_gram(A, B, bandwidth):
+    from scipy.spatial.distance import cdist
+
+    return np.exp(-cdist(A, B, "sqeuclidean") / (2.0 * bandwidth ** 2))
+
+
+def mmd2_unbiased(X, Y, bandwidth):
+    """Unbiased MMD^2 with a Gaussian kernel.  Zero in expectation when X and Y share a law.
+
+    Unbiased rather than biased because the value is compared against a permutation null
+    centred at zero; the biased estimator is positive even for identical distributions and
+    would have to be compared against a different reference.
+    """
+    X, Y = _2d(X), _2d(Y)
+    n, m = len(X), len(Y)
+    Kxx, Kyy, Kxy = (_gaussian_gram(X, X, bandwidth), _gaussian_gram(Y, Y, bandwidth),
+                     _gaussian_gram(X, Y, bandwidth))
+    np.fill_diagonal(Kxx, 0.0)
+    np.fill_diagonal(Kyy, 0.0)
+    return float(Kxx.sum() / (n * (n - 1)) + Kyy.sum() / (m * (m - 1)) - 2.0 * Kxy.mean())
+
+
+def mmd_permutation_test(X, Y, n_perm=500, bandwidth=None, seed=0):
+    """Permutation test of ``X ~ Y``.  A LARGE p-value means the two are indistinguishable.
+
+    The direction matters for how this is read: here ``X`` is a fitted mixture's samples and
+    ``Y`` the teacher's, so failing to reject is the *goal*, which makes this a test with the
+    alternative in the interesting position.  It can only ever say "no detectable difference at
+    this sample size", never "identical" -- with n = 64 the power against a subtle difference is
+    limited, so a large p-value is weak evidence and is reported as such.
+    """
+    X, Y = _2d(X), _2d(Y)
+    bw = median_bandwidth(X, Y, seed=seed) if bandwidth is None else float(bandwidth)
+    obs = mmd2_unbiased(X, Y, bw)
+    Z = np.concatenate([X, Y])
+    n = len(X)
+    rng = np.random.default_rng(seed)
+    null = np.empty(n_perm)
+    for b in range(n_perm):
+        idx = rng.permutation(len(Z))
+        null[b] = mmd2_unbiased(Z[idx[:n]], Z[idx[n:]], bw)
+    return dict(mmd2=obs, bandwidth=bw, p_value=float((1 + np.sum(null >= obs)) / (1 + n_perm)),
+                null_mean=float(null.mean()), null_q95=float(np.quantile(null, 0.95)),
+                n_x=int(n), n_y=int(len(Y)), n_perm=int(n_perm))

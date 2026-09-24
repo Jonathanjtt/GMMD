@@ -45,6 +45,8 @@ __all__ = ["IsotropicMixture", "mixture_gradients", "ibw_variance_update",
            "md_variance_update", "ngd_update", "fit", "METHODS"]
 
 METHODS = ("ibw", "md", "ngd")
+# Above this many elements the per-iteration mean trace is not stored (see `fit`).
+TRACE_MAX_ELEMENTS = 50_000_000
 _LOG2PI = float(np.log(2.0 * np.pi))
 
 
@@ -81,9 +83,22 @@ class IsotropicMixture:
     def weights(self):
         return np.full(self.n_components, 1.0 / self.n_components)
 
+    # A dense (N, d, d) covariance is 309 GB per component at d = 196 608, so it is NOT built
+    # unless asked for and the dimension is small.  `variances` is the complete parametrisation:
+    # component j is eps_j * I, and every formula in this module uses the scalar.
+    DENSE_COVARIANCE_MAX_DIM = 4096
+
     @property
     def covariances(self):
-        """``(N, d, d)`` dense covariances, for code that wants the general shape."""
+        """``(N, d, d)`` dense covariances, for code that wants the general shape.
+
+        Refuses above :data:`DENSE_COVARIANCE_MAX_DIM`: the array would not fit in memory and
+        nothing here needs it.  Use ``variances`` instead."""
+        if self.dim > self.DENSE_COVARIANCE_MAX_DIM:
+            raise MemoryError(
+                f"a dense (N, d, d) covariance at d = {self.dim} would need "
+                f"{self.n_components * self.dim ** 2 * 8 / 2**30:.0f} GiB. This family is "
+                "isotropic -- use `variances` (component j is variances[j] * I).")
         return self.variances[:, None, None] * np.eye(self.dim)[None]
 
     def copy(self):
@@ -224,7 +239,7 @@ def ngd_update(means, variances, grad_means, grad_variances, n_components, dim, 
 def fit(target, n_components=5, dim=None, method="ibw", n_iterations=1000, step_size=0.1,
         n_grad_samples=10, init_means=None, init_variances=None, init_spread=10.0,
         init_variance=1.0, seed=0, common_noise=False, kl_every=None, n_kl_samples=1000,
-        callback=None):
+        callback=None, store_trace=None, fixed_noise=None):
     """Algorithm 1: fit a uniform-weight isotropic Gaussian mixture to ``target`` by reverse KL.
 
     ``target`` needs ``score(x)`` mapping ``(M, d) -> (M, d)``; ``log_prob(x) -> (M,)`` is used
@@ -240,7 +255,16 @@ def fit(target, n_components=5, dim=None, method="ibw", n_iterations=1000, step_
     ``init_spread`` /  the paper's ``s`` and ``r`` (Sec. E.2): means drawn uniformly in
     ``init_variance``  ``[-s, s]^d``, every variance set to ``r``;
     ``common_noise``   reuse ONE noise block for every iteration (common random numbers) instead
-                       of drawing a fresh one -- both are available in the reference code.
+                       of drawing a fresh one -- both are available in the reference code;
+    ``fixed_noise``    an explicit ``(B, d)`` block to reuse every iteration.  Supplying the same
+                       block to two implementations makes their trajectories comparable exactly,
+                       which is how ``tests/test_ibw_gpu_parity.py`` pins the torch backend.
+
+    ``store_trace`` keeps the per-iteration parameter snapshots.  It defaults to True only when
+    they fit comfortably in memory: the mean trace is ``n_iterations x N x d``, which is 3.8 TB
+    for 300 iterations of 8 components at image scale, so it switches itself off above
+    :data:`TRACE_MAX_ELEMENTS` and ``means_trace`` comes back None.  ``variances_trace`` is
+    ``n_iterations x N`` and is always kept.
 
     Returns a dict with the fitted ``means`` / ``variances`` / ``weights``, the per-iteration
     ``means_trace`` / ``variances_trace`` (pre-update snapshots, so index 0 is the init), the
@@ -263,18 +287,29 @@ def fit(target, n_components=5, dim=None, method="ibw", n_iterations=1000, step_
         init_variances = np.full(n_components, float(init_variance))
     q = IsotropicMixture(init_means, init_variances)
 
-    fixed_noise = rng.standard_normal((n_grad_samples, dim)) if common_noise else None
+    if fixed_noise is not None:
+        fixed_noise = np.asarray(fixed_noise, dtype=float)
+        if fixed_noise.shape != (n_grad_samples, dim):
+            raise ValueError(f"fixed_noise must be ({n_grad_samples}, {dim}), got {fixed_noise.shape}")
+        common_noise = True
+    elif common_noise:
+        fixed_noise = rng.standard_normal((n_grad_samples, dim))
     kl_every = max(1, n_iterations // 10) if kl_every is None else kl_every
     kl_rng_seed = int(rng.integers(0, 2**31 - 1))
 
-    means_trace = np.empty((n_iterations, n_components, dim))
+    if store_trace is None:
+        store_trace = n_iterations * n_components * dim <= TRACE_MAX_ELEMENTS
+    means_trace = np.empty((n_iterations, n_components, dim)) if store_trace else None
     var_trace = np.empty((n_iterations, n_components))
     kls, kl_iters = [], []
     stopped_early = None
 
+    n_run = 0
     for it in range(n_iterations):
-        means_trace[it] = q.means                      # pre-update snapshot
+        if store_trace:
+            means_trace[it] = q.means                  # pre-update snapshot
         var_trace[it] = q.variances
+        n_run = it + 1
         if kl_every and (it % kl_every == 0 or it == n_iterations - 1):
             kl_iters.append(it)
             # the SAME stream at every checkpoint, so the trace compares fits, not MC luck
@@ -290,7 +325,8 @@ def fit(target, n_components=5, dim=None, method="ibw", n_iterations=1000, step_
                 stopped_early = (f"NGD produced a non-positive variance at iteration {it}: "
                                  "Eq. (14) has no positivity guarantee (paper Sec. 5). "
                                  "Lower step_size, or use method='ibw' / 'md', which do.")
-                means_trace, var_trace = means_trace[:it + 1], var_trace[:it + 1]
+                means_trace = means_trace[:it + 1] if store_trace else None
+                var_trace = var_trace[:it + 1]
                 break
         else:
             new_means = q.means - step_size * n_components * grad_means          # (GD)
@@ -299,7 +335,8 @@ def fit(target, n_components=5, dim=None, method="ibw", n_iterations=1000, step_
             if not np.all(new_variances > 0) or not np.all(np.isfinite(new_means)):
                 stopped_early = (f"non-finite or non-positive iterate at iteration {it} "
                                  f"(method={method}, step_size={step_size})")
-                means_trace, var_trace = means_trace[:it + 1], var_trace[:it + 1]
+                means_trace = means_trace[:it + 1] if store_trace else None
+                var_trace = var_trace[:it + 1]
                 break
 
         q = IsotropicMixture(new_means, new_variances)
@@ -307,10 +344,10 @@ def fit(target, n_components=5, dim=None, method="ibw", n_iterations=1000, step_
             callback(it, q)
 
     return dict(
-        means=q.means, variances=q.variances, covariances=q.covariances, weights=q.weights,
+        means=q.means, variances=q.variances, weights=q.weights,
         means_trace=means_trace, variances_trace=var_trace,
         kls=np.asarray(kls), kl_iters=np.asarray(kl_iters, dtype=int),
-        n_iterations_run=len(means_trace), stopped_early=stopped_early,
+        n_iterations_run=len(var_trace), stopped_early=stopped_early,
         settings=dict(method=method, step_size=step_size, n_grad_samples=n_grad_samples,
                       n_components=n_components, dim=dim, seed=seed, common_noise=common_noise),
     )
