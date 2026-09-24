@@ -1,0 +1,360 @@
+{
+  "timestamp": "2026-09-24T08:57:01+00:00",
+  "git": {
+    "commit": "81e161e3aab88f6df60feeb90773987ce64cd6eb",
+    "branch": "main",
+    "dirty": true
+  },
+  "config": {
+    "dataset": {
+      "name": "celebahq256",
+      "source": "hf_parquet",
+      "root": "celebahq256",
+      "split": "validation",
+      "image_index": 0,
+      "image_size": 256
+    },
+    "teacher": {
+      "name": "score_sde",
+      "config": "ve/celebahq_256_ncsnpp_continuous",
+      "checkpoint": "checkpoints/ve/celebahq_256_ncsnpp_continuous/checkpoint_48.pth",
+      "use_ema": true,
+      "allow_tf32": false,
+      "device": "cuda",
+      "batch_size": 16,
+      "predictor": "reverse_diffusion",
+      "corrector": "langevin",
+      "snr": 0.075,
+      "n_steps_each": 1
+    },
+    "transition": {
+      "t": 0.6,
+      "s": 0.45,
+      "s_near": 0.58,
+      "n_samples": 64,
+      "forward_noise_seed": 0,
+      "rollout_seed_base": 1000,
+      "record_every": 0,
+      "deterministic_repeats": 3
+    },
+    "features": {
+      "extractor": "pixel",
+      "input": "denoised",
+      "pixel_downsample": 8
+    },
+    "diagnostics": {
+      "pca_dims": 10,
+      "gmm_max_components": 4,
+      "gmm_covariance": "diag",
+      "cv_folds": 5,
+      "n_boot": 200,
+      "n_null": 100,
+      "seed": 0
+    },
+    "umap": {
+      "enabled": true,
+      "n_neighbors": 15,
+      "min_dist": 0.1,
+      "seed": 0
+    },
+    "ibw": {
+      "enabled": false,
+      "n_components": 4,
+      "method": "ibw",
+      "step_size": 0.001,
+      "n_iterations": 500,
+      "n_grad_samples": 8
+    },
+    "output": {
+      "dir": "conditional_multimodality_pc",
+      "save_samples": true
+    },
+    "name": "conditional_multimodality_pc"
+  },
+  "packages": {
+    "python": "3.12.13",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "torch": "2.12.0+cu130",
+    "jax": "0.10.1",
+    "jaxlib": "0.10.1",
+    "sklearn": "1.9.0",
+    "umap": "0.5.12",
+    "matplotlib": "3.10.9",
+    "PIL": "12.2.0",
+    "pyarrow": "25.0.1",
+    "einops": "0.8.2",
+    "torchvision": null
+  },
+  "machine": {
+    "hostname": "atlas",
+    "platform": "Linux-6.8.0-90-generic-x86_64-with-glibc2.39",
+    "torch_cuda": "13.0",
+    "gpu": {
+      "name": "NVIDIA H200 NVL",
+      "index": 0,
+      "total_memory_gb": 139.8,
+      "cudnn_deterministic": false,
+      "allow_tf32": true
+    }
+  },
+  "argv": [
+    "/home/juntingwu/.gmmd/gmmd/experiments/conditional_multimodality.py",
+    "conditional_multimodality_pc"
+  ],
+  "status": "finished",
+  "teacher": {
+    "kind": "VESDE",
+    "N": 2000,
+    "T": 1.0,
+    "eps": 1e-05,
+    "device": "cuda",
+    "image_shape": [
+      3,
+      256,
+      256
+    ],
+    "checkpoint": "/home/juntingwu/.gmmd/data/checkpoints/ve/celebahq_256_ncsnpp_continuous/checkpoint_48.pth",
+    "checkpoint_sha256": "3abcb7d219a80b9929e8b5a93b184fa55c428063c33a21000266741b091bd424",
+    "step": 2400005,
+    "use_ema": true,
+    "n_params": 65574549,
+    "ema_num_updates": 2400005,
+    "config_name": "ve/celebahq_256_ncsnpp_continuous",
+    "allow_tf32": false,
+    "upstream_commit": "cb1f359f4aadf0ff9a5e122fe8fffc9451fd6e44",
+    "sigma_min": 0.01,
+    "sigma_max": 348.0,
+    "config": {
+      "training": {
+        "continuous": true,
+        "likelihood_weighting": false,
+        "reduce_mean": false,
+        "sde": "vesde"
+      },
+      "sampling": {
+        "n_steps_each": 1,
+        "noise_removal": true,
+        "probability_flow": false,
+        "snr": 0.075,
+        "method": "pc",
+        "predictor": "reverse_diffusion",
+        "corrector": "langevin"
+      },
+      "data": {
+        "dataset": "CelebAHQ",
+        "image_size": 256,
+        "random_flip": true,
+        "uniform_dequantization": false,
+        "centered": false,
+        "num_channels": 3
+      },
+      "model": {
+        "sigma_max": 348,
+        "sigma_min": 0.01,
+        "num_scales": 2000,
+        "beta_min": 0.1,
+        "beta_max": 20.0,
+        "dropout": 0.0,
+        "embedding_type": "fourier",
+        "name": "ncsnpp",
+        "scale_by_sigma": true,
+        "ema_rate": 0.999,
+        "normalization": "GroupNorm",
+        "nonlinearity": "swish",
+        "nf": 128,
+        "ch_mult": [
+          1,
+          1,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "num_res_blocks": 2,
+        "attn_resolutions": [
+          16
+        ],
+        "resamp_with_conv": true,
+        "conditional": true,
+        "fir": true,
+        "fir_kernel": [
+          1,
+          3,
+          3,
+          1
+        ],
+        "skip_rescale": true,
+        "resblock_type": "biggan",
+        "progressive": "output_skip",
+        "progressive_input": "input_skip",
+        "progressive_combine": "sum",
+        "attention_type": "ddpm",
+        "init_scale": 0.0,
+        "fourier_scale": 16,
+        "conv_size": 3
+      }
+    }
+  },
+  "dataset": {
+    "name": "celebahq256",
+    "source": "hf_parquet",
+    "root": "/home/juntingwu/.gmmd/data/celebahq256",
+    "split": "validation",
+    "n_images": 2000,
+    "image_size": 256,
+    "centered": false,
+    "value_range": [
+      0.0,
+      1.0
+    ],
+    "layout": "CHW",
+    "channel_order": "RGB",
+    "files": [
+      "validation-00000-of-00001.parquet"
+    ]
+  },
+  "image": {
+    "index": 0,
+    "identifier": "validation-00000-of-00001.parquet#row0",
+    "x0_sha256": "f389c63994bd37361a3732811f4531cab68ab42a9468b554f5c8aef5c5051107"
+  },
+  "transition": {
+    "t": 0.5998038649559021,
+    "s": 0.4502306282520294,
+    "s_near": 0.5797941088676453,
+    "i_t": 800,
+    "i_s": 1099,
+    "i_near": 840,
+    "n_steps": 299,
+    "sigma_t": 5.297327041625977,
+    "sigma_s": 1.108557105064392,
+    "sigma_near": 4.297153472900391,
+    "t_requested": 0.6,
+    "s_requested": 0.45,
+    "s_near_requested": 0.58
+  },
+  "x_t": {
+    "sha256": "508d4c129745125ffbab2b91bee61c027a76bcdd11d671d1ecf26b2dbc35dd1f",
+    "t": 0.5998038649559021,
+    "i_t": 800,
+    "sigma": 5.297327041625977,
+    "forward_noise_seed": 0
+  },
+  "sampler": {
+    "predictor": "reverse_diffusion",
+    "corrector": "langevin",
+    "snr": 0.075,
+    "n_steps_each": 1
+  },
+  "n_samples": 64,
+  "rollout_seeds": [
+    1000,
+    1001,
+    1002,
+    1003,
+    1004,
+    1005,
+    1006,
+    1007,
+    1008,
+    1009,
+    1010,
+    1011,
+    1012,
+    1013,
+    1014,
+    1015,
+    1016,
+    1017,
+    1018,
+    1019,
+    1020,
+    1021,
+    1022,
+    1023,
+    1024,
+    1025,
+    1026,
+    1027,
+    1028,
+    1029,
+    1030,
+    1031,
+    1032,
+    1033,
+    1034,
+    1035,
+    1036,
+    1037,
+    1038,
+    1039,
+    1040,
+    1041,
+    1042,
+    1043,
+    1044,
+    1045,
+    1046,
+    1047,
+    1048,
+    1049,
+    1050,
+    1051,
+    1052,
+    1053,
+    1054,
+    1055,
+    1056,
+    1057,
+    1058,
+    1059,
+    1060,
+    1061,
+    1062,
+    1063
+  ],
+  "batch_size": 16,
+  "nfe_per_sample": 598,
+  "n_network_forwards": 3299,
+  "deterministic_control": {
+    "repeats": 3,
+    "max_abs_diff": 0.0
+  },
+  "features": {
+    "extractor": "pixel",
+    "input": "denoised",
+    "representation": "pixel/denoised"
+  },
+  "timings": {
+    "teacher_load_s": 2.427306890487671,
+    "rollouts_s": 1134.9003174304962,
+    "denoise_s": 3.8721370697021484,
+    "deterministic_control_s": 36.227221727371216,
+    "features_s": 0.22914433479309082,
+    "diagnostics_s": 42.37322926521301,
+    "embeddings_s": 7.256904363632202,
+    "total_s": 1255.0182936191559
+  },
+  "outputs": [
+    "config.json",
+    "controls.pdf",
+    "controls.png",
+    "diagnostics.json",
+    "embedding_pca.pdf",
+    "embedding_pca.png",
+    "embedding_umap.pdf",
+    "embedding_umap.png",
+    "embeddings.npz",
+    "features.npz",
+    "gmm_selection.pdf",
+    "gmm_selection.png",
+    "lrt_null.pdf",
+    "lrt_null.png",
+    "provenance.json",
+    "sample_grid.pdf",
+    "sample_grid.png",
+    "samples.npz"
+  ]
+}

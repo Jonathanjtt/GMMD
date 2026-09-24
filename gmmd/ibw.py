@@ -90,11 +90,20 @@ class IsotropicMixture:
         return IsotropicMixture(self.means, self.variances)
 
     # ---------------------------------------------------------------- densities
+    # The straightforward vectorisation of the two formulas below materialises an (M, N, d)
+    # difference tensor.  That is fine in the paper's low-dimensional experiments and hopeless
+    # at image scale: one conditional sample here is d = 3 x 256 x 256 = 196 608, where a single
+    # (64, 8, d) temporary is 800 MB in float64.  Both methods therefore loop over the N
+    # components -- N is small, and each step holds only an (M, d) temporary.  The arithmetic is
+    # the SAME subtraction as the vectorised form, not an expanded |x|^2 - 2x.m + |m|^2 identity,
+    # which would lose precision exactly where it matters (|x - m| much smaller than |x|).
     def log_component_densities(self, x):
         """``log[(1/N) N(x; m_j, eps_j I)]`` for ``x`` ``(M, d)`` -> ``(M, N)``."""
         x = np.asarray(x, dtype=float)
-        diff = x[:, None, :] - self.means[None, :, :]                    # (M, N, d)
-        quad = np.einsum("mnd,mnd->mn", diff, diff) / self.variances[None, :]
+        quad = np.empty((x.shape[0], self.n_components), dtype=float)
+        for j in range(self.n_components):
+            diff = x - self.means[j][None, :]                            # (M, d)
+            quad[:, j] = np.einsum("md,md->m", diff, diff) / self.variances[j]
         log_norm = -0.5 * self.dim * (_LOG2PI + np.log(self.variances))  # (N,)
         return log_norm[None, :] - 0.5 * quad - np.log(self.n_components)
 
@@ -112,10 +121,12 @@ class IsotropicMixture:
         component (where the naive ratio-of-sums underflows to 0/0)."""
         from scipy.special import softmax
 
-        logc = self.log_component_densities(x)                           # (M, N)
-        r = softmax(logc, axis=1)                                        # (M, N)
-        diff = np.asarray(x, dtype=float)[:, None, :] - self.means[None, :, :]
-        return -np.einsum("mn,mnd->md", r, diff / self.variances[None, :, None])
+        x = np.asarray(x, dtype=float)
+        r = softmax(self.log_component_densities(x), axis=1)             # (M, N)
+        out = np.zeros_like(x)
+        for j in range(self.n_components):
+            out -= (r[:, j] / self.variances[j])[:, None] * (x - self.means[j][None, :])
+        return out
 
     # ---------------------------------------------------------------- sampling
     def sample_per_component(self, noise):
