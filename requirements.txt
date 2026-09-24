@@ -1,0 +1,21 @@
+# Core.  Unpinned on purpose -- see the note in pyproject.toml about not letting pip touch the
+# working torch-CUDA install.  Install torch first, following https://pytorch.org, then:
+numpy
+scipy
+torch                  # the teacher: Song et al.'s NCSN++ runs in torch (CUDA strongly advised)
+pillow                 # decoding the CelebA-HQ PNGs
+pyarrow                # reading the CelebA-HQ parquet shards
+matplotlib             # every figure
+scikit-learn           # PCA, Gaussian mixtures, k-means and the stability diagnostics
+
+# PINNED, unlike the rest of this file, because it is the only dependency whose version can
+# silently change a FIGURE: the conditional-sample embedding panel fits one UMAP, UMAP's layout
+# is stochastic and its algorithm has changed across releases.  The experiment already pins
+# random_state and stamps the version into the run's provenance.json, so a bump is at least
+# visible.  Note the import name is `umap` but the PyPI package is `umap-learn`.
+umap-learn==0.5.12
+
+# Optional.
+# gdown                # `python -m gmmd.download --checkpoint ...` (Google Drive)
+# einops               # only for tests/test_ibw_reference_parity.py (the reference code imports it)
+# torchvision          # only for features.extractor = "inception_pool3"

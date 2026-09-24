@@ -1,0 +1,15 @@
+# Data: the teacher checkpoint (1.0 GB) and the CelebA-HQ shards (0.2 GB per shard).
+# Fetch with `python -m gmmd.download --checkpoint ve/celebahq_256_ncsnpp_continuous --celebahq validation`.
+data/
+
+# Raw conditional samples: ~27 MB of float32 images per 8 rollouts, ~200 MB at N = 64.
+# The figures, diagnostics.json and provenance.json next to them ARE tracked -- they are the
+# result; provenance.json carries every seed needed to regenerate the arrays.
+results/**/*.npz
+
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+.ipynb_checkpoints/
+.venv/

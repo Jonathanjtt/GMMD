@@ -1,0 +1,86 @@
+# GMMD / conditional_multimodality -- the first H1 experiment.
+#
+# For ONE held-out CelebA-HQ image x_0: build x_t = x_0 + sigma(t) z once (forward VE marginal),
+# FREEZE it, run N independent stochastic reverse-SDE rollouts x_t -> x_s from that same tensor,
+# and characterise the empirical conditional p_theta(x_s | x_t).  Two controls run alongside:
+# the probability-flow ODE from the same x_t (must be deterministic) and the same rollouts
+# observed at a nearby time s_near (a short transition, expected to stay local).
+#
+# Run:   CUDA_VISIBLE_DEVICES=<free gpu> python -m gmmd.experiments.conditional_multimodality \
+#            conditional_multimodality [--set transition.n_samples=8 ...]
+# Out:   results/conditional_multimodality/   (config.json, provenance.json, samples.npz,
+#        features.npz, diagnostics.json, figures *.png/*.pdf)
+#
+# Time convention is Song et al.'s: t in [eps, 1], VE sigma(t) = 0.01 * 34800^t
+#   t = 0.60 -> sigma 5.3,  0.55 -> 3.1,  0.50 -> 1.9,  0.45 -> 1.1,  0.40 -> 0.66,  0.30 -> 0.23
+# Values of t and s snap to the official 2000-point sampling grid linspace(1, 1e-5, 2000).
+
+[dataset]
+name = "celebahq256"
+source = "hf_parquet"           # "hf_parquet" (korexyz/celeba-hq-256x256 shards) | "image_dir"
+root = "celebahq256"            # under the data root ($GMMD_DATA_DIR, default gmmd/data)
+split = "validation"
+image_index = 0                 # held-out image: row 0 of the validation shard
+image_size = 256
+
+[teacher]
+name = "score_sde"
+config = "ve/celebahq_256_ncsnpp_continuous"
+checkpoint = "checkpoints/ve/celebahq_256_ncsnpp_continuous/checkpoint_48.pth"   # under the data root
+use_ema = true
+allow_tf32 = false
+device = "cuda"
+batch_size = 16                 # rollouts per network call (memory: ~30 GB at 16, ~48 GB at 64)
+# The sampler.  Official celebahq_256 default is pc + reverse_diffusion + langevin (snr 0.075).
+# "reverse_diffusion" with corrector "none" is the exact SMLD discretisation of the reverse SDE
+# on the official grid; the Langevin corrector changes the transition kernel (it re-targets the
+# marginal at every level), so it is a different teacher, not a refinement of the same one.
+predictor = "reverse_diffusion"   # reverse_diffusion | euler_maruyama
+corrector = "none"                # none | langevin
+snr = 0.075
+n_steps_each = 1
+
+[transition]
+t = 0.60                        # sigma_t ~ 5.3: coarse layout survives, identity does not
+s = 0.45                        # sigma_s ~ 1.1
+s_near = 0.58                   # control 2: a short transition (sigma ~ 4.3)
+n_samples = 64                  # N independent rollouts from the frozen x_t
+forward_noise_seed = 0          # the one draw of z that makes x_t
+rollout_seed_base = 1000        # rollout i uses seed rollout_seed_base + i
+record_every = 0                # >0: also keep every k-th intermediate state (memory!)
+deterministic_repeats = 3       # control 1: separate ODE runs from the same x_t
+
+[features]
+extractor = "pixel"             # pixel | dinov2_vitb14 | inception_pool3 (the latter two download weights)
+input = "denoised"              # diagnostics on E[x_0|x_s] ("denoised") or on the raw x_s ("raw")
+pixel_downsample = 8            # pixel extractor: average-pool factor (256 -> 32 per side, 3072-d)
+
+[diagnostics]
+pca_dims = 10
+gmm_max_components = 4
+gmm_covariance = "diag"
+cv_folds = 5
+n_boot = 200                    # bootstrap LRT draws and k-means resamples
+n_null = 100                    # Gaussian-null draws for the silhouette / ARI calibration
+seed = 0
+
+[umap]
+enabled = true
+n_neighbors = 15
+min_dist = 0.1
+seed = 0
+
+# IBW on the teacher conditional is NOT run: the reverse-KL target needs
+# grad_{x_s} log p(x_s | x_t), which the teacher does not provide.  See gmmd/vi.py.
+# These are the settings it WOULD take (gmmd.ibw.fit's names, paper Sec. E.2 conventions).
+[ibw]
+enabled = false
+n_components = 4                # the paper's N
+method = "ibw"                  # ibw (Eq. 12) | md (Eq. 13) | ngd (Eq. 14)
+step_size = 1e-3                # the paper's gamma; the updates carry their own N and d factors
+n_iterations = 500
+n_grad_samples = 8              # the paper's B_grad (its experiments use 10)
+
+[output]
+dir = "conditional_multimodality"   # under results/
+save_samples = true

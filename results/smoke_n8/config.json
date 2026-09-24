@@ -1,0 +1,65 @@
+{
+  "dataset": {
+    "name": "celebahq256",
+    "source": "hf_parquet",
+    "root": "celebahq256",
+    "split": "validation",
+    "image_index": 0,
+    "image_size": 256
+  },
+  "teacher": {
+    "name": "score_sde",
+    "config": "ve/celebahq_256_ncsnpp_continuous",
+    "checkpoint": "checkpoints/ve/celebahq_256_ncsnpp_continuous/checkpoint_48.pth",
+    "use_ema": true,
+    "allow_tf32": false,
+    "device": "cuda",
+    "batch_size": 8,
+    "predictor": "reverse_diffusion",
+    "corrector": "none",
+    "snr": 0.075,
+    "n_steps_each": 1
+  },
+  "transition": {
+    "t": 0.6,
+    "s": 0.45,
+    "s_near": 0.58,
+    "n_samples": 8,
+    "forward_noise_seed": 0,
+    "rollout_seed_base": 1000,
+    "record_every": 0,
+    "deterministic_repeats": 2
+  },
+  "features": {
+    "extractor": "pixel",
+    "input": "denoised",
+    "pixel_downsample": 8
+  },
+  "diagnostics": {
+    "pca_dims": 10,
+    "gmm_max_components": 4,
+    "gmm_covariance": "diag",
+    "cv_folds": 5,
+    "n_boot": 40,
+    "n_null": 20,
+    "seed": 0
+  },
+  "umap": {
+    "enabled": true,
+    "n_neighbors": 15,
+    "min_dist": 0.1,
+    "seed": 0
+  },
+  "ibw": {
+    "enabled": false,
+    "K": 4,
+    "learning_rate": 0.001,
+    "n_iterations": 500,
+    "BG": 8
+  },
+  "output": {
+    "dir": "conditional_multimodality",
+    "save_samples": true
+  },
+  "name": "conditional_multimodality"
+}

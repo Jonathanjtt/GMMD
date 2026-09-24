@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gmmd"
+version = "0.1.0"
+description = "Is the stochastic diffusion transition p(x_s | x_t) multimodal? (score-SDE teacher + isotropic-Gaussian-mixture VI)"
+requires-python = ">=3.11"
+# Intentionally NO dependencies here.  This package is developed inside a conda environment
+# that also holds a carefully-working jax-GPU and torch-CUDA install, and `pip install -e .`
+# must never be able to touch them.  The dependencies are listed, unpinned, in
+# requirements.txt; install them yourself into an environment you are happy for pip to edit.
+# (Python >= 3.11 is needed for the stdlib `tomllib` the config loader uses.)
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["gmmd*"]
+
+[tool.pytest.ini_options]
+markers = [
+    "network: fetches from the internet (the reference IBW implementation, the vendored score-SDE sources); skipped when offline",
+    "checkpoint: needs the 1 GB CelebA-HQ score-SDE checkpoint and a GPU; skipped when absent",
+]

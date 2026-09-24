@@ -1,0 +1,612 @@
+{
+  "representation": "pixel/denoised",
+  "feature_dims": {
+    "pixel/raw/long": 3072,
+    "pixel/raw/near": 3072,
+    "pixel/raw/deterministic": 3072,
+    "pixel/denoised/long": 3072,
+    "pixel/denoised/near": 3072,
+    "pixel/denoised/deterministic": 3072
+  },
+  "groups": {
+    "long": {
+      "spread": {
+        "n": 8,
+        "dim": 3072,
+        "rms_std": 0.06753233423521642,
+        "mean_dist_to_centroid": 3.4652631182992364,
+        "pairwise_mean": 5.2545660883620515,
+        "pairwise_median": 5.466168119543113,
+        "pairwise_min": 3.8057098335159245,
+        "pairwise_max": 6.286719604191861,
+        "pairwise_std": 0.6402819337306884
+      },
+      "degenerate": false,
+      "pca": {
+        "n_components": 7,
+        "explained_variance_ratio": [
+          0.23417309707597356,
+          0.20044763451625408,
+          0.170258123524341,
+          0.14508948434592273,
+          0.10542185358208764,
+          0.07958346150382334,
+          0.06502634545159765
+        ],
+        "total_explained": 1.0
+      },
+      "gmm": {
+        "covariance_type": "diag",
+        "max_k": 1,
+        "cv_folds": 5,
+        "rows": [
+          {
+            "K": 1,
+            "bic": 214.19608042922917,
+            "aic": 213.08389884571147,
+            "loglik": -92.54194942285574,
+            "converged": true,
+            "cv_loglik_mean": -20.454079796191664,
+            "cv_loglik_std": 6.62811678663359,
+            "weights": [
+              1.0
+            ]
+          }
+        ],
+        "best_k_bic": 1,
+        "best_k_cv": 1,
+        "delta_bic_1_vs_2": null
+      },
+      "lrt": {
+        "statistic": 107.18011034509937,
+        "null_mean": 93.98874792888333,
+        "null_q95": 108.81492033175378,
+        "null_q99": 108.8149203317538,
+        "p_value": 0.6829268292682927,
+        "n_boot": 40,
+        "null": [
+          108.81492033175378,
+          108.81492033175377,
+          108.81492033175377,
+          41.83621512137762,
+          108.81492033175374,
+          35.821741141836355,
+          108.81492033175375,
+          107.09226630950239,
+          107.09226630950238,
+          108.81492033175371,
+          108.81492033175377,
+          108.81492033175377,
+          108.81492033175378,
+          108.81492033175377,
+          108.81492033175378,
+          23.304600698532596,
+          108.81492033175377,
+          108.81492033175375,
+          108.81492033175378,
+          108.81492033175377,
+          108.81492033175378,
+          35.821741141836355,
+          108.81492033175374,
+          107.09226630950239,
+          108.8149203317538,
+          108.81492033175377,
+          107.09226630950235,
+          41.83621512137762,
+          108.81492033175377,
+          108.81492033175375,
+          35.821741141836355,
+          108.81492033175377,
+          108.81492033175377,
+          35.821741141836355,
+          107.09226630950235,
+          108.81492033175377,
+          108.81492033175378,
+          108.81492033175377,
+          35.821741141836355,
+          108.81492033175377
+        ]
+      },
+      "stability": {
+        "k": 2,
+        "cluster_sizes": [
+          2,
+          6
+        ],
+        "ari_mean": 0.1165405982905983,
+        "ari_std": 0.2860034913622873,
+        "silhouette": 0.07034336074324962,
+        "null_silhouette_mean": 0.23000222207368543,
+        "null_silhouette_q95": 0.3041634349024622,
+        "p_silhouette": 1.0,
+        "null_ari_mean": 0.37699920201784765,
+        "null_ari_q95": 0.7371002781237408,
+        "p_ari": 0.8571428571428571,
+        "n_boot": 40,
+        "n_null": 20
+      }
+    },
+    "near": {
+      "spread": {
+        "n": 8,
+        "dim": 3072,
+        "rms_std": 0.035591074381876954,
+        "mean_dist_to_centroid": 1.822524956544585,
+        "pairwise_mean": 2.7606147148809415,
+        "pairwise_median": 2.738705388787852,
+        "pairwise_min": 2.1401900724344523,
+        "pairwise_max": 3.4960594149067767,
+        "pairwise_std": 0.40219670413244835
+      },
+      "degenerate": false,
+      "pca": {
+        "n_components": 7,
+        "explained_variance_ratio": [
+          0.2790796989562606,
+          0.24097475957693912,
+          0.16284776758611944,
+          0.1167010041839489,
+          0.08428949099224671,
+          0.06593479958302739,
+          0.05017247912145786
+        ],
+        "total_explained": 1.0
+      },
+      "gmm": {
+        "covariance_type": "diag",
+        "max_k": 1,
+        "cv_folds": 5,
+        "rows": [
+          {
+            "K": 1,
+            "bic": 137.86807528234874,
+            "aic": 136.75589369883104,
+            "loglik": -54.37794684941552,
+            "converged": true,
+            "cv_loglik_mean": -9.40881734289189,
+            "cv_loglik_std": 0.959471965224603,
+            "weights": [
+              1.0
+            ]
+          }
+        ],
+        "best_k_bic": 1,
+        "best_k_cv": 1,
+        "delta_bic_1_vs_2": null
+      },
+      "lrt": {
+        "statistic": 93.43413160682545,
+        "null_mean": 88.16955623197698,
+        "null_q95": 99.27393525250795,
+        "null_q99": 99.27393525250797,
+        "p_value": 0.8536585365853658,
+        "n_boot": 40,
+        "null": [
+          99.27393525250794,
+          99.27393525250795,
+          99.27393525250795,
+          99.27393525250794,
+          99.27393525250795,
+          23.304600692986654,
+          99.27393525250795,
+          97.5512812399428,
+          97.55128123994277,
+          99.27393525250794,
+          99.27393525250795,
+          99.27393525250795,
+          99.27393525250795,
+          99.27393525250794,
+          99.27393525250794,
+          23.304600692986668,
+          99.27393525250795,
+          99.27393525250797,
+          99.27393525250794,
+          99.27393525250795,
+          99.27393525250794,
+          23.304600692986682,
+          99.27393525250794,
+          99.27393525250794,
+          99.27393525250794,
+          97.55128123994278,
+          99.27393525250795,
+          41.8360632791362,
+          99.27393525250794,
+          99.27393525250794,
+          23.304600692986654,
+          99.27393525250794,
+          99.27393525250795,
+          23.304600692986668,
+          97.55128123994277,
+          99.27393525250794,
+          99.27393525250795,
+          99.27393525250793,
+          99.27393525250794,
+          99.27393525250793
+        ]
+      },
+      "stability": {
+        "k": 2,
+        "cluster_sizes": [
+          2,
+          6
+        ],
+        "ari_mean": 0.4092083333333333,
+        "ari_std": 0.4190315068747197,
+        "silhouette": 0.14213319287357623,
+        "null_silhouette_mean": 0.2494484537505785,
+        "null_silhouette_q95": 0.3404521633722599,
+        "p_silhouette": 0.9523809523809523,
+        "null_ari_mean": 0.4255015851803,
+        "null_ari_q95": 0.8288100915703565,
+        "p_ari": 0.5238095238095238,
+        "n_boot": 40,
+        "n_null": 20
+      }
+    },
+    "deterministic": {
+      "spread": {
+        "n": 2,
+        "dim": 3072,
+        "rms_std": 0.0,
+        "mean_dist_to_centroid": 0.0,
+        "pairwise_mean": 0.0,
+        "pairwise_median": 0.0,
+        "pairwise_min": 0.0,
+        "pairwise_max": 0.0,
+        "pairwise_std": 0.0
+      },
+      "degenerate": true
+    }
+  },
+  "pixel_space_raw": {
+    "long": {
+      "n": 8,
+      "dim": 196608,
+      "rms_std": 1.1050473322352365,
+      "mean_dist_to_centroid": 458.3334451140821,
+      "pairwise_mean": 692.9374209397773,
+      "pairwise_median": 692.6366704297146,
+      "pairwise_min": 688.3277985437272,
+      "pairwise_max": 696.7057934183404,
+      "pairwise_std": 2.330236700721139
+    },
+    "near": {
+      "n": 8,
+      "dim": 196608,
+      "rms_std": 2.5270291237154954,
+      "mean_dist_to_centroid": 1048.1281375950348,
+      "pairwise_mean": 1584.6210485156757,
+      "pairwise_median": 1584.2776468762281,
+      "pairwise_min": 1581.190218607632,
+      "pairwise_max": 1590.3247048356363,
+      "pairwise_std": 2.1966694297497016
+    },
+    "deterministic": {
+      "n": 2,
+      "dim": 196608,
+      "rms_std": 0.0,
+      "mean_dist_to_centroid": 0.0,
+      "pairwise_mean": 0.0,
+      "pairwise_median": 0.0,
+      "pairwise_min": 0.0,
+      "pairwise_max": 0.0,
+      "pairwise_std": 0.0
+    }
+  },
+  "pixel_space_denoised": {
+    "long": {
+      "n": 8,
+      "dim": 196608,
+      "rms_std": 0.07635962335075423,
+      "mean_dist_to_centroid": 31.448233533296765,
+      "pairwise_mean": 47.64561527383443,
+      "pairwise_median": 48.581803734547904,
+      "pairwise_min": 36.627747678518446,
+      "pairwise_max": 55.865300833462896,
+      "pairwise_std": 4.759840651440488
+    },
+    "near": {
+      "n": 8,
+      "dim": 196608,
+      "rms_std": 0.03839089799359067,
+      "mean_dist_to_centroid": 15.757345427102283,
+      "pairwise_mean": 23.864748429761686,
+      "pairwise_median": 23.402014943278026,
+      "pairwise_min": 18.947567055819196,
+      "pairwise_max": 30.100323565650367,
+      "pairwise_std": 3.165363886011876
+    },
+    "deterministic": {
+      "n": 2,
+      "dim": 196608,
+      "rms_std": 0.0,
+      "mean_dist_to_centroid": 0.0,
+      "pairwise_mean": 0.0,
+      "pairwise_median": 0.0,
+      "pairwise_min": 0.0,
+      "pairwise_max": 0.0,
+      "pairwise_std": 0.0
+    }
+  },
+  "reference_pixel_raw": {
+    "long": {
+      "spread": {
+        "n": 8,
+        "dim": 3072,
+        "rms_std": 0.15546138316049765,
+        "mean_dist_to_centroid": 8.05764392573933,
+        "pairwise_mean": 12.182894442916218,
+        "pairwise_median": 12.173054479036129,
+        "pairwise_min": 11.692621517521564,
+        "pairwise_max": 12.711862885649245,
+        "pairwise_std": 0.2583790162002855
+      },
+      "degenerate": false,
+      "pca": {
+        "n_components": 7,
+        "explained_variance_ratio": [
+          0.16231680249523722,
+          0.15276245096036375,
+          0.1452236358551602,
+          0.14319538964331166,
+          0.13672541343127495,
+          0.13213004160705807,
+          0.12764626600759404
+        ],
+        "total_explained": 1.0
+      },
+      "gmm": {
+        "covariance_type": "diag",
+        "max_k": 1,
+        "cv_folds": 5,
+        "rows": [
+          {
+            "K": 1,
+            "bic": 312.6294114218594,
+            "aic": 311.5172298383417,
+            "loglik": -141.75861491917084,
+            "converged": true,
+            "cv_loglik_mean": -24.74908621179435,
+            "cv_loglik_std": 5.012724306334556,
+            "weights": [
+              1.0
+            ]
+          }
+        ],
+        "best_k_bic": 1,
+        "best_k_cv": 1,
+        "delta_bic_1_vs_2": null
+      },
+      "lrt": {
+        "statistic": 115.50724633990302,
+        "null_mean": 98.65433069872583,
+        "null_q95": 121.11908240960148,
+        "null_q99": 121.11908240960149,
+        "p_value": 0.7560975609756098,
+        "n_boot": 40,
+        "null": [
+          121.11908240960139,
+          121.11908240960142,
+          121.1190824096015,
+          119.3964283216365,
+          121.11908240960142,
+          119.39642832163645,
+          35.413660393288666,
+          119.39642832163642,
+          119.39642832163645,
+          119.39642832163645,
+          121.11908240960148,
+          121.11908240960145,
+          119.39642832163648,
+          119.39642832163639,
+          121.11908240960148,
+          119.3964283216365,
+          121.11908240960145,
+          121.11908240960148,
+          25.717593696221854,
+          35.821748138627726,
+          121.11908240960145,
+          35.82174813862778,
+          121.11908240960145,
+          119.39642832163639,
+          119.39642832163645,
+          121.11908240960139,
+          119.39642832163648,
+          35.41366039328864,
+          121.11908240960142,
+          35.82174813862781,
+          35.821748138627754,
+          119.39642832163645,
+          25.2425095779339,
+          35.82174813862778,
+          119.3964283216365,
+          121.11908240960139,
+          121.11908240960145,
+          119.39642832163648,
+          35.821748138627754,
+          121.11908240960148
+        ]
+      },
+      "stability": {
+        "k": 2,
+        "cluster_sizes": [
+          6,
+          2
+        ],
+        "ari_mean": 0.24683459595959598,
+        "ari_std": 0.3477116437585925,
+        "silhouette": 0.020606359398051232,
+        "null_silhouette_mean": 0.20140801405567038,
+        "null_silhouette_q95": 0.2615917397378229,
+        "p_silhouette": 1.0,
+        "null_ari_mean": 0.3520161544805342,
+        "null_ari_q95": 0.6101209621993129,
+        "p_ari": 0.7142857142857143,
+        "n_boot": 40,
+        "n_null": 20
+      }
+    },
+    "near": {
+      "spread": {
+        "n": 8,
+        "dim": 3072,
+        "rms_std": 0.3187894143793072,
+        "mean_dist_to_centroid": 16.52719338906357,
+        "pairwise_mean": 24.986661317689748,
+        "pairwise_median": 24.96857486238632,
+        "pairwise_min": 24.488805379006738,
+        "pairwise_max": 25.516856923318723,
+        "pairwise_std": 0.2472730891159756
+      },
+      "degenerate": false,
+      "pca": {
+        "n_components": 7,
+        "explained_variance_ratio": [
+          0.15371414981075066,
+          0.14801452359037556,
+          0.144003933689689,
+          0.14324911408762625,
+          0.14060013314192799,
+          0.136206082362833,
+          0.13421206331679744
+        ],
+        "total_explained": 0.9999999999999999
+      },
+      "gmm": {
+        "covariance_type": "diag",
+        "max_k": 1,
+        "cv_folds": 5,
+        "rows": [
+          {
+            "K": 1,
+            "bic": 393.17553267920806,
+            "aic": 392.06335109569034,
+            "loglik": -182.03167554784517,
+            "converged": true,
+            "cv_loglik_mean": -24.840292852907133,
+            "cv_loglik_std": 0.5398091753756532,
+            "weights": [
+              1.0
+            ]
+          }
+        ],
+        "best_k_bic": 1,
+        "best_k_cv": 1,
+        "delta_bic_1_vs_2": null
+      },
+      "lrt": {
+        "statistic": 27.10099734835069,
+        "null_mean": 103.42385944857169,
+        "null_q95": 131.1873462858024,
+        "null_q99": 131.1873462858024,
+        "p_value": 0.926829268292683,
+        "n_boot": 40,
+        "null": [
+          131.18734628580233,
+          131.1873462858024,
+          131.18734628580233,
+          129.46469205422278,
+          131.18734628580236,
+          129.46469205422278,
+          35.41366039363572,
+          129.46469205422278,
+          129.46469205422275,
+          129.46469205422278,
+          131.1873462858024,
+          131.1873462858024,
+          129.4646920542227,
+          129.46469205422278,
+          131.18734628580236,
+          129.46469205422278,
+          131.18734628580233,
+          131.18734628580236,
+          25.71759649362872,
+          35.82174838984088,
+          131.18734628580233,
+          35.82174838984088,
+          131.1873462858024,
+          129.46469205422272,
+          129.46469205422278,
+          131.1873462858024,
+          129.46469205422272,
+          35.41366039363561,
+          131.1873462858024,
+          35.82174838984088,
+          35.82174838984082,
+          129.46469205422272,
+          25.242509578098748,
+          35.82174838984088,
+          129.46469205422275,
+          131.1873462858024,
+          131.1873462858024,
+          129.46469205422278,
+          35.82174838984082,
+          19.920577698669376
+        ]
+      },
+      "stability": {
+        "k": 2,
+        "cluster_sizes": [
+          2,
+          6
+        ],
+        "ari_mean": 0.18466326728826726,
+        "ari_std": 0.3654960011983378,
+        "silhouette": 0.006710317935999326,
+        "null_silhouette_mean": 0.20127576902805694,
+        "null_silhouette_q95": 0.2643873961184556,
+        "p_silhouette": 1.0,
+        "null_ari_mean": 0.35322725451070636,
+        "null_ari_q95": 0.6095079478276065,
+        "p_ari": 0.7619047619047619,
+        "n_boot": 40,
+        "n_null": 20
+      }
+    }
+  },
+  "deterministic_control": {
+    "repeats": 2,
+    "max_abs_diff": 0.0
+  },
+  "summary_lines": [
+    "[pixel/denoised long] N=8 D=3072  rms per-coord std=0.06753  pairwise dist mean=5.255 (min 3.81, max 6.29)",
+    "[pixel/denoised long] PCA 7 dims explain 100.00%",
+    "[pixel/denoised long] GMM (diag): best K by BIC = 1, by 5-fold CV log-lik = 1; K=1: BIC 214.2 / CV -20.45",
+    "[pixel/denoised long] bootstrap LRT K=1 vs 2: stat 107.2 vs null q95 108.8, p = 0.683 (n_boot 40)",
+    "[pixel/denoised long] k-means(2) sizes [2, 6]: bootstrap ARI 0.12 (Gaussian null 0.38, p = 0.857); silhouette 0.070 (null 0.230, p = 1.000)",
+    "[pixel/denoised near] N=8 D=3072  rms per-coord std=0.03559  pairwise dist mean=2.761 (min 2.14, max 3.5)",
+    "[pixel/denoised near] PCA 7 dims explain 100.00%",
+    "[pixel/denoised near] GMM (diag): best K by BIC = 1, by 5-fold CV log-lik = 1; K=1: BIC 137.9 / CV -9.41",
+    "[pixel/denoised near] bootstrap LRT K=1 vs 2: stat 93.4 vs null q95 99.3, p = 0.854 (n_boot 40)",
+    "[pixel/denoised near] k-means(2) sizes [2, 6]: bootstrap ARI 0.41 (Gaussian null 0.43, p = 0.524); silhouette 0.142 (null 0.249, p = 0.952)",
+    "[pixel/denoised deterministic] N=2 D=3072  rms per-coord std=0  pairwise dist mean=0 (min 0, max 0)",
+    "[pixel/denoised deterministic] cloud is degenerate (no spread): model-based diagnostics skipped",
+    "[pixel/raw long] N=8 D=3072  rms per-coord std=0.1555  pairwise dist mean=12.18 (min 11.7, max 12.7)",
+    "[pixel/raw long] PCA 7 dims explain 100.00%",
+    "[pixel/raw long] GMM (diag): best K by BIC = 1, by 5-fold CV log-lik = 1; K=1: BIC 312.6 / CV -24.75",
+    "[pixel/raw long] bootstrap LRT K=1 vs 2: stat 115.5 vs null q95 121.1, p = 0.756 (n_boot 40)",
+    "[pixel/raw long] k-means(2) sizes [6, 2]: bootstrap ARI 0.25 (Gaussian null 0.35, p = 0.714); silhouette 0.021 (null 0.201, p = 1.000)",
+    "[pixel/raw near] N=8 D=3072  rms per-coord std=0.3188  pairwise dist mean=24.99 (min 24.5, max 25.5)",
+    "[pixel/raw near] PCA 7 dims explain 100.00%",
+    "[pixel/raw near] GMM (diag): best K by BIC = 1, by 5-fold CV log-lik = 1; K=1: BIC 393.2 / CV -24.84",
+    "[pixel/raw near] bootstrap LRT K=1 vs 2: stat 27.1 vs null q95 131.2, p = 0.927 (n_boot 40)",
+    "[pixel/raw near] k-means(2) sizes [2, 6]: bootstrap ARI 0.18 (Gaussian null 0.35, p = 0.762); silhouette 0.007 (null 0.201, p = 1.000)"
+  ],
+  "umap": {
+    "n_components": 2,
+    "n_neighbors": 15,
+    "min_dist": 0.1,
+    "metric": "euclidean",
+    "random_state": 0,
+    "umap_version": "0.5.12"
+  },
+  "settings": {
+    "pca_dims": 10,
+    "max_k": 4,
+    "covariance_type": "diag",
+    "cv_folds": 5,
+    "n_boot": 40,
+    "n_null": 20,
+    "seed": 0
+  }
+}

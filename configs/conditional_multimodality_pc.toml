@@ -1,0 +1,11 @@
+# Variant: the SAME experiment with the official celebahq_256 predictor-corrector sampler
+# (reverse_diffusion predictor + Langevin corrector, snr 0.075, one corrector step per level).
+# The corrector re-targets the marginal p_{t_i} at every level, so this is a different
+# transition kernel from the pure reverse SDE of the base config -- run both, compare.
+inherit = "conditional_multimodality"
+
+[teacher]
+corrector = "langevin"
+
+[output]
+dir = "conditional_multimodality_pc"
