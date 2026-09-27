@@ -33,7 +33,7 @@ from scipy.spatial.distance import pdist
 
 __all__ = ["spread_stats", "pca_scores", "gmm_model_selection", "bootstrap_lrt",
            "clustering_stability", "analyze", "summarize", "median_bandwidth",
-           "mmd2_unbiased", "mmd_permutation_test"]
+           "mmd2_unbiased", "mmd_permutation_test", "sliced_wasserstein"]
 
 
 def _2d(Z):
@@ -275,3 +275,22 @@ def mmd_permutation_test(X, Y, n_perm=500, bandwidth=None, seed=0):
     return dict(mmd2=obs, bandwidth=bw, p_value=float((1 + np.sum(null >= obs)) / (1 + n_perm)),
                 null_mean=float(null.mean()), null_q95=float(np.quantile(null, 0.95)),
                 n_x=int(n), n_y=int(len(Y)), n_perm=int(n_perm))
+
+
+def sliced_wasserstein(X, Y, n_projections=128, seed=0):
+    """Mean 1-D Wasserstein distance over deterministic random unit projections."""
+    from scipy.stats import wasserstein_distance
+
+    X, Y = _2d(X), _2d(Y)
+    if X.shape[1] != Y.shape[1]:
+        raise ValueError(f"feature dimensions differ: {X.shape[1]} vs {Y.shape[1]}")
+    if n_projections < 1:
+        raise ValueError("n_projections must be positive")
+    rng = np.random.default_rng(seed)
+    directions = rng.standard_normal((int(n_projections), X.shape[1]))
+    directions /= np.maximum(np.linalg.norm(directions, axis=1, keepdims=True), 1e-12)
+    xp, yp = X @ directions.T, Y @ directions.T
+    distances = np.asarray([wasserstein_distance(xp[:, j], yp[:, j])
+                            for j in range(directions.shape[0])])
+    return dict(mean=float(distances.mean()), std=float(distances.std()),
+                n_projections=int(n_projections), seed=int(seed))

@@ -1,0 +1,33 @@
+{
+  "output": {
+    "dir": "outputs/exp2_toy_h1"
+  },
+  "experiment": {
+    "separations": [
+      0.0,
+      1.0,
+      2.0,
+      4.0,
+      6.0
+    ],
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "n_train": 4000,
+    "n_test": 4000,
+    "n_eval": 4000,
+    "n_mmd": 512,
+    "n_projections": 256
+  },
+  "ibw": {
+    "n_iterations": 800,
+    "n_grad_samples": 64,
+    "n_kl_samples": 2000,
+    "step_size": 0.05
+  },
+  "name": "exp2_toy_h1"
+}

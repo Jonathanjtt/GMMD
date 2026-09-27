@@ -1,0 +1,5341 @@
+{
+  "config": {
+    "output": {
+      "dir": "outputs/exp2_toy_h1"
+    },
+    "experiment": {
+      "separations": [
+        0.0,
+        1.0,
+        2.0,
+        4.0,
+        6.0
+      ],
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "n_train": 4000,
+      "n_test": 4000,
+      "n_eval": 4000,
+      "n_mmd": 512,
+      "n_projections": 256
+    },
+    "ibw": {
+      "n_iterations": 800,
+      "n_grad_samples": 64,
+      "n_kl_samples": 2000,
+      "step_size": 0.05
+    },
+    "name": "exp2_toy_h1"
+  },
+  "metrics": [
+    {
+      "separation": 0.0,
+      "seed": 0,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "heldout_nll": 2.84991483892117,
+      "sliced_wasserstein": 0.036261734447132,
+      "sliced_wasserstein_projection_std": 0.00475512819210914,
+      "mmd2": 0.0008097706242620184,
+      "mmd_bandwidth": 1.6317132141231705,
+      "mode_mass_error": 0.007249999999999979
+    },
+    {
+      "separation": 0.0,
+      "seed": 0,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "heldout_nll": 2.8550831648881156,
+      "sliced_wasserstein": 0.029695815922027826,
+      "sliced_wasserstein_projection_std": 0.00845687477927437,
+      "mmd2": 6.8573900380286545e-06,
+      "mmd_bandwidth": 1.6136845644314246,
+      "mode_mass_error": 0.009750000000000036
+    },
+    {
+      "separation": 0.0,
+      "seed": 0,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "heldout_nll": 2.850384260224837,
+      "sliced_wasserstein": 0.0447540510750934,
+      "sliced_wasserstein_projection_std": 0.006442892315876144,
+      "mmd2": 0.0014012910920537802,
+      "mmd_bandwidth": 1.632568100323625,
+      "mode_mass_error": 0.007500000000000007
+    },
+    {
+      "separation": 0.0,
+      "seed": 0,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "heldout_nll": 2.8503327485625003,
+      "sliced_wasserstein": 0.036048336979432924,
+      "sliced_wasserstein_projection_std": 0.00751292531727239,
+      "mmd2": -9.037265449762799e-05,
+      "mmd_bandwidth": 1.6733066481647882,
+      "mode_mass_error": 0.004249999999999976
+    },
+    {
+      "separation": 0.0,
+      "seed": 1,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "heldout_nll": 2.8252067944945036,
+      "sliced_wasserstein": 0.01984704593784537,
+      "sliced_wasserstein_projection_std": 0.003273526370669268,
+      "mmd2": 0.00040675006455592744,
+      "mmd_bandwidth": 1.6439407589849209,
+      "mode_mass_error": 0.0040000000000000036
+    },
+    {
+      "separation": 0.0,
+      "seed": 1,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "heldout_nll": 2.8296391653556747,
+      "sliced_wasserstein": 0.046548186147578205,
+      "sliced_wasserstein_projection_std": 0.01050068012984728,
+      "mmd2": -7.107468477474121e-05,
+      "mmd_bandwidth": 1.7228023046492962,
+      "mode_mass_error": 0.006249999999999978
+    },
+    {
+      "separation": 0.0,
+      "seed": 1,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "heldout_nll": 2.8244529463742603,
+      "sliced_wasserstein": 0.020611824862873537,
+      "sliced_wasserstein_projection_std": 0.0042138100174020825,
+      "mmd2": 0.0016429433763187618,
+      "mmd_bandwidth": 1.6529131786806104,
+      "mode_mass_error": 0.007750000000000035
+    },
+    {
+      "separation": 0.0,
+      "seed": 1,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "heldout_nll": 2.824588220815778,
+      "sliced_wasserstein": 0.03494174283566878,
+      "sliced_wasserstein_projection_std": 0.00534250455835679,
+      "mmd2": -0.0005129539454953314,
+      "mmd_bandwidth": 1.7132649854448614,
+      "mode_mass_error": 0.003500000000000003
+    },
+    {
+      "separation": 0.0,
+      "seed": 2,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "heldout_nll": 2.8284352577070853,
+      "sliced_wasserstein": 0.04048653307846392,
+      "sliced_wasserstein_projection_std": 0.010507671540897053,
+      "mmd2": -0.00012015147461230669,
+      "mmd_bandwidth": 1.6787267181125478,
+      "mode_mass_error": 0.00824999999999998
+    },
+    {
+      "separation": 0.0,
+      "seed": 2,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "heldout_nll": 2.829998341594219,
+      "sliced_wasserstein": 0.03965059242230594,
+      "sliced_wasserstein_projection_std": 0.010537033923418765,
+      "mmd2": -0.000953846342762521,
+      "mmd_bandwidth": 1.622261320952999,
+      "mode_mass_error": 0.028249999999999997
+    },
+    {
+      "separation": 0.0,
+      "seed": 2,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "heldout_nll": 2.827741458598914,
+      "sliced_wasserstein": 0.024260281957286946,
+      "sliced_wasserstein_projection_std": 0.004849947661399077,
+      "mmd2": -0.0001321993435665636,
+      "mmd_bandwidth": 1.674946566362975,
+      "mode_mass_error": 0.018000000000000016
+    },
+    {
+      "separation": 0.0,
+      "seed": 2,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "heldout_nll": 2.8279639020639236,
+      "sliced_wasserstein": 0.03153907762501809,
+      "sliced_wasserstein_projection_std": 0.010594505004612247,
+      "mmd2": -6.399045153115956e-05,
+      "mmd_bandwidth": 1.6200400254026794,
+      "mode_mass_error": 0.0047499999999999765
+    },
+    {
+      "separation": 0.0,
+      "seed": 3,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "heldout_nll": 2.809488201822271,
+      "sliced_wasserstein": 0.02507535273416799,
+      "sliced_wasserstein_projection_std": 0.00303572668560872,
+      "mmd2": 0.0007164279292131148,
+      "mmd_bandwidth": 1.6335220179060335,
+      "mode_mass_error": 0.0012499999999999734
+    },
+    {
+      "separation": 0.0,
+      "seed": 3,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "heldout_nll": 2.812272810922084,
+      "sliced_wasserstein": 0.034765218020284615,
+      "sliced_wasserstein_projection_std": 0.009116620175646616,
+      "mmd2": -0.0010539216117408934,
+      "mmd_bandwidth": 1.613758225384602,
+      "mode_mass_error": 0.0020000000000000018
+    },
+    {
+      "separation": 0.0,
+      "seed": 3,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "heldout_nll": 2.809389302252328,
+      "sliced_wasserstein": 0.03446355824176507,
+      "sliced_wasserstein_projection_std": 0.008040098310098652,
+      "mmd2": 0.0018702959362024707,
+      "mmd_bandwidth": 1.6322139110537193,
+      "mode_mass_error": 0.003249999999999975
+    },
+    {
+      "separation": 0.0,
+      "seed": 3,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "heldout_nll": 2.8093646317388012,
+      "sliced_wasserstein": 0.02636885408961223,
+      "sliced_wasserstein_projection_std": 0.0062551651350428025,
+      "mmd2": -0.00022892485766456971,
+      "mmd_bandwidth": 1.6459666751963389,
+      "mode_mass_error": 0.007000000000000006
+    },
+    {
+      "separation": 0.0,
+      "seed": 4,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "heldout_nll": 2.8062113290324175,
+      "sliced_wasserstein": 0.03865973933809773,
+      "sliced_wasserstein_projection_std": 0.010166660777124354,
+      "mmd2": -0.0008655946979923002,
+      "mmd_bandwidth": 1.6547387346653968,
+      "mode_mass_error": 0.0015000000000000013
+    },
+    {
+      "separation": 0.0,
+      "seed": 4,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "heldout_nll": 2.8080229662397036,
+      "sliced_wasserstein": 0.04196926497385161,
+      "sliced_wasserstein_projection_std": 0.012678286519566493,
+      "mmd2": 0.0003304915935931074,
+      "mmd_bandwidth": 1.6359825946005828,
+      "mode_mass_error": 0.01874999999999999
+    },
+    {
+      "separation": 0.0,
+      "seed": 4,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "heldout_nll": 2.8056463650741814,
+      "sliced_wasserstein": 0.02970605039058675,
+      "sliced_wasserstein_projection_std": 0.006166980072588617,
+      "mmd2": -0.0006641103777924595,
+      "mmd_bandwidth": 1.6580515824522997,
+      "mode_mass_error": 0.003750000000000031
+    },
+    {
+      "separation": 0.0,
+      "seed": 4,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "heldout_nll": 2.805260974049036,
+      "sliced_wasserstein": 0.02564383709367089,
+      "sliced_wasserstein_projection_std": 0.004396394056190848,
+      "mmd2": 6.542225852923522e-05,
+      "mmd_bandwidth": 1.6197738569935767,
+      "mode_mass_error": 0.0044999999999999485
+    },
+    {
+      "separation": 1.0,
+      "seed": 0,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "heldout_nll": 2.9573750682383873,
+      "sliced_wasserstein": 0.03570475788742043,
+      "sliced_wasserstein_projection_std": 0.006196882043482391,
+      "mmd2": 0.0006443358900076745,
+      "mmd_bandwidth": 1.72018555531539,
+      "mode_mass_error": 0.00824999999999998
+    },
+    {
+      "separation": 1.0,
+      "seed": 0,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "heldout_nll": 2.9638468734559185,
+      "sliced_wasserstein": 0.04127297368753741,
+      "sliced_wasserstein_projection_std": 0.014434640598450427,
+      "mmd2": 0.0013518413554087783,
+      "mmd_bandwidth": 1.8017970058796022,
+      "mode_mass_error": 0.0010000000000000009
+    },
+    {
+      "separation": 1.0,
+      "seed": 0,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "heldout_nll": 2.9645229754999347,
+      "sliced_wasserstein": 0.060061400254300665,
+      "sliced_wasserstein_projection_std": 0.016323187618137093,
+      "mmd2": 0.0019018824380507837,
+      "mmd_bandwidth": 1.7187493190043241,
+      "mode_mass_error": 0.007249999999999979
+    },
+    {
+      "separation": 1.0,
+      "seed": 0,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "heldout_nll": 2.957969194270527,
+      "sliced_wasserstein": 0.04727753579463357,
+      "sliced_wasserstein_projection_std": 0.013226671001935909,
+      "mmd2": -0.0002691773094112282,
+      "mmd_bandwidth": 1.7500353404861984,
+      "mode_mass_error": 0.004500000000000004
+    },
+    {
+      "separation": 1.0,
+      "seed": 1,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "heldout_nll": 2.938250640155483,
+      "sliced_wasserstein": 0.027306221023311417,
+      "sliced_wasserstein_projection_std": 0.007713424323567817,
+      "mmd2": 8.281701565460153e-05,
+      "mmd_bandwidth": 1.7503590191296354,
+      "mode_mass_error": 0.011749999999999983
+    },
+    {
+      "separation": 1.0,
+      "seed": 1,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "heldout_nll": 2.93974104643991,
+      "sliced_wasserstein": 0.04723025713392275,
+      "sliced_wasserstein_projection_std": 0.01291388845750175,
+      "mmd2": -0.0007589514195915914,
+      "mmd_bandwidth": 1.801844693180494,
+      "mode_mass_error": 0.010000000000000009
+    },
+    {
+      "separation": 1.0,
+      "seed": 1,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "heldout_nll": 2.9426334491690262,
+      "sliced_wasserstein": 0.034789878580267844,
+      "sliced_wasserstein_projection_std": 0.01060808999802035,
+      "mmd2": 0.0011297507995409184,
+      "mmd_bandwidth": 1.7579932630760677,
+      "mode_mass_error": 0.00824999999999998
+    },
+    {
+      "separation": 1.0,
+      "seed": 1,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "heldout_nll": 2.937068603463522,
+      "sliced_wasserstein": 0.03731613984441627,
+      "sliced_wasserstein_projection_std": 0.006535399409800412,
+      "mmd2": -0.0004020303157992178,
+      "mmd_bandwidth": 1.7794625694964181,
+      "mode_mass_error": 0.0012499999999999734
+    },
+    {
+      "separation": 1.0,
+      "seed": 2,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "heldout_nll": 2.9436892055353576,
+      "sliced_wasserstein": 0.03527269282144124,
+      "sliced_wasserstein_projection_std": 0.005088097323756218,
+      "mmd2": 9.592414051073916e-06,
+      "mmd_bandwidth": 1.7648294243443825,
+      "mode_mass_error": 0.01100000000000001
+    },
+    {
+      "separation": 1.0,
+      "seed": 2,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "heldout_nll": 2.944913478158408,
+      "sliced_wasserstein": 0.02695495394026668,
+      "sliced_wasserstein_projection_std": 0.005349258471479551,
+      "mmd2": 0.0006388497472038512,
+      "mmd_bandwidth": 1.7743376068123928,
+      "mode_mass_error": 0.0040000000000000036
+    },
+    {
+      "separation": 1.0,
+      "seed": 2,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "heldout_nll": 2.947812533574326,
+      "sliced_wasserstein": 0.03156091602408687,
+      "sliced_wasserstein_projection_std": 0.011541208304645488,
+      "mmd2": 0.00013514248585533295,
+      "mmd_bandwidth": 1.7692641673738483,
+      "mode_mass_error": 0.01824999999999999
+    },
+    {
+      "separation": 1.0,
+      "seed": 2,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "heldout_nll": 2.943318884665164,
+      "sliced_wasserstein": 0.041716993014347246,
+      "sliced_wasserstein_projection_std": 0.015722469318860177,
+      "mmd2": 0.0003668667053262631,
+      "mmd_bandwidth": 1.7110707353792503,
+      "mode_mass_error": 0.005249999999999977
+    },
+    {
+      "separation": 1.0,
+      "seed": 3,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "heldout_nll": 2.9227464233010103,
+      "sliced_wasserstein": 0.0271008097391354,
+      "sliced_wasserstein_projection_std": 0.0033312424274695774,
+      "mmd2": 0.00045542577438451026,
+      "mmd_bandwidth": 1.7459322589480357,
+      "mode_mass_error": 0.0012499999999999734
+    },
+    {
+      "separation": 1.0,
+      "seed": 3,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "heldout_nll": 2.9242910592245432,
+      "sliced_wasserstein": 0.03358420011477994,
+      "sliced_wasserstein_projection_std": 0.010871831038243839,
+      "mmd2": 0.002114424042248153,
+      "mmd_bandwidth": 1.7151667919668614,
+      "mode_mass_error": 0.0007500000000000284
+    },
+    {
+      "separation": 1.0,
+      "seed": 3,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "heldout_nll": 2.9298292277703544,
+      "sliced_wasserstein": 0.05501749921082087,
+      "sliced_wasserstein_projection_std": 0.016714757814326617,
+      "mmd2": 0.0029394676265583897,
+      "mmd_bandwidth": 1.745593941098752,
+      "mode_mass_error": 0.003249999999999975
+    },
+    {
+      "separation": 1.0,
+      "seed": 3,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "heldout_nll": 2.922325283193438,
+      "sliced_wasserstein": 0.028789825663772632,
+      "sliced_wasserstein_projection_std": 0.007426539857686898,
+      "mmd2": -0.0006073665688450802,
+      "mmd_bandwidth": 1.7158436079509913,
+      "mode_mass_error": 0.004249999999999976
+    },
+    {
+      "separation": 1.0,
+      "seed": 4,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "heldout_nll": 2.9091309984599714,
+      "sliced_wasserstein": 0.044223988864540154,
+      "sliced_wasserstein_projection_std": 0.011758704008661134,
+      "mmd2": -0.0002670602184009496,
+      "mmd_bandwidth": 1.7518299616457047,
+      "mode_mass_error": 0.004750000000000032
+    },
+    {
+      "separation": 1.0,
+      "seed": 4,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "heldout_nll": 2.9108920574845953,
+      "sliced_wasserstein": 0.04335086732139711,
+      "sliced_wasserstein_projection_std": 0.01448266226529578,
+      "mmd2": -0.0003560847029970837,
+      "mmd_bandwidth": 1.7044220439637052,
+      "mode_mass_error": 0.014249999999999985
+    },
+    {
+      "separation": 1.0,
+      "seed": 4,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "heldout_nll": 2.9173467044339287,
+      "sliced_wasserstein": 0.045713605014096374,
+      "sliced_wasserstein_projection_std": 0.011814287042174689,
+      "mmd2": 0.00010792717136265395,
+      "mmd_bandwidth": 1.7546945267352974,
+      "mode_mass_error": 0.003249999999999975
+    },
+    {
+      "separation": 1.0,
+      "seed": 4,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "heldout_nll": 2.908142678652406,
+      "sliced_wasserstein": 0.035320218079130966,
+      "sliced_wasserstein_projection_std": 0.0021659324669984605,
+      "mmd2": -0.0004263449951671383,
+      "mmd_bandwidth": 1.72155877938156,
+      "mode_mass_error": 0.0034999999999999476
+    },
+    {
+      "separation": 2.0,
+      "seed": 0,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "heldout_nll": 3.1889698283699897,
+      "sliced_wasserstein": 0.050884927012222816,
+      "sliced_wasserstein_projection_std": 0.015420972759292231,
+      "mmd2": 0.0009158581091393003,
+      "mmd_bandwidth": 1.9638462093610252,
+      "mode_mass_error": 0.006750000000000034
+    },
+    {
+      "separation": 2.0,
+      "seed": 0,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "heldout_nll": 3.185005710499633,
+      "sliced_wasserstein": 0.035784291727726875,
+      "sliced_wasserstein_projection_std": 0.012559071005255268,
+      "mmd2": -0.0006342861089185803,
+      "mmd_bandwidth": 2.046731307865504,
+      "mode_mass_error": 0.008499999999999952
+    },
+    {
+      "separation": 2.0,
+      "seed": 0,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "heldout_nll": 3.2523596234304044,
+      "sliced_wasserstein": 0.14474099251096884,
+      "sliced_wasserstein_projection_std": 0.06676985626723192,
+      "mmd2": 0.007229863314185403,
+      "mmd_bandwidth": 1.9447508764566843,
+      "mode_mass_error": 0.007500000000000007
+    },
+    {
+      "separation": 2.0,
+      "seed": 0,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "heldout_nll": 3.1824888290759383,
+      "sliced_wasserstein": 0.057522858694846336,
+      "sliced_wasserstein_projection_std": 0.018690915154409203,
+      "mmd2": -0.0005347529637820259,
+      "mmd_bandwidth": 2.0109168002569535,
+      "mode_mass_error": 0.007249999999999979
+    },
+    {
+      "separation": 2.0,
+      "seed": 1,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "heldout_nll": 3.176557137915298,
+      "sliced_wasserstein": 0.04892485355398078,
+      "sliced_wasserstein_projection_std": 0.029569066421219575,
+      "mmd2": 0.0005779398235707944,
+      "mmd_bandwidth": 2.0106007123936642,
+      "mode_mass_error": 0.01200000000000001
+    },
+    {
+      "separation": 2.0,
+      "seed": 1,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "heldout_nll": 3.1656919496330977,
+      "sliced_wasserstein": 0.05104068020884042,
+      "sliced_wasserstein_projection_std": 0.01644109036308499,
+      "mmd2": 0.0011973470256991803,
+      "mmd_bandwidth": 2.003610776242239,
+      "mode_mass_error": 0.003500000000000003
+    },
+    {
+      "separation": 2.0,
+      "seed": 1,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "heldout_nll": 3.2368477053968783,
+      "sliced_wasserstein": 0.12233262023103375,
+      "sliced_wasserstein_projection_std": 0.0659809271123549,
+      "mmd2": 0.004975257994383142,
+      "mmd_bandwidth": 2.0038113780828857,
+      "mode_mass_error": 0.006750000000000034
+    },
+    {
+      "separation": 2.0,
+      "seed": 1,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "heldout_nll": 3.1644063713773276,
+      "sliced_wasserstein": 0.03649551638191786,
+      "sliced_wasserstein_projection_std": 0.008079588252398979,
+      "mmd2": -0.00022201232752250277,
+      "mmd_bandwidth": 2.0802820879425212,
+      "mode_mass_error": 0.005249999999999977
+    },
+    {
+      "separation": 2.0,
+      "seed": 2,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "heldout_nll": 3.1838666207447877,
+      "sliced_wasserstein": 0.05827962150996571,
+      "sliced_wasserstein_projection_std": 0.015652375379433838,
+      "mmd2": 0.0005306254040553515,
+      "mmd_bandwidth": 2.005917889541694,
+      "mode_mass_error": 0.014500000000000013
+    },
+    {
+      "separation": 2.0,
+      "seed": 2,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "heldout_nll": 3.172951913183783,
+      "sliced_wasserstein": 0.03593400758767247,
+      "sliced_wasserstein_projection_std": 0.009479039772658947,
+      "mmd2": -0.0008899484193136686,
+      "mmd_bandwidth": 1.9948255132799801,
+      "mode_mass_error": 0.016750000000000043
+    },
+    {
+      "separation": 2.0,
+      "seed": 2,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "heldout_nll": 3.240379012234451,
+      "sliced_wasserstein": 0.11697240247750651,
+      "sliced_wasserstein_projection_std": 0.06328515566375607,
+      "mmd2": 0.0046355599307128514,
+      "mmd_bandwidth": 2.012632589298704,
+      "mode_mass_error": 0.02024999999999999
+    },
+    {
+      "separation": 2.0,
+      "seed": 2,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "heldout_nll": 3.17197065442672,
+      "sliced_wasserstein": 0.044268166996772225,
+      "sliced_wasserstein_projection_std": 0.012184841100232591,
+      "mmd2": -0.00010902607954688115,
+      "mmd_bandwidth": 1.9723482351825967,
+      "mode_mass_error": 0.009000000000000008
+    },
+    {
+      "separation": 2.0,
+      "seed": 3,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "heldout_nll": 3.1606277681589545,
+      "sliced_wasserstein": 0.042550574665332574,
+      "sliced_wasserstein_projection_std": 0.01940365819254536,
+      "mmd2": 0.0009967870085882957,
+      "mmd_bandwidth": 1.9947377268900732,
+      "mode_mass_error": 0.0020000000000000018
+    },
+    {
+      "separation": 2.0,
+      "seed": 3,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "heldout_nll": 3.1504443692688002,
+      "sliced_wasserstein": 0.032964621659507046,
+      "sliced_wasserstein_projection_std": 0.011298716265793233,
+      "mmd2": -0.0008712223180642464,
+      "mmd_bandwidth": 1.9774350783025276,
+      "mode_mass_error": 0.006500000000000006
+    },
+    {
+      "separation": 2.0,
+      "seed": 3,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "heldout_nll": 3.226734975554826,
+      "sliced_wasserstein": 0.13380226460317118,
+      "sliced_wasserstein_projection_std": 0.06594339393268872,
+      "mmd2": 0.009359909248233489,
+      "mmd_bandwidth": 1.9894155785460423,
+      "mode_mass_error": 0.0050000000000000044
+    },
+    {
+      "separation": 2.0,
+      "seed": 3,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "heldout_nll": 3.1494455271910704,
+      "sliced_wasserstein": 0.02458855939003631,
+      "sliced_wasserstein_projection_std": 0.004147571608532436,
+      "mmd2": 0.0019859383947387066,
+      "mmd_bandwidth": 2.01313600969773,
+      "mode_mass_error": 0.0034999999999999476
+    },
+    {
+      "separation": 2.0,
+      "seed": 4,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "heldout_nll": 3.1415443052164655,
+      "sliced_wasserstein": 0.056508760683944365,
+      "sliced_wasserstein_projection_std": 0.01261541804192576,
+      "mmd2": -0.00019045140808948702,
+      "mmd_bandwidth": 2.004766865611198,
+      "mode_mass_error": 0.004249999999999976
+    },
+    {
+      "separation": 2.0,
+      "seed": 4,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "heldout_nll": 3.1322525459723964,
+      "sliced_wasserstein": 0.04392730478980954,
+      "sliced_wasserstein_projection_std": 0.015587229863076823,
+      "mmd2": 0.0008554845269439504,
+      "mmd_bandwidth": 2.0316612924844986,
+      "mode_mass_error": 0.017749999999999988
+    },
+    {
+      "separation": 2.0,
+      "seed": 4,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "heldout_nll": 3.2086578360764046,
+      "sliced_wasserstein": 0.12188365985871208,
+      "sliced_wasserstein_projection_std": 0.05664407307709693,
+      "mmd2": 0.0035546717695569274,
+      "mmd_bandwidth": 1.998676671689521,
+      "mode_mass_error": 0.004249999999999976
+    },
+    {
+      "separation": 2.0,
+      "seed": 4,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "heldout_nll": 3.130912933172287,
+      "sliced_wasserstein": 0.027301638156974457,
+      "sliced_wasserstein_projection_std": 0.0038241027319852465,
+      "mmd2": -0.0007647686645824159,
+      "mmd_bandwidth": 1.9676848029995466,
+      "mode_mass_error": 0.01150000000000001
+    },
+    {
+      "separation": 4.0,
+      "seed": 0,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "heldout_nll": 3.644796166619397,
+      "sliced_wasserstein": 0.21448469782045831,
+      "sliced_wasserstein_projection_std": 0.1502173018658194,
+      "mmd2": 0.005651882109239503,
+      "mmd_bandwidth": 2.6510116576201135,
+      "mode_mass_error": 0.005249999999999977
+    },
+    {
+      "separation": 4.0,
+      "seed": 0,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "heldout_nll": 3.4794758285805796,
+      "sliced_wasserstein": 0.08066033857348186,
+      "sliced_wasserstein_projection_std": 0.03130085487011009,
+      "mmd2": -0.0015288807454549858,
+      "mmd_bandwidth": 2.7189793011925563,
+      "mode_mass_error": 0.009500000000000008
+    },
+    {
+      "separation": 4.0,
+      "seed": 0,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "heldout_nll": 4.010630692935025,
+      "sliced_wasserstein": 0.4734824736773542,
+      "sliced_wasserstein_projection_std": 0.2794797733466729,
+      "mmd2": 0.04289897197579706,
+      "mmd_bandwidth": 2.5902227098601287,
+      "mode_mass_error": 0.009500000000000008
+    },
+    {
+      "separation": 4.0,
+      "seed": 0,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "heldout_nll": 3.47880733696568,
+      "sliced_wasserstein": 0.07840725826923908,
+      "sliced_wasserstein_projection_std": 0.028925067645254526,
+      "mmd2": -0.0012032869439446703,
+      "mmd_bandwidth": 2.769854100812145,
+      "mode_mass_error": 0.00824999999999998
+    },
+    {
+      "separation": 4.0,
+      "seed": 1,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "heldout_nll": 3.6383871828027874,
+      "sliced_wasserstein": 0.21657306992982894,
+      "sliced_wasserstein_projection_std": 0.16559114347730414,
+      "mmd2": 0.005592856243906041,
+      "mmd_bandwidth": 2.7277453389587683,
+      "mode_mass_error": 0.011749999999999983
+    },
+    {
+      "separation": 4.0,
+      "seed": 1,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "heldout_nll": 3.460853581486613,
+      "sliced_wasserstein": 0.06165698545676207,
+      "sliced_wasserstein_projection_std": 0.024438769274907728,
+      "mmd2": -0.000442810982520081,
+      "mmd_bandwidth": 2.7477956775940298,
+      "mode_mass_error": 0.008000000000000007
+    },
+    {
+      "separation": 4.0,
+      "seed": 1,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "heldout_nll": 4.239620374145648,
+      "sliced_wasserstein": 0.6039037570253903,
+      "sliced_wasserstein_projection_std": 0.26239393428347757,
+      "mmd2": 0.07025770832676015,
+      "mmd_bandwidth": 2.648882560124634,
+      "mode_mass_error": 0.22125
+    },
+    {
+      "separation": 4.0,
+      "seed": 1,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "heldout_nll": 3.4600174494560383,
+      "sliced_wasserstein": 0.03643111888133524,
+      "sliced_wasserstein_projection_std": 0.009141104056417573,
+      "mmd2": 5.572614559978817e-05,
+      "mmd_bandwidth": 2.847285872127725,
+      "mode_mass_error": 0.005499999999999949
+    },
+    {
+      "separation": 4.0,
+      "seed": 2,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "heldout_nll": 3.646777528122785,
+      "sliced_wasserstein": 0.22161599409499672,
+      "sliced_wasserstein_projection_std": 0.14580724481082932,
+      "mmd2": 0.0065525750303363495,
+      "mmd_bandwidth": 2.6951384720115166,
+      "mode_mass_error": 0.017500000000000016
+    },
+    {
+      "separation": 4.0,
+      "seed": 2,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "heldout_nll": 3.467365696526243,
+      "sliced_wasserstein": 0.05277489429975746,
+      "sliced_wasserstein_projection_std": 0.01529873668559064,
+      "mmd2": 0.00025205433610708816,
+      "mmd_bandwidth": 2.69058207419342,
+      "mode_mass_error": 0.003249999999999975
+    },
+    {
+      "separation": 4.0,
+      "seed": 2,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "heldout_nll": 3.9942621852171905,
+      "sliced_wasserstein": 0.43520519271191327,
+      "sliced_wasserstein_projection_std": 0.2547896682540504,
+      "mmd2": 0.037676004063884605,
+      "mmd_bandwidth": 2.6800772472277776,
+      "mode_mass_error": 0.043749999999999956
+    },
+    {
+      "separation": 4.0,
+      "seed": 2,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "heldout_nll": 3.4653098635132364,
+      "sliced_wasserstein": 0.05672206242607136,
+      "sliced_wasserstein_projection_std": 0.0195142980282884,
+      "mmd2": -1.0900769342292449e-05,
+      "mmd_bandwidth": 2.74578663367847,
+      "mode_mass_error": 0.0017500000000000293
+    },
+    {
+      "separation": 4.0,
+      "seed": 3,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "heldout_nll": 3.6218424079279377,
+      "sliced_wasserstein": 0.19538324073116073,
+      "sliced_wasserstein_projection_std": 0.15134000736174,
+      "mmd2": 0.007895070524852166,
+      "mmd_bandwidth": 2.6858045456397326,
+      "mode_mass_error": 0.0022499999999999742
+    },
+    {
+      "separation": 4.0,
+      "seed": 3,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "heldout_nll": 3.448253922982869,
+      "sliced_wasserstein": 0.036317495582585034,
+      "sliced_wasserstein_projection_std": 0.007042740170169304,
+      "mmd2": 0.0007810079985115514,
+      "mmd_bandwidth": 2.709766826774862,
+      "mode_mass_error": 0.005750000000000033
+    },
+    {
+      "separation": 4.0,
+      "seed": 3,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "heldout_nll": 4.049752238504661,
+      "sliced_wasserstein": 0.4601392321519691,
+      "sliced_wasserstein_projection_std": 0.25309691156503095,
+      "mmd2": 0.048528769357033985,
+      "mmd_bandwidth": 2.639960522959394,
+      "mode_mass_error": 0.11675000000000002
+    },
+    {
+      "separation": 4.0,
+      "seed": 3,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "heldout_nll": 3.446490589503934,
+      "sliced_wasserstein": 0.030218519240184948,
+      "sliced_wasserstein_projection_std": 0.008239110993014487,
+      "mmd2": 0.001691062339188143,
+      "mmd_bandwidth": 2.771569129873673,
+      "mode_mass_error": 0.003750000000000031
+    },
+    {
+      "separation": 4.0,
+      "seed": 4,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "heldout_nll": 3.6012710079036467,
+      "sliced_wasserstein": 0.2077848964865447,
+      "sliced_wasserstein_projection_std": 0.13949891964668568,
+      "mmd2": 0.0027464227485995973,
+      "mmd_bandwidth": 2.7159172716879647,
+      "mode_mass_error": 0.0040000000000000036
+    },
+    {
+      "separation": 4.0,
+      "seed": 4,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "heldout_nll": 3.4364370649602423,
+      "sliced_wasserstein": 0.0374657421033566,
+      "sliced_wasserstein_projection_std": 0.007240523753851199,
+      "mmd2": -0.0007481474741313221,
+      "mmd_bandwidth": 2.8212436708345114,
+      "mode_mass_error": 0.014249999999999985
+    },
+    {
+      "separation": 4.0,
+      "seed": 4,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "heldout_nll": 4.286859928813514,
+      "sliced_wasserstein": 0.6552356233213885,
+      "sliced_wasserstein_projection_std": 0.2667340447685743,
+      "mmd2": 0.06342983297451266,
+      "mmd_bandwidth": 2.6252400067946864,
+      "mode_mass_error": 0.25525
+    },
+    {
+      "separation": 4.0,
+      "seed": 4,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "heldout_nll": 3.43537294659537,
+      "sliced_wasserstein": 0.03357620311638923,
+      "sliced_wasserstein_projection_std": 0.00494802658542688,
+      "mmd2": -0.001396489093727471,
+      "mmd_bandwidth": 2.757007207303766,
+      "mode_mass_error": 0.012249999999999983
+    },
+    {
+      "separation": 6.0,
+      "seed": 0,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "heldout_nll": 3.9909605835937745,
+      "sliced_wasserstein": 0.4812364918911433,
+      "sliced_wasserstein_projection_std": 0.3377364136427595,
+      "mmd2": 0.014835227056872569,
+      "mmd_bandwidth": 3.4506355064108556,
+      "mode_mass_error": 0.0030000000000000027
+    },
+    {
+      "separation": 6.0,
+      "seed": 0,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "heldout_nll": 3.5373604771341607,
+      "sliced_wasserstein": 0.11167229416303495,
+      "sliced_wasserstein_projection_std": 0.04520463349839747,
+      "mmd2": -0.001147253368188883,
+      "mmd_bandwidth": 3.630394855918473,
+      "mode_mass_error": 0.015000000000000013
+    },
+    {
+      "separation": 6.0,
+      "seed": 0,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "heldout_nll": 12.008674938288106,
+      "sliced_wasserstein": 1.9835900642083506,
+      "sliced_wasserstein_projection_std": 0.9829226923243154,
+      "mmd2": 0.321789255677866,
+      "mmd_bandwidth": 2.407159336603305,
+      "mode_mass_error": 0.499
+    },
+    {
+      "separation": 6.0,
+      "seed": 0,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "heldout_nll": 3.5368421636213925,
+      "sliced_wasserstein": 0.09957375525547588,
+      "sliced_wasserstein_projection_std": 0.03856034335024534,
+      "mmd2": -0.001510260836704358,
+      "mmd_bandwidth": 3.6306371441382828,
+      "mode_mass_error": 0.006000000000000005
+    },
+    {
+      "separation": 6.0,
+      "seed": 1,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "heldout_nll": 3.986307302002005,
+      "sliced_wasserstein": 0.4857225634560202,
+      "sliced_wasserstein_projection_std": 0.35015932668639926,
+      "mmd2": 0.014330026673915919,
+      "mmd_bandwidth": 3.5404748808783886,
+      "mode_mass_error": 0.01100000000000001
+    },
+    {
+      "separation": 6.0,
+      "seed": 1,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "heldout_nll": 3.515267230453409,
+      "sliced_wasserstein": 0.07865321447248982,
+      "sliced_wasserstein_projection_std": 0.03167497351207089,
+      "mmd2": -0.0007832767194682067,
+      "mmd_bandwidth": 3.562413071509316,
+      "mode_mass_error": 0.013000000000000012
+    },
+    {
+      "separation": 6.0,
+      "seed": 1,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "heldout_nll": 11.360001491403903,
+      "sliced_wasserstein": 1.897246790064133,
+      "sliced_wasserstein_projection_std": 0.9183213313632123,
+      "mmd2": 0.34760007659345793,
+      "mmd_bandwidth": 2.5829075119256464,
+      "mode_mass_error": 0.4975
+    },
+    {
+      "separation": 6.0,
+      "seed": 1,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "heldout_nll": 3.514685979312751,
+      "sliced_wasserstein": 0.06958937839386137,
+      "sliced_wasserstein_projection_std": 0.026628907529675717,
+      "mmd2": -0.0008869062137633055,
+      "mmd_bandwidth": 3.559039632091386,
+      "mode_mass_error": 0.01150000000000001
+    },
+    {
+      "separation": 6.0,
+      "seed": 2,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "heldout_nll": 3.9947761986627346,
+      "sliced_wasserstein": 0.48808404135803496,
+      "sliced_wasserstein_projection_std": 0.3255475572845456,
+      "mmd2": 0.01699406038697049,
+      "mmd_bandwidth": 3.4864900774586873,
+      "mode_mass_error": 0.01824999999999999
+    },
+    {
+      "separation": 6.0,
+      "seed": 2,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "heldout_nll": 3.520876839440707,
+      "sliced_wasserstein": 0.07173124207913041,
+      "sliced_wasserstein_projection_std": 0.021324985558357303,
+      "mmd2": 0.0003268529891309324,
+      "mmd_bandwidth": 3.5169288806427232,
+      "mode_mass_error": 0.0012499999999999734
+    },
+    {
+      "separation": 6.0,
+      "seed": 2,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "heldout_nll": 11.306679778860108,
+      "sliced_wasserstein": 1.8324682865453625,
+      "sliced_wasserstein_projection_std": 0.8799478046475155,
+      "mmd2": 0.3202215567941973,
+      "mmd_bandwidth": 2.4212615059926463,
+      "mode_mass_error": 0.49850000000000005
+    },
+    {
+      "separation": 6.0,
+      "seed": 2,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "heldout_nll": 3.517942512847455,
+      "sliced_wasserstein": 0.07038284900770486,
+      "sliced_wasserstein_projection_std": 0.026654724291558383,
+      "mmd2": -5.3017923127951505e-05,
+      "mmd_bandwidth": 3.59666287054502,
+      "mode_mass_error": 0.004750000000000032
+    },
+    {
+      "separation": 6.0,
+      "seed": 3,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "heldout_nll": 3.9694997797738414,
+      "sliced_wasserstein": 0.4432775498525363,
+      "sliced_wasserstein_projection_std": 0.329859975303604,
+      "mmd2": 0.019386477230865395,
+      "mmd_bandwidth": 3.4700241648296624,
+      "mode_mass_error": 0.00275000000000003
+    },
+    {
+      "separation": 6.0,
+      "seed": 3,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "heldout_nll": 3.5005984661881184,
+      "sliced_wasserstein": 0.03936371984397864,
+      "sliced_wasserstein_projection_std": 0.009397498228839705,
+      "mmd2": 0.00029577124645197017,
+      "mmd_bandwidth": 3.6959028697631684,
+      "mode_mass_error": 0.00649999999999995
+    },
+    {
+      "separation": 6.0,
+      "seed": 3,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "heldout_nll": 11.690148463014127,
+      "sliced_wasserstein": 1.840231009048878,
+      "sliced_wasserstein_projection_std": 0.9215886394655791,
+      "mmd2": 0.36192544403431737,
+      "mmd_bandwidth": 2.560198209023532,
+      "mode_mass_error": 0.49875
+    },
+    {
+      "separation": 6.0,
+      "seed": 3,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "heldout_nll": 3.500084358664729,
+      "sliced_wasserstein": 0.03475446736009532,
+      "sliced_wasserstein_projection_std": 0.008519713050930999,
+      "mmd2": 0.0011845278935727066,
+      "mmd_bandwidth": 3.6441853831490585,
+      "mode_mass_error": 0.007249999999999979
+    },
+    {
+      "separation": 6.0,
+      "seed": 4,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "heldout_nll": 3.9497591516225294,
+      "sliced_wasserstein": 0.47186135577103494,
+      "sliced_wasserstein_projection_std": 0.3219705599221615,
+      "mmd2": 0.010589318506812884,
+      "mmd_bandwidth": 3.534331992841831,
+      "mode_mass_error": 0.0030000000000000027
+    },
+    {
+      "separation": 6.0,
+      "seed": 4,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "heldout_nll": 3.4944294645788405,
+      "sliced_wasserstein": 0.03979378441301981,
+      "sliced_wasserstein_projection_std": 0.007075298147059446,
+      "mmd2": -0.0009300681692336887,
+      "mmd_bandwidth": 3.6970037573401573,
+      "mode_mass_error": 0.012500000000000011
+    },
+    {
+      "separation": 6.0,
+      "seed": 4,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "heldout_nll": 11.67645237887387,
+      "sliced_wasserstein": 1.9211518955589337,
+      "sliced_wasserstein_projection_std": 0.9190614975269298,
+      "mmd2": 0.3112738060340511,
+      "mmd_bandwidth": 2.5610952551352746,
+      "mode_mass_error": 0.49824999999999997
+    },
+    {
+      "separation": 6.0,
+      "seed": 4,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "heldout_nll": 3.4937281806547325,
+      "sliced_wasserstein": 0.04151733595252771,
+      "sliced_wasserstein_projection_std": 0.00932424135159556,
+      "mmd2": -0.001474284234256773,
+      "mmd_bandwidth": 3.6481221295471844,
+      "mode_mass_error": 0.016000000000000014
+    }
+  ],
+  "advantages": [
+    {
+      "separation": 0.0,
+      "seed": 0,
+      "fit_family": "direct_full_covariance",
+      "heldout_nll_advantage": -0.005168325966945719,
+      "sliced_wasserstein_advantage": 0.006565918525104176,
+      "mmd2_advantage": 0.0008029132342239897,
+      "mode_mass_advantage": -0.0025000000000000577
+    },
+    {
+      "separation": 0.0,
+      "seed": 0,
+      "fit_family": "ibw_isotropic",
+      "heldout_nll_advantage": 5.1511662336523045e-05,
+      "sliced_wasserstein_advantage": 0.008705714095660476,
+      "mmd2_advantage": 0.0014916637465514082,
+      "mode_mass_advantage": 0.0032500000000000306
+    },
+    {
+      "separation": 0.0,
+      "seed": 1,
+      "fit_family": "direct_full_covariance",
+      "heldout_nll_advantage": -0.004432370861171098,
+      "sliced_wasserstein_advantage": -0.026701140209732833,
+      "mmd2_advantage": 0.00047782474933066865,
+      "mode_mass_advantage": -0.0022499999999999742
+    },
+    {
+      "separation": 0.0,
+      "seed": 1,
+      "fit_family": "ibw_isotropic",
+      "heldout_nll_advantage": -0.00013527444151772983,
+      "sliced_wasserstein_advantage": -0.014329917972795245,
+      "mmd2_advantage": 0.002155897321814093,
+      "mode_mass_advantage": 0.0042500000000000315
+    },
+    {
+      "separation": 0.0,
+      "seed": 2,
+      "fit_family": "direct_full_covariance",
+      "heldout_nll_advantage": -0.001563083887133665,
+      "sliced_wasserstein_advantage": 0.0008359406561579824,
+      "mmd2_advantage": 0.0008336948681502143,
+      "mode_mass_advantage": -0.020000000000000018
+    },
+    {
+      "separation": 0.0,
+      "seed": 2,
+      "fit_family": "ibw_isotropic",
+      "heldout_nll_advantage": -0.00022244346500954748,
+      "sliced_wasserstein_advantage": -0.007278795667731146,
+      "mmd2_advantage": -6.820889203540403e-05,
+      "mode_mass_advantage": 0.01325000000000004
+    },
+    {
+      "separation": 0.0,
+      "seed": 3,
+      "fit_family": "direct_full_covariance",
+      "heldout_nll_advantage": -0.002784609099812929,
+      "sliced_wasserstein_advantage": -0.009689865286116626,
+      "mmd2_advantage": 0.0017703495409540082,
+      "mode_mass_advantage": -0.0007500000000000284
+    },
+    {
+      "separation": 0.0,
+      "seed": 3,
+      "fit_family": "ibw_isotropic",
+      "heldout_nll_advantage": 2.4670513526725557e-05,
+      "sliced_wasserstein_advantage": 0.00809470415215284,
+      "mmd2_advantage": 0.0020992207938670404,
+      "mode_mass_advantage": -0.003750000000000031
+    },
+    {
+      "separation": 0.0,
+      "seed": 4,
+      "fit_family": "direct_full_covariance",
+      "heldout_nll_advantage": -0.0018116372072860543,
+      "sliced_wasserstein_advantage": -0.0033095256357538808,
+      "mmd2_advantage": -0.0011960862915854076,
+      "mode_mass_advantage": -0.017249999999999988
+    },
+    {
+      "separation": 0.0,
+      "seed": 4,
+      "fit_family": "ibw_isotropic",
+      "heldout_nll_advantage": 0.00038539102514523194,
+      "sliced_wasserstein_advantage": 0.004062213296915862,
+      "mmd2_advantage": -0.0007295326363216947,
+      "mode_mass_advantage": -0.0007499999999999174
+    },
+    {
+      "separation": 1.0,
+      "seed": 0,
+      "fit_family": "direct_full_covariance",
+      "heldout_nll_advantage": -0.006471805217531212,
+      "sliced_wasserstein_advantage": -0.005568215800116981,
+      "mmd2_advantage": -0.0007075054654011037,
+      "mode_mass_advantage": 0.007249999999999979
+    },
+    {
+      "separation": 1.0,
+      "seed": 0,
+      "fit_family": "ibw_isotropic",
+      "heldout_nll_advantage": 0.00655378122940764,
+      "sliced_wasserstein_advantage": 0.012783864459667095,
+      "mmd2_advantage": 0.002171059747462012,
+      "mode_mass_advantage": 0.0027499999999999747
+    },
+    {
+      "separation": 1.0,
+      "seed": 1,
+      "fit_family": "direct_full_covariance",
+      "heldout_nll_advantage": -0.0014904062844269816,
+      "sliced_wasserstein_advantage": -0.019924036110611335,
+      "mmd2_advantage": 0.0008417684352461929,
+      "mode_mass_advantage": 0.0017499999999999738
+    },
+    {
+      "separation": 1.0,
+      "seed": 1,
+      "fit_family": "ibw_isotropic",
+      "heldout_nll_advantage": 0.005564845705504418,
+      "sliced_wasserstein_advantage": -0.0025262612641484272,
+      "mmd2_advantage": 0.0015317811153401362,
+      "mode_mass_advantage": 0.007000000000000006
+    },
+    {
+      "separation": 1.0,
+      "seed": 2,
+      "fit_family": "direct_full_covariance",
+      "heldout_nll_advantage": -0.0012242726230504708,
+      "sliced_wasserstein_advantage": 0.008317738881174562,
+      "mmd2_advantage": -0.0006292573331527773,
+      "mode_mass_advantage": 0.007000000000000006
+    },
+    {
+      "separation": 1.0,
+      "seed": 2,
+      "fit_family": "ibw_isotropic",
+      "heldout_nll_advantage": 0.00449364890916204,
+      "sliced_wasserstein_advantage": -0.010156076990260374,
+      "mmd2_advantage": -0.00023172421947093014,
+      "mode_mass_advantage": 0.013000000000000012
+    },
+    {
+      "separation": 1.0,
+      "seed": 3,
+      "fit_family": "direct_full_covariance",
+      "heldout_nll_advantage": -0.0015446359235329332,
+      "sliced_wasserstein_advantage": -0.006483390375644538,
+      "mmd2_advantage": -0.0016589982678636428,
+      "mode_mass_advantage": 0.0004999999999999449
+    },
+    {
+      "separation": 1.0,
+      "seed": 3,
+      "fit_family": "ibw_isotropic",
+      "heldout_nll_advantage": 0.007503944576916499,
+      "sliced_wasserstein_advantage": 0.02622767354704824,
+      "mmd2_advantage": 0.00354683419540347,
+      "mode_mass_advantage": -0.0010000000000000009
+    },
+    {
+      "separation": 1.0,
+      "seed": 4,
+      "fit_family": "direct_full_covariance",
+      "heldout_nll_advantage": -0.0017610590246239788,
+      "sliced_wasserstein_advantage": 0.000873121543143042,
+      "mmd2_advantage": 8.90244845961341e-05,
+      "mode_mass_advantage": -0.009499999999999953
+    },
+    {
+      "separation": 1.0,
+      "seed": 4,
+      "fit_family": "ibw_isotropic",
+      "heldout_nll_advantage": 0.009204025781522684,
+      "sliced_wasserstein_advantage": 0.010393386934965408,
+      "mmd2_advantage": 0.0005342721665297923,
+      "mode_mass_advantage": -0.00024999999999997247
+    },
+    {
+      "separation": 2.0,
+      "seed": 0,
+      "fit_family": "direct_full_covariance",
+      "heldout_nll_advantage": 0.003964117870356443,
+      "sliced_wasserstein_advantage": 0.015100635284495942,
+      "mmd2_advantage": 0.0015501442180578806,
+      "mode_mass_advantage": -0.0017499999999999183
+    },
+    {
+      "separation": 2.0,
+      "seed": 0,
+      "fit_family": "ibw_isotropic",
+      "heldout_nll_advantage": 0.06987079435446608,
+      "sliced_wasserstein_advantage": 0.0872181338161225,
+      "mmd2_advantage": 0.007764616277967429,
+      "mode_mass_advantage": 0.000250000000000028
+    },
+    {
+      "separation": 2.0,
+      "seed": 1,
+      "fit_family": "direct_full_covariance",
+      "heldout_nll_advantage": 0.0108651882822004,
+      "sliced_wasserstein_advantage": -0.00211582665485964,
+      "mmd2_advantage": -0.0006194072021283858,
+      "mode_mass_advantage": 0.008500000000000008
+    },
+    {
+      "separation": 2.0,
+      "seed": 1,
+      "fit_family": "ibw_isotropic",
+      "heldout_nll_advantage": 0.07244133401955066,
+      "sliced_wasserstein_advantage": 0.08583710384911589,
+      "mmd2_advantage": 0.005197270321905645,
+      "mode_mass_advantage": 0.0015000000000000568
+    },
+    {
+      "separation": 2.0,
+      "seed": 2,
+      "fit_family": "direct_full_covariance",
+      "heldout_nll_advantage": 0.010914707561004544,
+      "sliced_wasserstein_advantage": 0.022345613922293242,
+      "mmd2_advantage": 0.0014205738233690202,
+      "mode_mass_advantage": -0.0022500000000000298
+    },
+    {
+      "separation": 2.0,
+      "seed": 2,
+      "fit_family": "ibw_isotropic",
+      "heldout_nll_advantage": 0.06840835780773125,
+      "sliced_wasserstein_advantage": 0.07270423548073429,
+      "mmd2_advantage": 0.004744586010259733,
+      "mode_mass_advantage": 0.011249999999999982
+    },
+    {
+      "separation": 2.0,
+      "seed": 3,
+      "fit_family": "direct_full_covariance",
+      "heldout_nll_advantage": 0.010183398890154294,
+      "sliced_wasserstein_advantage": 0.009585953005825529,
+      "mmd2_advantage": 0.0018680093266525422,
+      "mode_mass_advantage": -0.004500000000000004
+    },
+    {
+      "separation": 2.0,
+      "seed": 3,
+      "fit_family": "ibw_isotropic",
+      "heldout_nll_advantage": 0.0772894483637554,
+      "sliced_wasserstein_advantage": 0.10921370521313487,
+      "mmd2_advantage": 0.007373970853494782,
+      "mode_mass_advantage": 0.0015000000000000568
+    },
+    {
+      "separation": 2.0,
+      "seed": 4,
+      "fit_family": "direct_full_covariance",
+      "heldout_nll_advantage": 0.009291759244069109,
+      "sliced_wasserstein_advantage": 0.012581455894134827,
+      "mmd2_advantage": -0.0010459359350334374,
+      "mode_mass_advantage": -0.013500000000000012
+    },
+    {
+      "separation": 2.0,
+      "seed": 4,
+      "fit_family": "ibw_isotropic",
+      "heldout_nll_advantage": 0.07774490290411773,
+      "sliced_wasserstein_advantage": 0.09458202170173763,
+      "mmd2_advantage": 0.004319440434139343,
+      "mode_mass_advantage": -0.007250000000000034
+    },
+    {
+      "separation": 4.0,
+      "seed": 0,
+      "fit_family": "direct_full_covariance",
+      "heldout_nll_advantage": 0.1653203380388173,
+      "sliced_wasserstein_advantage": 0.13382435924697644,
+      "mmd2_advantage": 0.007180762854694489,
+      "mode_mass_advantage": -0.0042500000000000315
+    },
+    {
+      "separation": 4.0,
+      "seed": 0,
+      "fit_family": "ibw_isotropic",
+      "heldout_nll_advantage": 0.5318233559693448,
+      "sliced_wasserstein_advantage": 0.3950752154081151,
+      "mmd2_advantage": 0.04410225891974173,
+      "mode_mass_advantage": 0.0012500000000000289
+    },
+    {
+      "separation": 4.0,
+      "seed": 1,
+      "fit_family": "direct_full_covariance",
+      "heldout_nll_advantage": 0.17753360131617457,
+      "sliced_wasserstein_advantage": 0.15491608447306687,
+      "mmd2_advantage": 0.006035667226426122,
+      "mode_mass_advantage": 0.0037499999999999756
+    },
+    {
+      "separation": 4.0,
+      "seed": 1,
+      "fit_family": "ibw_isotropic",
+      "heldout_nll_advantage": 0.7796029246896099,
+      "sliced_wasserstein_advantage": 0.5674726381440551,
+      "mmd2_advantage": 0.07020198218116036,
+      "mode_mass_advantage": 0.21575000000000005
+    },
+    {
+      "separation": 4.0,
+      "seed": 2,
+      "fit_family": "direct_full_covariance",
+      "heldout_nll_advantage": 0.17941183159654228,
+      "sliced_wasserstein_advantage": 0.16884109979523926,
+      "mmd2_advantage": 0.006300520694229261,
+      "mode_mass_advantage": 0.01425000000000004
+    },
+    {
+      "separation": 4.0,
+      "seed": 2,
+      "fit_family": "ibw_isotropic",
+      "heldout_nll_advantage": 0.528952321703954,
+      "sliced_wasserstein_advantage": 0.3784831302858419,
+      "mmd2_advantage": 0.0376869048332269,
+      "mode_mass_advantage": 0.041999999999999926
+    },
+    {
+      "separation": 4.0,
+      "seed": 3,
+      "fit_family": "direct_full_covariance",
+      "heldout_nll_advantage": 0.17358848494506862,
+      "sliced_wasserstein_advantage": 0.1590657451485757,
+      "mmd2_advantage": 0.007114062526340614,
+      "mode_mass_advantage": -0.0035000000000000586
+    },
+    {
+      "separation": 4.0,
+      "seed": 3,
+      "fit_family": "ibw_isotropic",
+      "heldout_nll_advantage": 0.6032616490007272,
+      "sliced_wasserstein_advantage": 0.4299207129117842,
+      "mmd2_advantage": 0.04683770701784584,
+      "mode_mass_advantage": 0.11299999999999999
+    },
+    {
+      "separation": 4.0,
+      "seed": 4,
+      "fit_family": "direct_full_covariance",
+      "heldout_nll_advantage": 0.16483394294340448,
+      "sliced_wasserstein_advantage": 0.1703191543831881,
+      "mmd2_advantage": 0.0034945702227309194,
+      "mode_mass_advantage": -0.010249999999999981
+    },
+    {
+      "separation": 4.0,
+      "seed": 4,
+      "fit_family": "ibw_isotropic",
+      "heldout_nll_advantage": 0.8514869822181437,
+      "sliced_wasserstein_advantage": 0.6216594202049993,
+      "mmd2_advantage": 0.06482632206824013,
+      "mode_mass_advantage": 0.243
+    },
+    {
+      "separation": 6.0,
+      "seed": 0,
+      "fit_family": "direct_full_covariance",
+      "heldout_nll_advantage": 0.4536001064596138,
+      "sliced_wasserstein_advantage": 0.36956419772810833,
+      "mmd2_advantage": 0.01598248042506145,
+      "mode_mass_advantage": -0.01200000000000001
+    },
+    {
+      "separation": 6.0,
+      "seed": 0,
+      "fit_family": "ibw_isotropic",
+      "heldout_nll_advantage": 8.471832774666714,
+      "sliced_wasserstein_advantage": 1.8840163089528748,
+      "mmd2_advantage": 0.32329951651457034,
+      "mode_mass_advantage": 0.493
+    },
+    {
+      "separation": 6.0,
+      "seed": 1,
+      "fit_family": "direct_full_covariance",
+      "heldout_nll_advantage": 0.47104007154859584,
+      "sliced_wasserstein_advantage": 0.4070693489835304,
+      "mmd2_advantage": 0.015113303393384125,
+      "mode_mass_advantage": -0.0020000000000000018
+    },
+    {
+      "separation": 6.0,
+      "seed": 1,
+      "fit_family": "ibw_isotropic",
+      "heldout_nll_advantage": 7.845315512091152,
+      "sliced_wasserstein_advantage": 1.8276574116702715,
+      "mmd2_advantage": 0.34848698280722123,
+      "mode_mass_advantage": 0.486
+    },
+    {
+      "separation": 6.0,
+      "seed": 2,
+      "fit_family": "direct_full_covariance",
+      "heldout_nll_advantage": 0.4738993592220275,
+      "sliced_wasserstein_advantage": 0.41635279927890456,
+      "mmd2_advantage": 0.016667207397839556,
+      "mode_mass_advantage": 0.017000000000000015
+    },
+    {
+      "separation": 6.0,
+      "seed": 2,
+      "fit_family": "ibw_isotropic",
+      "heldout_nll_advantage": 7.788737266012653,
+      "sliced_wasserstein_advantage": 1.7620854375376576,
+      "mmd2_advantage": 0.32027457471732523,
+      "mode_mass_advantage": 0.49375
+    },
+    {
+      "separation": 6.0,
+      "seed": 3,
+      "fit_family": "direct_full_covariance",
+      "heldout_nll_advantage": 0.46890131358572296,
+      "sliced_wasserstein_advantage": 0.4039138300085577,
+      "mmd2_advantage": 0.019090705984413425,
+      "mode_mass_advantage": -0.00374999999999992
+    },
+    {
+      "separation": 6.0,
+      "seed": 3,
+      "fit_family": "ibw_isotropic",
+      "heldout_nll_advantage": 8.190064104349398,
+      "sliced_wasserstein_advantage": 1.8054765416887828,
+      "mmd2_advantage": 0.36074091614074466,
+      "mode_mass_advantage": 0.49150000000000005
+    },
+    {
+      "separation": 6.0,
+      "seed": 4,
+      "fit_family": "direct_full_covariance",
+      "heldout_nll_advantage": 0.4553296870436889,
+      "sliced_wasserstein_advantage": 0.4320675713580151,
+      "mmd2_advantage": 0.011519386676046572,
+      "mode_mass_advantage": -0.009500000000000008
+    },
+    {
+      "separation": 6.0,
+      "seed": 4,
+      "fit_family": "ibw_isotropic",
+      "heldout_nll_advantage": 8.182724198219137,
+      "sliced_wasserstein_advantage": 1.879634559606406,
+      "mmd2_advantage": 0.31274809026830785,
+      "mode_mass_advantage": 0.48224999999999996
+    }
+  ],
+  "parameters": [
+    {
+      "separation": 0.0,
+      "seed": 0,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "means": [
+        [
+          0.019182528493950794,
+          0.00904599628320596
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.005717811366106,
+            -0.017051658852646912
+          ],
+          [
+            -0.017051658852646912,
+            0.9940577771228124
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 0.0,
+      "seed": 0,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "means": [
+        [
+          0.6217129593183578,
+          0.20335802851741408
+        ],
+        [
+          -0.5469481762350297,
+          -0.17352736784639977
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.6385685615485575,
+            -0.14259635181370348
+          ],
+          [
+            -0.1425963518137035,
+            0.92991387667343
+          ]
+        ],
+        [
+          [
+            0.6890720970173022,
+            -0.11245769560757096
+          ],
+          [
+            -0.11245769560757098,
+            0.9855174179922984
+          ]
+        ]
+      ],
+      "weights": [
+        0.48442674057172674,
+        0.5155732594282733
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 0.0,
+      "seed": 0,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "means": [
+        [
+          9.43687312643779e-18,
+          9.551052658118114e-18
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9999999999999998,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999999999999998
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": -5.551115123125783e-19
+    },
+    {
+      "separation": 0.0,
+      "seed": 0,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "means": [
+        [
+          -0.13239540681868478,
+          0.08414142389079265
+        ],
+        [
+          0.13251892180758074,
+          -0.08408098735315628
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9874288673243947,
+            0.0
+          ],
+          [
+            0.0,
+            0.9874288673243947
+          ]
+        ],
+        [
+          [
+            0.9875519672045505,
+            0.0
+          ],
+          [
+            0.0,
+            0.9875519672045505
+          ]
+        ]
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": -2.9957328305120433e-05
+    },
+    {
+      "separation": 0.0,
+      "seed": 1,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "means": [
+        [
+          -0.010501597819163981,
+          -0.01916872246403712
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9972569885602943,
+            -0.017553343556160655
+          ],
+          [
+            -0.017553343556160655,
+            0.9746005931023836
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 0.0,
+      "seed": 1,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "means": [
+        [
+          0.24305806723373047,
+          0.5318236703750054
+        ],
+        [
+          -0.2765399724991489,
+          -0.5972777076662216
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.904291941132139,
+            -0.1790631329951677
+          ],
+          [
+            -0.1790631329951677,
+            0.6396809142012714
+          ]
+        ],
+        [
+          [
+            0.9565642087539182,
+            -0.1484792913427204
+          ],
+          [
+            -0.14847929134272037,
+            0.6732593892902343
+          ]
+        ]
+      ],
+      "weights": [
+        0.5120080414790495,
+        0.48799195852095045
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 0.0,
+      "seed": 1,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "means": [
+        [
+          -9.367701669227905e-18,
+          -9.804866917954215e-18
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 3.3306690738754695e-18
+    },
+    {
+      "separation": 0.0,
+      "seed": 1,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "means": [
+        [
+          0.14748732431239037,
+          -0.053979787585436076
+        ],
+        [
+          -0.1480991754363346,
+          0.054304150993043414
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9881980380279739,
+            0.0
+          ],
+          [
+            0.0,
+            0.9881980380279739
+          ]
+        ],
+        [
+          [
+            0.9880946855413996,
+            0.0
+          ],
+          [
+            0.0,
+            0.9880946855413996
+          ]
+        ]
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 0.00018630286805709583
+    },
+    {
+      "separation": 0.0,
+      "seed": 2,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "means": [
+        [
+          0.024184585292850693,
+          0.015571011194447884
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.0039135522238798,
+            0.005961923759175035
+          ],
+          [
+            0.005961923759175035,
+            1.007055630799647
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 0.0,
+      "seed": 2,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "means": [
+        [
+          -0.5699201748699918,
+          -0.18099980480027314
+        ],
+        [
+          0.5933954754024853,
+          0.20390521863500669
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.6724066943766708,
+            -0.13288129709718471
+          ],
+          [
+            -0.13288129709718474,
+            0.991060001928099
+          ]
+        ],
+        [
+          [
+            0.6593578445864305,
+            -0.08010472313378073
+          ],
+          [
+            -0.08010472313378073,
+            0.9498902365836401
+          ]
+        ]
+      ],
+      "weights": [
+        0.4893004662804215,
+        0.5106995337195784
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 0.0,
+      "seed": 2,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "means": [
+        [
+          1.3221435599034288e-17,
+          1.3988534091161325e-17
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9999999999999998,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999999999999998
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 4.440892098500626e-19
+    },
+    {
+      "separation": 0.0,
+      "seed": 2,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "means": [
+        [
+          -0.14869665097850734,
+          -0.049481397785760634
+        ],
+        [
+          0.1481541287424637,
+          0.04985749929477264
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9871279320408992,
+            0.0
+          ],
+          [
+            0.0,
+            0.9871279320408992
+          ]
+        ],
+        [
+          [
+            0.9871675789320615,
+            0.0
+          ],
+          [
+            0.0,
+            0.9871675789320615
+          ]
+        ]
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 5.942898571256749e-05
+    },
+    {
+      "separation": 0.0,
+      "seed": 3,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "means": [
+        [
+          -0.004704790233373632,
+          0.010505939094932169
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.0217188967954918,
+            8.664807727377255e-05
+          ],
+          [
+            8.664807727377255e-05,
+            0.9859241760900059
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 0.0,
+      "seed": 3,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "means": [
+        [
+          -0.5957467963658731,
+          0.12030423754103024
+        ],
+        [
+          0.6646949731989986,
+          -0.11384893626500661
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.6111926954951983,
+            0.10277268360296918
+          ],
+          [
+            0.10277268360296916,
+            0.9954975047189744
+          ]
+        ],
+        [
+          [
+            0.6429314392328258,
+            0.040529027419299334
+          ],
+          [
+            0.04052902741929933,
+            0.9459635687891622
+          ]
+        ]
+      ],
+      "weights": [
+        0.5310834499426835,
+        0.46891655005731653
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 0.0,
+      "seed": 3,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "means": [
+        [
+          -8.60169911319311e-18,
+          9.259917492391468e-18
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 4.8849813083506885e-18
+    },
+    {
+      "separation": 0.0,
+      "seed": 3,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "means": [
+        [
+          -0.15480687835271426,
+          0.02727979973083032
+        ],
+        [
+          0.15490663058064924,
+          -0.026273701468823293
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9877172661477093,
+            0.0
+          ],
+          [
+            0.0,
+            0.9877172661477093
+          ]
+        ],
+        [
+          [
+            0.9879077954109449,
+            0.0
+          ],
+          [
+            0.0,
+            0.9879077954109449
+          ]
+        ]
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 0.00038536120570549303
+    },
+    {
+      "separation": 0.0,
+      "seed": 4,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "means": [
+        [
+          0.019082302348686547,
+          0.021645744637366186
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9985313790023976,
+            0.008364450168313947
+          ],
+          [
+            0.008364450168313947,
+            0.98408305613639
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 0.0,
+      "seed": 4,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "means": [
+        [
+          -0.574113455429424,
+          -0.017335637323150455
+        ],
+        [
+          0.6594641534137864,
+          0.06372792275417086
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.6186317921717127,
+            -0.03451199141203769
+          ],
+          [
+            -0.034511991412037674,
+            0.9765046260612581
+          ]
+        ],
+        [
+          [
+            0.6186895815385154,
+            0.002739889977247855
+          ],
+          [
+            0.00273988997724786,
+            0.988852985559876
+          ]
+        ]
+      ],
+      "weights": [
+        0.5191257092171289,
+        0.48087429078287125
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 0.0,
+      "seed": 4,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "means": [
+        [
+          5.868837918923769e-18,
+          1.2335949619330962e-17
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9999999999999998,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999999999999998
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": -2.220446049250313e-19
+    },
+    {
+      "separation": 0.0,
+      "seed": 4,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "means": [
+        [
+          0.15602181011191865,
+          -0.021213632621528065
+        ],
+        [
+          -0.15555666433551762,
+          0.021305462977100318
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9875295864242619,
+            0.0
+          ],
+          [
+            0.0,
+            0.9875295864242619
+          ]
+        ],
+        [
+          [
+            0.9875955147023884,
+            0.0
+          ],
+          [
+            0.0,
+            0.9875955147023884
+          ]
+        ]
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": -0.0009871483919399813
+    },
+    {
+      "separation": 1.0,
+      "seed": 0,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "means": [
+        [
+          0.011432528493950706,
+          0.00904599628320596
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.2598204208563315,
+            -0.016220403902274007
+          ],
+          [
+            -0.016220403902274007,
+            0.9940577771228124
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 1.0,
+      "seed": 0,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "means": [
+        [
+          0.7441854036574573,
+          -0.009870753822755235
+        ],
+        [
+          -0.7185361667379752,
+          0.02789086999290734
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.6916102418242602,
+            -0.008255942131472712
+          ],
+          [
+            -0.008255942131472706,
+            0.9735155406595173
+          ]
+        ],
+        [
+          [
+            0.758130662874596,
+            0.0034101994940220945
+          ],
+          [
+            0.003410199494022092,
+            1.0138103479331486
+          ]
+        ]
+      ],
+      "weights": [
+        0.49904828779860405,
+        0.5009517122013959
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 1.0,
+      "seed": 0,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "means": [
+        [
+          4.470055497927635e-05,
+          -0.0006032179995443075
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.1140584244600371,
+            0.0
+          ],
+          [
+            0.0,
+            1.1140584244600371
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 0.0036888358671199875
+    },
+    {
+      "separation": 1.0,
+      "seed": 0,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "means": [
+        [
+          0.5000613495589091,
+          -4.01340428064094e-06
+        ],
+        [
+          -0.5000614077880254,
+          4.3587635182369055e-06
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9999727673534708,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999727673534708
+          ]
+        ],
+        [
+          [
+            0.9999724952266401,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999724952266401
+          ]
+        ]
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 5.199384461591627e-07
+    },
+    {
+      "separation": 1.0,
+      "seed": 1,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "means": [
+        [
+          -0.014251597819163983,
+          -0.01916872246403712
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.2325602401728406,
+            -0.010649574777308147
+          ],
+          [
+            -0.010649574777308147,
+            0.9746005931023836
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 1.0,
+      "seed": 1,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "means": [
+        [
+          0.6586436834305387,
+          -0.0680541805532012
+        ],
+        [
+          -0.7231125393686985,
+          0.03232962031644359
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.7493136602654888,
+            -0.002298390078530851
+          ],
+          [
+            -0.0022983900785308498,
+            0.9405505446334784
+          ]
+        ],
+        [
+          [
+            0.7621629071931918,
+            0.051711032655743915
+          ],
+          [
+            0.051711032655743935,
+            1.0053009872941594
+          ]
+        ]
+      ],
+      "weights": [
+        0.5130144737929863,
+        0.48698552620701374
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 1.0,
+      "seed": 1,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "means": [
+        [
+          0.0018361821899382158,
+          0.0006681933964482016
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.1079156881556174,
+            0.0
+          ],
+          [
+            0.0,
+            1.1079156881556174
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 0.004052146546847467
+    },
+    {
+      "separation": 1.0,
+      "seed": 1,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "means": [
+        [
+          0.5000629573677551,
+          -4.769763476801712e-06
+        ],
+        [
+          -0.5000632122213088,
+          4.654970674911198e-06
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9999738402325343,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999738402325343
+          ]
+        ],
+        [
+          [
+            0.999972584884026,
+            0.0
+          ],
+          [
+            0.0,
+            0.999972584884026
+          ]
+        ]
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 3.2159040724222263e-07
+    },
+    {
+      "separation": 1.0,
+      "seed": 2,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "means": [
+        [
+          0.01943458529285068,
+          0.015571011194447884
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.2221441323652207,
+            -0.002928571936137727
+          ],
+          [
+            -0.002928571936137727,
+            1.007055630799647
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 1.0,
+      "seed": 2,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "means": [
+        [
+          0.6848688857061352,
+          0.02247121466892532
+        ],
+        [
+          -0.6816445232926236,
+          0.008301189819234016
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.7634947810071562,
+            0.0131271021322193
+          ],
+          [
+            0.0131271021322193,
+            1.0499316913857493
+          ]
+        ],
+        [
+          [
+            0.7473275986720892,
+            -0.029778596358151253
+          ],
+          [
+            -0.02977859635815126,
+            0.9617798476518264
+          ]
+        ]
+      ],
+      "weights": [
+        0.5130422460319307,
+        0.4869577539680692
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 1.0,
+      "seed": 2,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "means": [
+        [
+          0.00167279913012939,
+          -0.0027139118053285246
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.1205639593619712,
+            0.0
+          ],
+          [
+            0.0,
+            1.1205639593619712
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 0.008079841103959599
+    },
+    {
+      "separation": 1.0,
+      "seed": 2,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "means": [
+        [
+          0.500056255828862,
+          5.469507665894061e-06
+        ],
+        [
+          -0.500057224816871,
+          -4.210150989378627e-06
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9999731477324709,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999731477324709
+          ]
+        ],
+        [
+          [
+            0.9999733812018002,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999733812018002
+          ]
+        ]
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": -6.254610043554543e-08
+    },
+    {
+      "separation": 1.0,
+      "seed": 3,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "means": [
+        [
+          -0.004704790233373624,
+          0.010505939094932169
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.273590997672657,
+            0.0035995364420114135
+          ],
+          [
+            0.0035995364420114135,
+            0.9859241760900059
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 1.0,
+      "seed": 3,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "means": [
+        [
+          -0.6819671285214935,
+          -0.024621501466958795
+        ],
+        [
+          0.7209192892572315,
+          0.04814174915194937
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.7640908547905799,
+            0.019965846489335495
+          ],
+          [
+            0.019965846489335498,
+            0.9919514925328693
+          ]
+        ],
+        [
+          [
+            0.8015052048628625,
+            -0.06673422080148483
+          ],
+          [
+            -0.06673422080148482,
+            0.9767279590049346
+          ]
+        ]
+      ],
+      "weights": [
+        0.517236513444566,
+        0.4827634865554341
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 1.0,
+      "seed": 3,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "means": [
+        [
+          0.0005691688846081629,
+          -0.00412674366478438
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.1107194317894478,
+            0.0
+          ],
+          [
+            0.0,
+            1.1107194317894478
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 0.0074403707274582455
+    },
+    {
+      "separation": 1.0,
+      "seed": 3,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "means": [
+        [
+          0.5000630548568272,
+          7.079570779743731e-06
+        ],
+        [
+          -0.5000632642860079,
+          -4.513237215918119e-06
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9999724995646947,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999724995646947
+          ]
+        ],
+        [
+          [
+            0.9999721886184337,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999721886184337
+          ]
+        ]
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 2.7679366837785045e-08
+    },
+    {
+      "separation": 1.0,
+      "seed": 4,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "means": [
+        [
+          0.023832302348686565,
+          0.021645744637366186
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.2452334218021799,
+            -0.004865554992040282
+          ],
+          [
+            -0.004865554992040282,
+            0.98408305613639
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 1.0,
+      "seed": 4,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "means": [
+        [
+          -0.7317883623294806,
+          0.0742916551889142
+        ],
+        [
+          0.7262438913178876,
+          -0.027292961530752193
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.6983347257214005,
+            0.016663629758866576
+          ],
+          [
+            0.016663629758866576,
+            0.961128354426939
+          ]
+        ],
+        [
+          [
+            0.7294820128653915,
+            0.04647550815817469
+          ],
+          [
+            0.04647550815817469,
+            1.0004499206431028
+          ]
+        ]
+      ],
+      "weights": [
+        0.48175312117552294,
+        0.518246878824477
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 1.0,
+      "seed": 4,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "means": [
+        [
+          -0.0011868137049826763,
+          -0.0009281253181876814
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.112936583853083,
+            0.0
+          ],
+          [
+            0.0,
+            1.112936583853083
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 0.012693385551749028
+    },
+    {
+      "separation": 1.0,
+      "seed": 4,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "means": [
+        [
+          0.5000633294194512,
+          -9.349339802237303e-07
+        ],
+        [
+          -0.5000631844350873,
+          1.5030879316574092e-06
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.999971621678396,
+            0.0
+          ],
+          [
+            0.0,
+            0.999971621678396
+          ]
+        ],
+        [
+          [
+            0.9999724131014276,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999724131014276
+          ]
+        ]
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": -2.136197003362428e-06
+    },
+    {
+      "separation": 2.0,
+      "seed": 0,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "means": [
+        [
+          0.003682528493950734,
+          0.00904599628320596
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            2.0138029053465565,
+            -0.015389148951901039
+          ],
+          [
+            -0.015389148951901039,
+            0.9940577771228124
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 2.0,
+      "seed": 0,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "means": [
+        [
+          -1.0924551071905746,
+          0.03299481718482698
+        ],
+        [
+          1.0197600295005933,
+          -0.013153641154275626
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9029810944720847,
+            0.006160354940339015
+          ],
+          [
+            0.006160354940339006,
+            1.0039985449614326
+          ]
+        ],
+        [
+          [
+            0.8973177952634989,
+            0.011525698578702977
+          ],
+          [
+            0.011525698578702975,
+            0.9838185879784528
+          ]
+        ]
+      ],
+      "weights": [
+        0.48104830012644934,
+        0.5189516998735507
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 2.0,
+      "seed": 0,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "means": [
+        [
+          -0.0003904682637891157,
+          -0.001770703455056459
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.3762424659431103,
+            0.0
+          ],
+          [
+            0.0,
+            1.3762424659431103
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 0.06421128092776643
+    },
+    {
+      "separation": 2.0,
+      "seed": 0,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "means": [
+        [
+          0.9999999999441833,
+          -5.542501796910185e-12
+        ],
+        [
+          -1.0000000000778482,
+          5.494368774276558e-12
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.0000000000161209,
+            0.0
+          ],
+          [
+            0.0,
+            1.0000000000161209
+          ]
+        ],
+        [
+          [
+            0.9999999999710534,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999999999710534
+          ]
+        ]
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": -4.157845179264541e-13
+    },
+    {
+      "separation": 2.0,
+      "seed": 1,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "means": [
+        [
+          -0.018001597819163974,
+          -0.01916872246403712
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.967835366785387,
+            -0.0037458059984556407
+          ],
+          [
+            -0.0037458059984556407,
+            0.9746005931023836
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 2.0,
+      "seed": 1,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "means": [
+        [
+          0.9849364910613136,
+          -0.01817623127045835
+        ],
+        [
+          -1.049204865447895,
+          -0.02018918441802832
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.931259950772626,
+            -0.02920131525725167
+          ],
+          [
+            -0.029201315257251684,
+            0.95939281175506
+          ]
+        ],
+        [
+          [
+            0.9360107277104078,
+            0.020351336140914066
+          ],
+          [
+            0.020351336140914063,
+            0.9902349117260694
+          ]
+        ]
+      ],
+      "weights": [
+        0.5069476928576784,
+        0.4930523071423216
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 2.0,
+      "seed": 1,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "means": [
+        [
+          -0.0038221604991607325,
+          0.0019503828340630559
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.359758355606986,
+            0.0
+          ],
+          [
+            0.0,
+            1.359758355606986
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 0.06583910006382471
+    },
+    {
+      "separation": 2.0,
+      "seed": 1,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "means": [
+        [
+          -1.0000000000233005,
+          4.465052853145046e-13
+        ],
+        [
+          0.9999999999968093,
+          -4.990441400823805e-13
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9999999999896558,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999999999896558
+          ]
+        ],
+        [
+          [
+            0.9999999999990073,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999999999990073
+          ]
+        ]
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": -3.354756472617737e-13
+    },
+    {
+      "separation": 2.0,
+      "seed": 2,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "means": [
+        [
+          0.014684585292850676,
+          0.015571011194447884
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.9403295875065616,
+            -0.011819067631450466
+          ],
+          [
+            -0.011819067631450466,
+            1.007055630799647
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 2.0,
+      "seed": 2,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "means": [
+        [
+          -0.960577114089361,
+          0.03650854506425001
+        ],
+        [
+          1.0517123733297873,
+          -0.006692556061093489
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9353018749598931,
+            -0.0068308605607607705
+          ],
+          [
+            -0.006830860560760766,
+            0.9567526235499092
+          ]
+        ],
+        [
+          [
+            0.9222084386912115,
+            0.027677550341409545
+          ],
+          [
+            0.027677550341409566,
+            1.0595826595059938
+          ]
+        ]
+      ],
+      "weights": [
+        0.5153472174458231,
+        0.4846527825541769
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 2.0,
+      "seed": 2,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "means": [
+        [
+          0.00825644616186463,
+          -0.008065012759850925
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.3983610038594385,
+            0.0
+          ],
+          [
+            0.0,
+            1.3983610038594385
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 0.08076660927238198
+    },
+    {
+      "separation": 2.0,
+      "seed": 2,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "means": [
+        [
+          -0.9999999999495751,
+          4.703987143505683e-12
+        ],
+        [
+          1.0000000000666378,
+          -4.242793147265985e-12
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.0000000000133196,
+            0.0
+          ],
+          [
+            0.0,
+            1.0000000000133196
+          ]
+        ],
+        [
+          [
+            0.9999999999738939,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999999999738939
+          ]
+        ]
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 4.578526446863407e-13
+    },
+    {
+      "separation": 2.0,
+      "seed": 3,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "means": [
+        [
+          -0.004704790233373678,
+          0.010505939094932169
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            2.025463098549822,
+            0.007112424806748997
+          ],
+          [
+            0.007112424806748997,
+            0.9859241760900059
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 2.0,
+      "seed": 3,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "means": [
+        [
+          1.011593796890737,
+          0.059266716178099414
+        ],
+        [
+          -1.0377282776591252,
+          -0.03905727847735779
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9959430383787463,
+            -0.07263086145094556
+          ],
+          [
+            -0.07263086145094556,
+            0.9667650236980885
+          ]
+        ],
+        [
+          [
+            0.9549278042592206,
+            -0.013402975074057112
+          ],
+          [
+            -0.01340297507405711,
+            1.0005253709759816
+          ]
+        ]
+      ],
+      "weights": [
+        0.5040805934092417,
+        0.4959194065907582
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 2.0,
+      "seed": 3,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "means": [
+        [
+          -0.004396919777268301,
+          -0.012383125095909777
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.3672421968076132,
+            0.0
+          ],
+          [
+            0.0,
+            1.3672421968076132
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 0.07693072101545476
+    },
+    {
+      "separation": 2.0,
+      "seed": 3,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "means": [
+        [
+          -1.0000000000076308,
+          -5.668066652205295e-12
+        ],
+        [
+          1.000000000013366,
+          6.517407533374399e-12
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9999999999946928,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999999999946928
+          ]
+        ],
+        [
+          [
+            0.9999999999927424,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999999999927424
+          ]
+        ]
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 3.044451357681055e-13
+    },
+    {
+      "separation": 2.0,
+      "seed": 4,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "means": [
+        [
+          0.02858230234868661,
+          0.021645744637366186
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.9918903396019614,
+            -0.01809556015239457
+          ],
+          [
+            -0.01809556015239457,
+            0.98408305613639
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 2.0,
+      "seed": 4,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "means": [
+        [
+          -1.0517301263662973,
+          0.0546198653598189
+        ],
+        [
+          1.0359995111013447,
+          -0.00910341252895434
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.8785095525069919,
+            0.007041846838121022
+          ],
+          [
+            0.0070418468381210145,
+            0.954325574310494
+          ]
+        ],
+        [
+          [
+            0.9269298203853366,
+            0.02265913263619594
+          ],
+          [
+            0.022659132636195952,
+            1.0098731834196322
+          ]
+        ]
+      ],
+      "weights": [
+        0.48254198756052885,
+        0.5174580124394712
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 2.0,
+      "seed": 4,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "means": [
+        [
+          0.002423732688794015,
+          -0.0027579423207272696
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.3730537454394132,
+            0.0
+          ],
+          [
+            0.0,
+            1.3730537454394132
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 0.09459820655773589
+    },
+    {
+      "separation": 2.0,
+      "seed": 4,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "means": [
+        [
+          -1.0000000000130524,
+          4.008158051527491e-12
+        ],
+        [
+          1.0000000000081684,
+          -3.8373740397347275e-12
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9999999999930334,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999999999930334
+          ]
+        ],
+        [
+          [
+            0.9999999999944494,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999999999944494
+          ]
+        ]
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": -5.75978376105013e-13
+    },
+    {
+      "separation": 4.0,
+      "seed": 0,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "means": [
+        [
+          -0.011817471506049237,
+          0.00904599628320596
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            5.021407499327008,
+            -0.013726639051155188
+          ],
+          [
+            -0.013726639051155188,
+            0.9940577771228124
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 4.0,
+      "seed": 0,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "means": [
+        [
+          2.034210835166112,
+          0.009325184191191981
+        ],
+        [
+          -1.980179399076001,
+          0.008777406231482019
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9471980266166211,
+            0.0009102767027560606
+          ],
+          [
+            0.0009102767027560595,
+            0.9933489787481443
+          ]
+        ],
+        [
+          [
+            1.0391887843390082,
+            -0.02888616888321603
+          ],
+          [
+            -0.028886168883216035,
+            0.9947395226798084
+          ]
+        ]
+      ],
+      "weights": [
+        0.4903265035820721,
+        0.5096734964179279
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 4.0,
+      "seed": 0,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "means": [
+        [
+          -0.011350136295605006,
+          -0.004201292861689678
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            2.0954068281871354,
+            0.0
+          ],
+          [
+            0.0,
+            2.0954068281871354
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 0.6005674065079329
+    },
+    {
+      "separation": 4.0,
+      "seed": 0,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "means": [
+        [
+          2.000000000000162,
+          9.710786813416215e-16
+        ],
+        [
+          -1.9999999999998388,
+          -5.919864212040189e-16
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9999999999999161,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999999999999161
+          ]
+        ],
+        [
+          [
+            1.0000000000000804,
+            0.0
+          ],
+          [
+            0.0,
+            1.0000000000000804
+          ]
+        ]
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": -4.271027975732977e-15
+    },
+    {
+      "separation": 4.0,
+      "seed": 1,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "means": [
+        [
+          -0.025501597819164036,
+          -0.01916872246403712
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            4.9383012450104795,
+            0.010061731559249347
+          ],
+          [
+            0.010061731559249347,
+            0.9746005931023836
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 4.0,
+      "seed": 1,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "means": [
+        [
+          1.9786178752117933,
+          -0.0034001905329158135
+        ],
+        [
+          -1.9977467975447312,
+          -0.03468646570558128
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9718586476787654,
+            -0.04184288240643731
+          ],
+          [
+            -0.04184288240643729,
+            0.9858526091606491
+          ]
+        ],
+        [
+          [
+            0.9992939024509031,
+            -0.0005633710930146324
+          ],
+          [
+            -0.0005633710930146354,
+            0.963042040973686
+          ]
+        ]
+      ],
+      "weights": [
+        0.4959920334365003,
+        0.5040079665634998
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 4.0,
+      "seed": 1,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "means": [
+        [
+          -0.8248377259398566,
+          0.004078565157999608
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.8891751781847514,
+            0.0
+          ],
+          [
+            0.0,
+            1.8891751781847514
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 0.6014593021310416
+    },
+    {
+      "separation": 4.0,
+      "seed": 1,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "means": [
+        [
+          -2.0000000000002114,
+          6.463567387500867e-16
+        ],
+        [
+          1.9999999999997993,
+          -1.6386058348117677e-15
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.999999999999899,
+            0.0
+          ],
+          [
+            0.0,
+            0.999999999999899
+          ]
+        ],
+        [
+          [
+            1.0000000000000875,
+            0.0
+          ],
+          [
+            0.0,
+            1.0000000000000875
+          ]
+        ]
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": -2.5648372314890367e-15
+    },
+    {
+      "separation": 4.0,
+      "seed": 2,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "means": [
+        [
+          0.0051845852928506355,
+          0.015571011194447884
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            4.876565122789245,
+            -0.029600059022076006
+          ],
+          [
+            -0.029600059022076006,
+            1.007055630799647
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 4.0,
+      "seed": 2,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "means": [
+        [
+          -1.9461057628396723,
+          0.035625597096962426
+        ],
+        [
+          1.993164460998538,
+          -0.004860655076010295
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9859943894062437,
+            0.0018235420818048776
+          ],
+          [
+            0.0018235420818048733,
+            0.9687417968634756
+          ]
+        ],
+        [
+          [
+            1.0090991616291327,
+            0.018871345883416633
+          ],
+          [
+            0.01887134588341663,
+            1.045262666678922
+          ]
+        ]
+      ],
+      "weights": [
+        0.5046568939788822,
+        0.4953431060211177
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 4.0,
+      "seed": 2,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "means": [
+        [
+          0.10814007282044065,
+          -0.018982883533641207
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            2.158950846722994,
+            0.0
+          ],
+          [
+            0.0,
+            2.158950846722994
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 0.6503338410335316
+    },
+    {
+      "separation": 4.0,
+      "seed": 2,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "means": [
+        [
+          -1.9999999999997877,
+          -1.5244931652989872e-15
+        ],
+        [
+          2.000000000000214,
+          2.874927185537216e-15
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.0000000000001132,
+            0.0
+          ],
+          [
+            0.0,
+            1.0000000000001132
+          ]
+        ],
+        [
+          [
+            0.9999999999998821,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999999999998821
+          ]
+        ]
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 3.112621271839089e-15
+    },
+    {
+      "separation": 4.0,
+      "seed": 3,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "means": [
+        [
+          -0.0047047902333737035,
+          0.010505939094932169
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            5.029207300304153,
+            0.014138201536224205
+          ],
+          [
+            0.014138201536224205,
+            0.9859241760900059
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 4.0,
+      "seed": 3,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "means": [
+        [
+          -2.028294129404924,
+          -0.002258404008074747
+        ],
+        [
+          1.9680303181211902,
+          0.022949505231080195
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9924761465914689,
+            0.0022057307807307395
+          ],
+          [
+            0.0022057307807307465,
+            1.0034171262074192
+          ]
+        ],
+        [
+          [
+            1.080803004053053,
+            -0.02395772669919164
+          ],
+          [
+            -0.023957726699191644,
+            0.9685571598911857
+          ]
+        ]
+      ],
+      "weights": [
+        0.49363737460700136,
+        0.5063626253929987
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 4.0,
+      "seed": 3,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "means": [
+        [
+          0.43281376282545686,
+          -0.028530494913712817
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            2.021097304349116,
+            0.0
+          ],
+          [
+            0.0,
+            2.021097304349116
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 0.6341235950578046
+    },
+    {
+      "separation": 4.0,
+      "seed": 3,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "means": [
+        [
+          -2.0000000000001856,
+          5.91283861395695e-15
+        ],
+        [
+          1.9999999999998204,
+          -6.015601946086278e-15
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9999999999999043,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999999999999043
+          ]
+        ],
+        [
+          [
+            1.000000000000081,
+            0.0
+          ],
+          [
+            0.0,
+            1.000000000000081
+          ]
+        ]
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 3.969047313034935e-15
+    },
+    {
+      "separation": 4.0,
+      "seed": 4,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "means": [
+        [
+          0.038082302348686495,
+          0.021645744637366186
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            4.985068800201526,
+            -0.044555570473103025
+          ],
+          [
+            -0.044555570473103025,
+            0.98408305613639
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 4.0,
+      "seed": 4,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "means": [
+        [
+          -1.9759519937296353,
+          0.05244315408509976
+        ],
+        [
+          2.0198671467562117,
+          -0.00865852545841876
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9844877887449603,
+            0.01076169236497418
+          ],
+          [
+            0.01076169236497419,
+            0.9497368309423792
+          ]
+        ],
+        [
+          [
+            1.002737235875097,
+            0.022103309362880356
+          ],
+          [
+            0.022103309362880352,
+            1.0160276752462705
+          ]
+        ]
+      ],
+      "weights": [
+        0.49596460068174203,
+        0.5040353993182579
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 4.0,
+      "seed": 4,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "means": [
+        [
+          0.9290815469853311,
+          -0.005324012693162301
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.8445528287893973,
+            0.0
+          ],
+          [
+            0.0,
+            1.8445528287893973
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 0.6290101949460994
+    },
+    {
+      "separation": 4.0,
+      "seed": 4,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "means": [
+        [
+          -1.9999999999998195,
+          -2.2193977227253422e-15
+        ],
+        [
+          2.0000000000001883,
+          2.4470135687853826e-15
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.0000000000000853,
+            0.0
+          ],
+          [
+            0.0,
+            1.0000000000000853
+          ]
+        ],
+        [
+          [
+            0.9999999999999097,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999999999999097
+          ]
+        ]
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 1.3700152123874432e-15
+    },
+    {
+      "separation": 6.0,
+      "seed": 0,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "means": [
+        [
+          -0.0273174715060492,
+          0.00904599628320596
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            10.02853159330746,
+            -0.012064129150409265
+          ],
+          [
+            -0.012064129150409265,
+            0.9940577771228124
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 6.0,
+      "seed": 0,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "means": [
+        [
+          3.0303590341440167,
+          0.009350347455041605
+        ],
+        [
+          -2.97679241773299,
+          0.008752415142583186
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9594391668854689,
+            0.007809008522748974
+          ],
+          [
+            0.007809008522748963,
+            0.9978379148933455
+          ]
+        ],
+        [
+          [
+            1.0587546428552246,
+            -0.0329976053296452
+          ],
+          [
+            -0.03299760532964521,
+            0.9904112310030873
+          ]
+        ]
+      ],
+      "weights": [
+        0.49099393778482786,
+        0.5090060622151722
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 6.0,
+      "seed": 0,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "means": [
+        [
+          -2.991159396164561,
+          -0.0002274738176409219
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.0105493561261876,
+            0.0
+          ],
+          [
+            0.0,
+            1.0105493561261876
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 0.6908531942685355
+    },
+    {
+      "separation": 6.0,
+      "seed": 0,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "means": [
+        [
+          3.000000000000004,
+          9.521525481184397e-18
+        ],
+        [
+          -2.999999999999996,
+          3.938714029546794e-18
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9999999999999987,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999999999999987
+          ]
+        ],
+        [
+          [
+            1.0000000000000007,
+            0.0
+          ],
+          [
+            0.0,
+            1.0000000000000007
+          ]
+        ]
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": -1.1035616864774056e-16
+    },
+    {
+      "separation": 6.0,
+      "seed": 1,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "means": [
+        [
+          -0.03300159781916388,
+          -0.01916872246403712
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            9.908654623235572,
+            0.023869269116954393
+          ],
+          [
+            0.023869269116954393,
+            0.9746005931023836
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 6.0,
+      "seed": 1,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "means": [
+        [
+          2.9776030418355957,
+          -0.0064921396381991126
+        ],
+        [
+          -2.9957777661030667,
+          -0.03164391664827826
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9741060670555252,
+            -0.031135921637651453
+          ],
+          [
+            -0.03113592163765146,
+            0.9792925310004865
+          ]
+        ],
+        [
+          [
+            1.0034726858222485,
+            0.0034815252440043346
+          ],
+          [
+            0.0034815252440043424,
+            0.969669421153841
+          ]
+        ]
+      ],
+      "weights": [
+        0.49599653254089543,
+        0.5040034674591045
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 6.0,
+      "seed": 1,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "means": [
+        [
+          -2.9752451000421023,
+          0.0005904227333067252
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.0515000444598386,
+            0.0
+          ],
+          [
+            0.0,
+            1.0515000444598386
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 0.6876048763375878
+    },
+    {
+      "separation": 6.0,
+      "seed": 1,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "means": [
+        [
+          2.999999999999996,
+          -1.1258673329472704e-17
+        ],
+        [
+          -3.000000000000004,
+          6.613147900479963e-18
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.0000000000000004,
+            0.0
+          ],
+          [
+            0.0,
+            1.0000000000000004
+          ]
+        ],
+        [
+          [
+            0.9999999999999988,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999999999999988
+          ]
+        ]
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 6.661338147750939e-18
+    },
+    {
+      "separation": 6.0,
+      "seed": 2,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "means": [
+        [
+          -0.004315414707149257,
+          0.015571011194447884
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            9.812620158071924,
+            -0.04738105041270151
+          ],
+          [
+            -0.04738105041270151,
+            1.007055630799647
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 6.0,
+      "seed": 2,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "means": [
+        [
+          -2.942028034618079,
+          0.032774846330019126
+        ],
+        [
+          2.9953565361590733,
+          -0.0019956702275981493
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9952763009222375,
+            -0.0006992250015049103
+          ],
+          [
+            -0.000699225001504904,
+            0.9716566496616952
+          ]
+        ],
+        [
+          [
+            1.0057247583616364,
+            0.009252700489680393
+          ],
+          [
+            0.009252700489680401,
+            1.0425904096722944
+          ]
+        ]
+      ],
+      "weights": [
+        0.5052177293062872,
+        0.49478227069371283
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 6.0,
+      "seed": 2,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "means": [
+        [
+          2.9861094965102666,
+          -0.00048301700640063927
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.0218722194374241,
+            0.0
+          ],
+          [
+            0.0,
+            1.0218722194374241
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 0.6887542651843883
+    },
+    {
+      "separation": 6.0,
+      "seed": 2,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "means": [
+        [
+          -2.999999999999996,
+          1.2172466024396e-17
+        ],
+        [
+          3.0000000000000036,
+          2.306706591578921e-17
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        [
+          [
+            0.9999999999999989,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999999999999989
+          ]
+        ]
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 5.595524044110789e-17
+    },
+    {
+      "separation": 6.0,
+      "seed": 3,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "means": [
+        [
+          -0.004704790233373624,
+          0.010505939094932169
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            10.032951502058477,
+            0.02116397826569938
+          ],
+          [
+            0.02116397826569938,
+            0.9859241760900059
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 6.0,
+      "seed": 3,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "means": [
+        [
+          -3.0044899897769684,
+          0.003329719560131772
+        ],
+        [
+          3.0000885145932568,
+          0.017694139241867687
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.0206220734056106,
+            0.012212729393691965
+          ],
+          [
+            0.012212729393691968,
+            1.005548588446838
+          ]
+        ],
+        [
+          [
+            1.0178096179759621,
+            -0.013031940947445054
+          ],
+          [
+            -0.013031940947445062,
+            0.9661637466892922
+          ]
+        ]
+      ],
+      "weights": [
+        0.5004170238826406,
+        0.4995829761173593
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 6.0,
+      "seed": 3,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "means": [
+        [
+          -2.98561608920869,
+          -0.0007271228005978005
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.0235112775174617,
+            0.0
+          ],
+          [
+            0.0,
+            1.0235112775174617
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 0.6921141276817514
+    },
+    {
+      "separation": 6.0,
+      "seed": 3,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "means": [
+        [
+          -3.000000000000004,
+          4.201754852542997e-17
+        ],
+        [
+          2.999999999999996,
+          -2.3469810755895273e-17
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9999999999999993,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999999999999993
+          ]
+        ],
+        [
+          [
+            1.0000000000000004,
+            0.0
+          ],
+          [
+            0.0,
+            1.0000000000000004
+          ]
+        ]
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 1.7630341631047487e-16
+    },
+    {
+      "separation": 6.0,
+      "seed": 4,
+      "fit_family": "direct_full_covariance",
+      "model": "K=1",
+      "means": [
+        [
+          0.04758230234868655,
+          0.021645744637366186
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            9.978066760801093,
+            -0.07101558079381157
+          ],
+          [
+            -0.07101558079381157,
+            0.98408305613639
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 6.0,
+      "seed": 4,
+      "fit_family": "direct_full_covariance",
+      "model": "K=2",
+      "means": [
+        [
+          -2.9714080803881053,
+          0.0502571355023927
+        ],
+        [
+          3.0215759413989622,
+          -0.006539205842613329
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            0.9986480176607032,
+            0.009985846836502077
+          ],
+          [
+            0.009985846836502076,
+            0.9488767381491896
+          ]
+        ],
+        [
+          [
+            1.0005547981554805,
+            0.018102240642465132
+          ],
+          [
+            0.01810224064246514,
+            1.0171638371387606
+          ]
+        ]
+      ],
+      "weights": [
+        0.4962458815572572,
+        0.5037541184427429
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": null
+    },
+    {
+      "separation": 6.0,
+      "seed": 4,
+      "fit_family": "ibw_isotropic",
+      "model": "K=1",
+      "means": [
+        [
+          2.9858692994489764,
+          -9.300233097270186e-05
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.0201113235415495,
+            0.0
+          ],
+          [
+            0.0,
+            1.0201113235415495
+          ]
+        ]
+      ],
+      "weights": [
+        1.0
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 0.6915903698526153
+    },
+    {
+      "separation": 6.0,
+      "seed": 4,
+      "fit_family": "ibw_isotropic",
+      "model": "K=2",
+      "means": [
+        [
+          -2.999999999999996,
+          -2.4707960699168576e-18
+        ],
+        [
+          3.000000000000004,
+          2.62264656029173e-17
+        ]
+      ],
+      "covariances": [
+        [
+          [
+            1.0000000000000004,
+            0.0
+          ],
+          [
+            0.0,
+            1.0000000000000004
+          ]
+        ],
+        [
+          [
+            0.9999999999999984,
+            0.0
+          ],
+          [
+            0.0,
+            0.9999999999999984
+          ]
+        ]
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "stopped_early": null,
+      "final_reverse_kl": 4.9960036108132046e-17
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+[output]
+dir = "outputs/exp1_transition_multimodality"
+
+[dataset]
+name = "celebahq256"
+source = "hf_parquet"
+root = "celebahq256"
+split = "validation"
+image_size = 256
+
+[teacher]
+config = "ve/celebahq_256_ncsnpp_continuous"
+checkpoint = "checkpoints/ve/celebahq_256_ncsnpp_continuous/checkpoint_48.pth"
+use_ema = true
+allow_tf32 = false
+device = "cuda"
+batch_size = 16
+predictor = "reverse_diffusion"
+corrector = "none"
+snr = 0.075
+n_steps_each = 1
+
+[experiment]
+t = 0.60
+endpoints = [0.58, 0.50, 0.45, 0.35]
+image_indices = [0, 137, 1024]
+forward_noise_seeds = [3101, 3102, 3103]
+rollout_seed_bases = [21000, 22000, 23000]
+n_samples = 64
+representation = "dinov2_vitb14"
+
+[diagnostics]
+pca_dims = 10
+gmm_max_components = 4
+gmm_covariance = "diag"
+cv_folds = 5
+n_boot = 200
+n_null = 100
+seed = 1701

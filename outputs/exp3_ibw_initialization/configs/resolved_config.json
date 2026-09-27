@@ -1,0 +1,31 @@
+{
+  "output": {
+    "dir": "outputs/exp3_ibw_initialization"
+  },
+  "reference": {
+    "base_config": "conditional_multimodality",
+    "n_boot": 50,
+    "n_null": 25
+  },
+  "experiment": {
+    "device": "cuda",
+    "feature_device": "same",
+    "batch_size": 16,
+    "seeds": [
+      11,
+      29,
+      47
+    ],
+    "n_iterations": 300,
+    "n_grad_samples": 4,
+    "step_size": 0.1,
+    "n_eval": 64,
+    "n_perm": 200,
+    "n_projections": 128,
+    "trace_every": 10,
+    "collapse_threshold": 1.0,
+    "spread_radius_scale": 1.25,
+    "teacher_cluster_seed": 0
+  },
+  "name": "exp3_ibw_initialization"
+}

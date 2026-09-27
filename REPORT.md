@@ -1,8 +1,99 @@
 # H1: is `p_θ(x_s | x_t)` multimodal?
 
-**A first diagnostic experiment on one fixed `x_t`.** Reproduced by the commands in each run's
-`provenance.json`; every number below is read from `results/*/diagnostics.json` and
-`results/*/representation_check.json`.
+This report contains the original single-state diagnostic and three focused follow-up
+experiments. The follow-up results below are the current summary; the original analysis is
+retained afterward for context and provenance.
+
+## Follow-up experiments 1–3
+
+### Overall conclusion
+
+The results support the project premise, with important limits. Conditional multimodality is
+present for some fixed noisy states and becomes easier to detect over longer transitions
+(Experiment 1). In a controlled problem, the benefit of a mixture increases sharply with true
+mode separation (Experiment 2). On the real high-dimensional conditional, however, standard IBW
+does not discover that benefit from a natural initialisation; an oracle initialisation helps
+substantially but remains an inadequate fit (Experiment 3).
+
+### Experiment 1 — transition length and multimodality
+
+Three fixed `x_t` states were each evaluated at four endpoints with 64 paired reverse-SDE
+rollouts. DINOv2 ViT-B/14 was fixed before analysis; negative `BIC(2)-BIC(1)` favors two
+components.
+
+| transition length | result |
+| --- | --- |
+| `Δt = 0.02, 0.10` | No state favored K=2 over K=1 by BIC. |
+| `Δt ≈ 0.15` | One of three states favored a mixture strongly (`ΔBIC = -39.85`). |
+| `Δt ≈ 0.25` | Two of three favored a mixture: one strongly (`-49.85`) and one marginally (`-3.08`); the third favored K=1 (`+18.78`). |
+
+**Interpretation.** Longer transitions can expose multimodal conditional structure, but the
+effect is state-dependent rather than universal. This is usable as pilot evidence, not an
+estimate of prevalence: only three states were tested, cluster-stability evidence was modest,
+and one short-transition condition anomalously preferred K=4 even though K=2 lost to K=1.
+
+### Experiment 2 — controlled test of the mixture hypothesis
+
+For a symmetric two-dimensional Gaussian-mixture target, mode separation was swept from 0 to 6.
+The reported advantage is `SWD(K=1)-SWD(K=2)`, so positive values favor the mixture.
+
+| mode separation | direct full-covariance | isotropic IBW |
+| ---: | ---: | ---: |
+| 0 | -0.006 | -0.000 |
+| 1 | -0.005 | 0.007 |
+| 2 | 0.012 | 0.090 |
+| 4 | 0.157 | 0.479 |
+| 6 | 0.406 | 1.832 |
+
+**Interpretation.** K=2 provides no spurious benefit for a unimodal or heavily overlapping
+target, then becomes progressively better as the modes separate. This cleanly validates the
+mechanism behind H1. The two columns should not be compared as equivalent estimators: the direct
+K=1 fit has full covariance, whereas IBW K=1 is isotropic and becomes mode-seeking at large
+separation. The experiment is an exact low-dimensional control, not evidence that real diffusion
+conditionals have the same geometry.
+
+### Experiment 3 — IBW initialisation diagnostic
+
+The canonical real conditional was fitted under three random seeds. Lower MMD² and SWD are
+better; teacher-cluster initialisation is an oracle diagnostic, not a practical algorithm.
+
+| condition | mean DINOv2 MMD² | mean SWD | normalized separation |
+| --- | ---: | ---: | ---: |
+| K=1, standard | 0.4396 | 0.957 | — |
+| K=2, standard | 0.4413 | 1.019 | 2.49 |
+| K=4, standard | 0.4361 | 0.969 | 2.84 |
+| K=2, deliberately spread | 0.4252 | 0.992 | 3.55 |
+| K=2, teacher-cluster oracle | **0.2154** | **0.722** | **9.51** |
+
+**Interpretation.** Adding components under standard or merely spread initialisation does not
+improve the fit. Initialising K=2 near the teacher clusters reduces MMD² by about 51% and SWD by
+about 25% relative to standard K=1, consistently across seeds. Thus initialisation/local
+optimisation is a real bottleneck. It is not the only bottleneck: every configuration is still
+rejected by the MMD test (`p ≈ 0.005`), and the oracle uses unavailable teacher information.
+Isotropic covariance and the continuous-target/discrete-sampler gap remain plausible sources of
+the residual mismatch.
+
+### Next steps
+
+1. **Establish prevalence.** Repeat Experiment 1 on more images and fixed `x_t` states, then
+   rerun positive conditions with fresh rollout seeds and inspect cluster-conditioned samples.
+2. **Test model capacity.** Replace isotropic components with low-rank-plus-diagonal or other
+   structured covariances and compare them under the same evaluation protocol.
+3. **Separate optimisation from target mismatch.** Increase IBW iterations and gradient samples,
+   sweep step sizes, and compare continuous-condition targets with a matched discretised target.
+4. **Make mode discovery practical.** Evaluate non-oracle initialisation or component birth/split
+   schemes against the teacher-cluster upper-bound diagnostic.
+
+Detailed artifacts are in `outputs/exp1_transition_multimodality`, `outputs/exp2_toy_h1`, and
+`outputs/exp3_ibw_initialization`; each directory contains a `SUMMARY.md`, numerical outputs,
+figures, resolved configuration, and provenance.
+
+---
+
+## Original single-state diagnostic
+
+Reproduced by the commands in each run's `provenance.json`; every number below is read from
+`results/*/diagnostics.json` and `results/*/representation_check.json`.
 
 ---
 

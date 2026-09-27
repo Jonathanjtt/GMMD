@@ -1,0 +1,68 @@
+{
+  "timestamp": "2026-09-27T05:21:12-04:00",
+  "git": {
+    "commit": "49d4a083666a4f4acb3304cd2fce1e00f8f28f0e",
+    "branch": "main",
+    "dirty": true
+  },
+  "config": {
+    "output": {
+      "dir": "outputs/exp2_toy_h1"
+    },
+    "experiment": {
+      "separations": [
+        0.0,
+        1.0,
+        2.0,
+        4.0,
+        6.0
+      ],
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "n_train": 4000,
+      "n_test": 4000,
+      "n_eval": 4000,
+      "n_mmd": 512,
+      "n_projections": 256
+    },
+    "ibw": {
+      "n_iterations": 800,
+      "n_grad_samples": 64,
+      "n_kl_samples": 2000,
+      "step_size": 0.05
+    },
+    "name": "exp2_toy_h1"
+  },
+  "packages": {
+    "python": "3.11.16",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "torch": "2.10.0+cu130",
+    "jax": null,
+    "jaxlib": null,
+    "sklearn": "1.9.1",
+    "umap": "0.5.12",
+    "matplotlib": "3.11.2",
+    "PIL": "12.3.0",
+    "pyarrow": "25.0.1",
+    "einops": null,
+    "torchvision": null
+  },
+  "machine": {
+    "hostname": "cs601.hpc.nyu.edu",
+    "platform": "Linux-6.12.0-211.47.1.el10_2.x86_64-x86_64-with-glibc2.39",
+    "torch_cuda": "13.0"
+  },
+  "argv": [
+    "/scratch/jt4994/GMMD/gmmd/experiments/toy_h1.py",
+    "--config",
+    "exp2_toy_h1"
+  ],
+  "status": "finished",
+  "runtime_s": 98.76618194580078
+}

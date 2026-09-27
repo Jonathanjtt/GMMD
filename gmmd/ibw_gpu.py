@@ -128,7 +128,7 @@ def mixture_gradients(q, target, noise):
 
 def fit(target, n_components=5, method="ibw", n_iterations=300, step_size=0.1, n_grad_samples=4,
         init_means=None, init_variances=None, seed=0, device=None, dtype=None, log=None,
-        log_every=50, fixed_noise=None):
+        log_every=50, fixed_noise=None, callback=None):
     """IBW / MD Algorithm 1 on a torch device. Returns the same shape of dict as ``ibw.fit``.
 
     ``target`` needs ``score_torch(x)`` mapping ``(M, d) -> (M, d)`` torch tensors, and ``dim``.
@@ -142,6 +142,9 @@ def fit(target, n_components=5, method="ibw", n_iterations=300, step_size=0.1, n
     No reverse-KL trace: the targets this backend exists for have no tractable log-density.
     ``variances_trace`` and a gradient-norm trace are kept; the ``(n_iterations, N, d)`` mean
     trace is not, because it is terabytes at image scale.
+
+    ``callback(iteration, q)`` runs after each successful update.  It is intended for cheap
+    scalar diagnostics; callers must not retain ``q`` or copy full image-scale means each step.
     """
     import torch
 
@@ -184,6 +187,8 @@ def fit(target, n_components=5, method="ibw", n_iterations=300, step_size=0.1, n
             var_trace, grad_norms = var_trace[:it + 1], grad_norms[:it + 1]
             break
         q.means, q.variances = new_means, new_variances
+        if callback is not None:
+            callback(it + 1, q)
         if log is not None and log_every and (it % log_every == 0 or it == n_iterations - 1):
             log(f"    it {it:4d}  |grad_m| {grad_norms[it]:10.3f}  "
                 f"eps {np.round(var_trace[it], 3).tolist()}")

@@ -141,3 +141,14 @@ def test_fit_is_reproducible_and_seed_sensitive():
     assert np.array_equal(a["means"], b["means"])
     assert not np.allclose(a["means"], c["means"])
     assert a["grad_norms"].shape == (25,) and np.all(np.isfinite(a["grad_norms"]))
+
+
+def test_callback_observes_each_successful_update():
+    from gmmd import ibw_gpu
+
+    seen = []
+    ibw_gpu.fit(_TorchTarget(MEANS, VARS), n_components=2, n_iterations=7,
+                step_size=0.01, n_grad_samples=4, init_means=INIT_M[:2],
+                init_variances=INIT_V[:2], device="cpu", dtype=torch.float64,
+                callback=lambda iteration, q: seen.append((iteration, q.n_components)))
+    assert seen == [(i, 2) for i in range(1, 8)]

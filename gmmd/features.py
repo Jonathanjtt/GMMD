@@ -16,7 +16,10 @@ from __future__ import annotations
 
 import numpy as np
 
-__all__ = ["EXTRACTORS", "extract", "describe"]
+__all__ = ["EXTRACTORS", "extract", "describe", "load_dinov2"]
+
+
+_DINO_MODELS = {}
 
 
 def _as_images(x):
@@ -49,11 +52,20 @@ def _imagenet_batches(x, size, device, batch_size):
         yield (b - mean) / std
 
 
+def load_dinov2(device="cuda", model_name="dinov2_vitb14"):
+    """Load and cache one DINOv2 model per ``(model_name, device)`` in this process."""
+    import torch
+    key = (model_name, str(torch.device(device)))
+    if key not in _DINO_MODELS:
+        _DINO_MODELS[key] = torch.hub.load("facebookresearch/dinov2", model_name).to(device).eval()
+    return _DINO_MODELS[key]
+
+
 def dinov2_features(x, device="cuda", batch_size=32, model_name="dinov2_vitb14", **_):
     """DINOv2 CLS token; weights fetched by torch.hub (facebookresearch/dinov2) on first use."""
     import torch
     x = _as_images(x)
-    model = torch.hub.load("facebookresearch/dinov2", model_name).to(device).eval()
+    model = load_dinov2(device=device, model_name=model_name)
     out = []
     with torch.no_grad():
         for b in _imagenet_batches(x, 224, device, batch_size):

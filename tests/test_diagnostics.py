@@ -47,3 +47,13 @@ def test_summary_lines_are_strings(clouds):
     r = D.analyze(clouds["unimodal"], **KW)
     lines = D.summarize(r, "u")
     assert len(lines) >= 4 and all(isinstance(ln, str) for ln in lines)
+
+
+def test_sliced_wasserstein_is_reproducible_and_detects_a_shift():
+    rng = np.random.default_rng(4)
+    x = rng.normal(size=(80, 5))
+    same = D.sliced_wasserstein(x, x.copy(), n_projections=32, seed=7)
+    shifted = D.sliced_wasserstein(x, x + 2.0, n_projections=32, seed=7)
+    assert same["mean"] == pytest.approx(0.0, abs=1e-12)
+    assert shifted["mean"] > 0.5
+    assert shifted == D.sliced_wasserstein(x, x + 2.0, n_projections=32, seed=7)
