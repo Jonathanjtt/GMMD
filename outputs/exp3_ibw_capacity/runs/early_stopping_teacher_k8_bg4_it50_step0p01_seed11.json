@@ -1,0 +1,96 @@
+{
+  "row": {
+    "stage": "early_stopping",
+    "init": "teacher",
+    "k": 8,
+    "bg": 4,
+    "seed": 11,
+    "iterations": 50,
+    "step_size": 0.01,
+    "run_id": "early_stopping_teacher_k8_bg4_it50_step0p01_seed11",
+    "initial_normalized_separation_mean": 319.61056113299867,
+    "final_variance_mean": 1.3574205338954926,
+    "mean_rms_displacement": 0.3035223897779457,
+    "grad_norm_first": 108.3626937866211,
+    "grad_norm_last": 84.387939453125,
+    "grad_norm_tail_mean": 85.2516098022461,
+    "grad_norm_tail_std": 0.5956309792340087,
+    "runtime_s": 41.42907890398055,
+    "score_samples": 1600,
+    "network_batches_estimate": 100,
+    "stopped_early": null,
+    "pairwise_distance_min": 500.5156208550109,
+    "pairwise_distance_mean": 504.16398596405037,
+    "normalized_separation_min": 214.94380217241823,
+    "normalized_separation_mean": 216.36363173435714,
+    "collapsed": false,
+    "effective_separated_components": 8,
+    "n_eval": 128,
+    "eval_seed": 114855,
+    "mmd2": 0.31197550973576704,
+    "mmd_p_value": 0.001996007984031936,
+    "mmd_null_q95": 0.005063832455324668,
+    "mmd_bandwidth": 42.40096521929141,
+    "sliced_wasserstein": 0.9146101421419373,
+    "swd_projection_std": 0.6595988411661471
+  },
+  "trajectory": [
+    {
+      "iteration": 0,
+      "pairwise_distance_min": 689.3003884979945,
+      "pairwise_distance_mean": 693.5968426978983,
+      "normalized_separation_min": 317.6307480006722,
+      "normalized_separation_mean": 319.61056113299867,
+      "collapsed": false,
+      "effective_separated_components": 8
+    },
+    {
+      "iteration": 10,
+      "pairwise_distance_min": 647.8669013019341,
+      "pairwise_distance_mean": 652.0457352004212,
+      "normalized_separation_min": 292.2804538107027,
+      "normalized_separation_mean": 294.1142311484981,
+      "collapsed": false,
+      "effective_separated_components": 8
+    },
+    {
+      "iteration": 20,
+      "pairwise_distance_min": 608.2952214264357,
+      "pairwise_distance_mean": 612.3449466162108,
+      "normalized_separation_min": 269.81450064635294,
+      "normalized_separation_mean": 271.52003750977366,
+      "collapsed": false,
+      "effective_separated_components": 8
+    },
+    {
+      "iteration": 30,
+      "pairwise_distance_min": 570.5638850029677,
+      "pairwise_distance_mean": 574.4823141109422,
+      "normalized_separation_min": 249.6820704710227,
+      "normalized_separation_mean": 251.27854208568746,
+      "collapsed": false,
+      "effective_separated_components": 8
+    },
+    {
+      "iteration": 40,
+      "pairwise_distance_min": 534.6465373865589,
+      "pairwise_distance_mean": 538.4302867025834,
+      "normalized_separation_min": 231.4927584493579,
+      "normalized_separation_mean": 232.9948530926812,
+      "collapsed": false,
+      "effective_separated_components": 8
+    },
+    {
+      "iteration": 50,
+      "pairwise_distance_min": 500.5156208550109,
+      "pairwise_distance_mean": 504.16398596405037,
+      "normalized_separation_min": 214.94380217241823,
+      "normalized_separation_mean": 216.36363173435714,
+      "collapsed": false,
+      "effective_separated_components": 8
+    }
+  ],
+  "init_note": "oracle DINOv2 teacher-cluster representatives; variance from /scratch/jt4994/GMMD/outputs/exp3_ibw_initialization/runs/k1_standard_seed11.npz",
+  "variance_source": "/scratch/jt4994/GMMD/outputs/exp3_ibw_initialization/runs/k1_standard_seed11.npz",
+  "fit_checkpoint": "/scratch/jt4994/GMMD/outputs/exp3_ibw_capacity/runs/early_stopping_teacher_k8_bg4_it50_step0p01_seed11.npz"
+}

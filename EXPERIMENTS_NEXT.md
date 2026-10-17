@@ -92,6 +92,37 @@ python -m gmmd.experiments.ibw_initialization \
   --config exp3_ibw_initialization --plot-only
 ```
 
+## Completed continuation
+
+The compute-conscious continuation preserves every result above and adds two independent output
+trees.
+
+- Expanded Experiment 1: `configs/exp1_transition_multimodality_expanded.toml`, five fresh fixed
+  states with 128 paired rollouts per endpoint, output under
+  `outputs/exp1_transition_multimodality_expanded/`.
+- Combined Experiment 1 analysis: eight states across both cohorts, generated without rerunning
+  the teacher by `python -m gmmd.experiments.transition_multimodality_combined`, output under
+  `outputs/exp1_transition_multimodality_combined/`.
+- Experiment 3 capacity/optimisation: `configs/exp3_ibw_capacity.toml`, a resumable K/BG/init/
+  iteration/step-size sweep with 128-sample held-out evaluation and a 256-sample independent
+  teacher pool, output under `outputs/exp3_ibw_capacity/`. The final focused stage maps
+  50–1000-step K=8 trajectories at step 0.01 and repeats the selected 400-step point across
+  seeds 11, 29 and 47; completed checkpoints are reused on every submission.
+
+Submit the GPU continuations with:
+
+```bash
+sbatch run/exp1_transition_multimodality_expanded.sbatch
+sbatch run/exp3_ibw_capacity.sbatch
+```
+
+Regenerate Experiment 3 figures and its generated summary without fitting or sampling:
+
+```bash
+python -m gmmd.experiments.ibw_capacity_sweep \
+  --config exp3_ibw_capacity --plot-only
+```
+
 ## Shared execution details
 
 Experiments 1 and 3 independently verify/download the checkpoint, validation shard, and DINOv2

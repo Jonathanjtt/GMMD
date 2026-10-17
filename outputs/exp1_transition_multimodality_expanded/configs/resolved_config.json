@@ -1,0 +1,66 @@
+{
+  "output": {
+    "dir": "outputs/exp1_transition_multimodality_expanded"
+  },
+  "dataset": {
+    "name": "celebahq256",
+    "source": "hf_parquet",
+    "root": "celebahq256",
+    "split": "validation",
+    "image_size": 256
+  },
+  "teacher": {
+    "config": "ve/celebahq_256_ncsnpp_continuous",
+    "checkpoint": "checkpoints/ve/celebahq_256_ncsnpp_continuous/checkpoint_48.pth",
+    "use_ema": true,
+    "allow_tf32": false,
+    "device": "cuda",
+    "batch_size": 16,
+    "predictor": "reverse_diffusion",
+    "corrector": "none",
+    "snr": 0.075,
+    "n_steps_each": 1
+  },
+  "experiment": {
+    "t": 0.6,
+    "endpoints": [
+      0.58,
+      0.5,
+      0.45,
+      0.35
+    ],
+    "image_indices": [
+      7,
+      43,
+      256,
+      777,
+      1500
+    ],
+    "forward_noise_seeds": [
+      5101,
+      5102,
+      5103,
+      5104,
+      5105
+    ],
+    "rollout_seed_bases": [
+      51000,
+      52000,
+      53000,
+      54000,
+      55000
+    ],
+    "n_samples": 128,
+    "representation": "dinov2_vitb14"
+  },
+  "diagnostics": {
+    "pca_dims": 10,
+    "gmm_max_components": 4,
+    "gmm_covariance": "diag",
+    "cv_folds": 5,
+    "n_boot": 200,
+    "n_null": 100,
+    "seed": 1701
+  },
+  "name": "exp1_transition_multimodality_expanded"
+}

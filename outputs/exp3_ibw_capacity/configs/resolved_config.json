@@ -1,0 +1,181 @@
+{
+  "output": {
+    "dir": "outputs/exp3_ibw_capacity"
+  },
+  "reference": {
+    "dir": "outputs/exp3_ibw_initialization/reference_h1",
+    "discovery_samples": 64
+  },
+  "teacher_eval": {
+    "n_samples": 256,
+    "rollout_seed_base": 41000,
+    "batch_size": 16,
+    "baseline_group_size": 128,
+    "baseline_repeats": 10
+  },
+  "experiment": {
+    "device": "cuda",
+    "feature_device": "same",
+    "batch_size": 16,
+    "n_eval": 128,
+    "n_perm": 500,
+    "n_projections": 256,
+    "trace_every": 10,
+    "collapse_threshold": 1.0,
+    "teacher_cluster_seed": 0
+  },
+  "runs": [
+    {
+      "stage": "screen",
+      "init": "standard",
+      "k": [
+        1,
+        2,
+        4,
+        8,
+        16
+      ],
+      "bg": [
+        4
+      ],
+      "seeds": [
+        11
+      ],
+      "iterations": [
+        300
+      ],
+      "step_sizes": [
+        0.1
+      ]
+    },
+    {
+      "stage": "screen",
+      "init": "teacher",
+      "k": [
+        1,
+        2,
+        4,
+        8,
+        16
+      ],
+      "bg": [
+        4
+      ],
+      "seeds": [
+        11
+      ],
+      "iterations": [
+        300
+      ],
+      "step_sizes": [
+        0.1
+      ]
+    },
+    {
+      "stage": "seed_repeat",
+      "init": "teacher",
+      "k": [
+        4
+      ],
+      "bg": [
+        16
+      ],
+      "seeds": [
+        11,
+        29,
+        47
+      ],
+      "iterations": [
+        300
+      ],
+      "step_sizes": [
+        0.1
+      ]
+    },
+    {
+      "stage": "optimization",
+      "init": "teacher",
+      "k": [
+        8
+      ],
+      "bg": [
+        4
+      ],
+      "seeds": [
+        11
+      ],
+      "iterations": [
+        1000
+      ],
+      "step_sizes": [
+        0.1,
+        0.03,
+        0.01
+      ]
+    },
+    {
+      "stage": "bg_sweep",
+      "init": "teacher",
+      "k": [
+        4
+      ],
+      "bg": [
+        64
+      ],
+      "seeds": [
+        11
+      ],
+      "iterations": [
+        300
+      ],
+      "step_sizes": [
+        0.1
+      ]
+    },
+    {
+      "stage": "early_stopping",
+      "init": "teacher",
+      "k": [
+        8
+      ],
+      "bg": [
+        4
+      ],
+      "seeds": [
+        11
+      ],
+      "iterations": [
+        50,
+        100,
+        200,
+        300,
+        400,
+        600
+      ],
+      "step_sizes": [
+        0.01
+      ]
+    },
+    {
+      "stage": "best_repeat",
+      "init": "teacher",
+      "k": [
+        8
+      ],
+      "bg": [
+        4
+      ],
+      "seeds": [
+        29,
+        47
+      ],
+      "iterations": [
+        400
+      ],
+      "step_sizes": [
+        0.01
+      ]
+    }
+  ],
+  "name": "exp3_ibw_capacity"
+}

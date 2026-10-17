@@ -1,0 +1,227 @@
+[
+  {
+    "stage": "screen",
+    "init": "standard",
+    "k": 1,
+    "bg": 4,
+    "seed": 11,
+    "iterations": 300,
+    "step_size": 0.1
+  },
+  {
+    "stage": "screen",
+    "init": "standard",
+    "k": 2,
+    "bg": 4,
+    "seed": 11,
+    "iterations": 300,
+    "step_size": 0.1
+  },
+  {
+    "stage": "screen",
+    "init": "standard",
+    "k": 4,
+    "bg": 4,
+    "seed": 11,
+    "iterations": 300,
+    "step_size": 0.1
+  },
+  {
+    "stage": "screen",
+    "init": "standard",
+    "k": 8,
+    "bg": 4,
+    "seed": 11,
+    "iterations": 300,
+    "step_size": 0.1
+  },
+  {
+    "stage": "screen",
+    "init": "standard",
+    "k": 16,
+    "bg": 4,
+    "seed": 11,
+    "iterations": 300,
+    "step_size": 0.1
+  },
+  {
+    "stage": "screen",
+    "init": "teacher",
+    "k": 1,
+    "bg": 4,
+    "seed": 11,
+    "iterations": 300,
+    "step_size": 0.1
+  },
+  {
+    "stage": "screen",
+    "init": "teacher",
+    "k": 2,
+    "bg": 4,
+    "seed": 11,
+    "iterations": 300,
+    "step_size": 0.1
+  },
+  {
+    "stage": "screen",
+    "init": "teacher",
+    "k": 4,
+    "bg": 4,
+    "seed": 11,
+    "iterations": 300,
+    "step_size": 0.1
+  },
+  {
+    "stage": "screen",
+    "init": "teacher",
+    "k": 8,
+    "bg": 4,
+    "seed": 11,
+    "iterations": 300,
+    "step_size": 0.1
+  },
+  {
+    "stage": "screen",
+    "init": "teacher",
+    "k": 16,
+    "bg": 4,
+    "seed": 11,
+    "iterations": 300,
+    "step_size": 0.1
+  },
+  {
+    "stage": "seed_repeat",
+    "init": "teacher",
+    "k": 4,
+    "bg": 16,
+    "seed": 11,
+    "iterations": 300,
+    "step_size": 0.1
+  },
+  {
+    "stage": "seed_repeat",
+    "init": "teacher",
+    "k": 4,
+    "bg": 16,
+    "seed": 29,
+    "iterations": 300,
+    "step_size": 0.1
+  },
+  {
+    "stage": "seed_repeat",
+    "init": "teacher",
+    "k": 4,
+    "bg": 16,
+    "seed": 47,
+    "iterations": 300,
+    "step_size": 0.1
+  },
+  {
+    "stage": "optimization",
+    "init": "teacher",
+    "k": 8,
+    "bg": 4,
+    "seed": 11,
+    "iterations": 1000,
+    "step_size": 0.1
+  },
+  {
+    "stage": "optimization",
+    "init": "teacher",
+    "k": 8,
+    "bg": 4,
+    "seed": 11,
+    "iterations": 1000,
+    "step_size": 0.03
+  },
+  {
+    "stage": "optimization",
+    "init": "teacher",
+    "k": 8,
+    "bg": 4,
+    "seed": 11,
+    "iterations": 1000,
+    "step_size": 0.01
+  },
+  {
+    "stage": "bg_sweep",
+    "init": "teacher",
+    "k": 4,
+    "bg": 64,
+    "seed": 11,
+    "iterations": 300,
+    "step_size": 0.1
+  },
+  {
+    "stage": "early_stopping",
+    "init": "teacher",
+    "k": 8,
+    "bg": 4,
+    "seed": 11,
+    "iterations": 50,
+    "step_size": 0.01
+  },
+  {
+    "stage": "early_stopping",
+    "init": "teacher",
+    "k": 8,
+    "bg": 4,
+    "seed": 11,
+    "iterations": 100,
+    "step_size": 0.01
+  },
+  {
+    "stage": "early_stopping",
+    "init": "teacher",
+    "k": 8,
+    "bg": 4,
+    "seed": 11,
+    "iterations": 200,
+    "step_size": 0.01
+  },
+  {
+    "stage": "early_stopping",
+    "init": "teacher",
+    "k": 8,
+    "bg": 4,
+    "seed": 11,
+    "iterations": 300,
+    "step_size": 0.01
+  },
+  {
+    "stage": "early_stopping",
+    "init": "teacher",
+    "k": 8,
+    "bg": 4,
+    "seed": 11,
+    "iterations": 400,
+    "step_size": 0.01
+  },
+  {
+    "stage": "early_stopping",
+    "init": "teacher",
+    "k": 8,
+    "bg": 4,
+    "seed": 11,
+    "iterations": 600,
+    "step_size": 0.01
+  },
+  {
+    "stage": "best_repeat",
+    "init": "teacher",
+    "k": 8,
+    "bg": 4,
+    "seed": 29,
+    "iterations": 400,
+    "step_size": 0.01
+  },
+  {
+    "stage": "best_repeat",
+    "init": "teacher",
+    "k": 8,
+    "bg": 4,
+    "seed": 47,
+    "iterations": 400,
+    "step_size": 0.01
+  }
+]

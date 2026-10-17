@@ -1,0 +1,241 @@
+{
+  "timestamp": "2026-10-17T03:21:28-04:00",
+  "git": {
+    "commit": "359d91c91b93e1cd72525aa53539c98059f21992",
+    "branch": "main",
+    "dirty": true
+  },
+  "config": {
+    "output": {
+      "dir": "outputs/exp3_ibw_capacity"
+    },
+    "reference": {
+      "dir": "outputs/exp3_ibw_initialization/reference_h1",
+      "discovery_samples": 64
+    },
+    "teacher_eval": {
+      "n_samples": 256,
+      "rollout_seed_base": 41000,
+      "batch_size": 16,
+      "baseline_group_size": 128,
+      "baseline_repeats": 10
+    },
+    "experiment": {
+      "device": "cuda",
+      "feature_device": "same",
+      "batch_size": 16,
+      "n_eval": 128,
+      "n_perm": 500,
+      "n_projections": 256,
+      "trace_every": 10,
+      "collapse_threshold": 1.0,
+      "teacher_cluster_seed": 0
+    },
+    "runs": [
+      {
+        "stage": "screen",
+        "init": "standard",
+        "k": [
+          1,
+          2,
+          4,
+          8,
+          16
+        ],
+        "bg": [
+          4
+        ],
+        "seeds": [
+          11
+        ],
+        "iterations": [
+          300
+        ],
+        "step_sizes": [
+          0.1
+        ]
+      },
+      {
+        "stage": "screen",
+        "init": "teacher",
+        "k": [
+          1,
+          2,
+          4,
+          8,
+          16
+        ],
+        "bg": [
+          4
+        ],
+        "seeds": [
+          11
+        ],
+        "iterations": [
+          300
+        ],
+        "step_sizes": [
+          0.1
+        ]
+      },
+      {
+        "stage": "seed_repeat",
+        "init": "teacher",
+        "k": [
+          4
+        ],
+        "bg": [
+          16
+        ],
+        "seeds": [
+          11,
+          29,
+          47
+        ],
+        "iterations": [
+          300
+        ],
+        "step_sizes": [
+          0.1
+        ]
+      },
+      {
+        "stage": "optimization",
+        "init": "teacher",
+        "k": [
+          8
+        ],
+        "bg": [
+          4
+        ],
+        "seeds": [
+          11
+        ],
+        "iterations": [
+          1000
+        ],
+        "step_sizes": [
+          0.1,
+          0.03,
+          0.01
+        ]
+      },
+      {
+        "stage": "bg_sweep",
+        "init": "teacher",
+        "k": [
+          4
+        ],
+        "bg": [
+          64
+        ],
+        "seeds": [
+          11
+        ],
+        "iterations": [
+          300
+        ],
+        "step_sizes": [
+          0.1
+        ]
+      },
+      {
+        "stage": "early_stopping",
+        "init": "teacher",
+        "k": [
+          8
+        ],
+        "bg": [
+          4
+        ],
+        "seeds": [
+          11
+        ],
+        "iterations": [
+          50,
+          100,
+          200,
+          300,
+          400,
+          600
+        ],
+        "step_sizes": [
+          0.01
+        ]
+      },
+      {
+        "stage": "best_repeat",
+        "init": "teacher",
+        "k": [
+          8
+        ],
+        "bg": [
+          4
+        ],
+        "seeds": [
+          29,
+          47
+        ],
+        "iterations": [
+          400
+        ],
+        "step_sizes": [
+          0.01
+        ]
+      }
+    ],
+    "name": "exp3_ibw_capacity"
+  },
+  "packages": {
+    "python": "3.11.16",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "torch": "2.10.0+cu130",
+    "jax": null,
+    "jaxlib": null,
+    "sklearn": "1.9.1",
+    "umap": "0.5.12",
+    "matplotlib": "3.11.2",
+    "PIL": "12.3.0",
+    "pyarrow": "25.0.1",
+    "einops": null,
+    "torchvision": null
+  },
+  "machine": {
+    "hostname": "gl019.hpc.nyu.edu",
+    "platform": "Linux-6.12.0-211.47.1.el10_2.x86_64-x86_64-with-glibc2.39",
+    "torch_cuda": "13.0",
+    "gpu": {
+      "name": "NVIDIA L40S",
+      "index": 0,
+      "total_memory_gb": 44.4,
+      "cudnn_deterministic": true,
+      "allow_tf32": false
+    }
+  },
+  "argv": [
+    "/scratch/jt4994/GMMD/gmmd/experiments/ibw_capacity_sweep.py",
+    "--config",
+    "exp3_ibw_capacity"
+  ],
+  "status": "finished",
+  "runtime_s": 779.2717244625092,
+  "reference": "/scratch/jt4994/GMMD/outputs/exp3_ibw_initialization/reference_h1",
+  "target": {
+    "kind": "ve_bayes_conditional",
+    "t": 0.5998038649559021,
+    "s": 0.4502306282520294,
+    "sigma_t": 5.297327041625977,
+    "sigma_s": 1.108557105064392,
+    "gap": 26.832774930753075,
+    "dim": 196608,
+    "image_shape": [
+      3,
+      256,
+      256
+    ],
+    "definition": "grad log p_s(x_s) + (x_t - x_s)/(sigma_t^2 - sigma_s^2); the continuous-time reversal's conditional, NOT the discretised sampler's transition kernel"
+  },
+  "n_runs": 25,
+  "heldout_teacher_samples": 256
+}

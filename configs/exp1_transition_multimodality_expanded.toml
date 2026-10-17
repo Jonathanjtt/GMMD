@@ -1,0 +1,11 @@
+inherit = "exp1_transition_multimodality"
+
+[output]
+dir = "outputs/exp1_transition_multimodality_expanded"
+
+[experiment]
+# Fresh states and rollout streams; the original three-state result remains untouched.
+image_indices = [7, 43, 256, 777, 1500]
+forward_noise_seeds = [5101, 5102, 5103, 5104, 5105]
+rollout_seed_bases = [51000, 52000, 53000, 54000, 55000]
+n_samples = 128

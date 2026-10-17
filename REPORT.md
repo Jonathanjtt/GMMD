@@ -4,6 +4,120 @@ This report contains the original single-state diagnostic and three focused foll
 experiments. The follow-up results below are the current summary; the original analysis is
 retained afterward for context and provenance.
 
+## Extended Experiment 1/3 continuation (2026-10-17)
+
+The continuation increases evaluation power, measures a teacher-versus-teacher floor, separates
+initialisation, capacity, gradient-sample budget and optimisation horizon, and expands the
+transition-length study to eight fixed noisy states. It reuses the same teacher, DINOv2
+representation, MMD²/SWD definitions and IBW implementation. No conditional neural network is
+introduced.
+
+### Experiment 3 — capacity and optimisation
+
+A fresh pool of 256 teacher rollouts (seeds 41000–41255) is disjoint from the 64 samples used for
+the oracle initialisation diagnostic. Fits are evaluated against 128 held-out teacher samples.
+Ten balanced 128-versus-128 teacher splits give a DINOv2 MMD² floor of
+`0.00004 ± 0.00202` (range `-0.00242` to `0.00438`) and SWD `0.1474 ± 0.0136`.
+
+| setting | DINOv2 MMD² | SWD | fit time |
+|---|---:|---:|---:|
+| standard init, K=1, BG=4, 300 × 0.1 | 0.41756 | 1.02431 | 29.5 s |
+| standard init, K=16, BG=4, 300 × 0.1 | 0.39263 | 0.94155 | 502.4 s |
+| oracle init, K=2, BG=4, 300 × 0.1 | 0.16673 | 0.64958 | 60.1 s |
+| oracle init, K=4, BG=4, 300 × 0.1 | 0.15859 | 0.61250 | 124.5 s |
+| oracle init, K=8, BG=4, 300 × 0.1 | 0.15443 | 0.57234 | 249.2 s |
+| oracle init, K=16, BG=4, 300 × 0.1 | 0.16313 | 0.63706 | 502.1 s |
+| oracle init, K=4, BG=16, 300 × 0.1 (3 seeds) | 0.16891 ± 0.00591 | 0.65591 ± 0.02428 | 498.4 s mean |
+| oracle init, K=4, BG=64, 300 × 0.1 | 0.17489 | 0.71844 | 2000.5 s |
+| oracle init, K=8, BG=4, 400 × 0.01 (3 seeds) | **0.03895 ± 0.00249** | **0.33736 ± 0.01485** | 330.8 s mean |
+| oracle init, K=8, BG=4, 600 × 0.01 | 0.06637 | 0.42837 | 501.3 s |
+| oracle init, K=8, BG=4, 1000 × 0.01 | 0.13400 | 0.57131 | 832.5 s |
+
+**What improved.** Oracle placement is by far the largest gain. Once components start in
+different semantic basins, K=2 cuts MMD² by about 60% relative to standard K=1; K=4 and K=8 give
+smaller further gains. A smaller step size plus early stopping is the second major gain. Along
+the common-seed K=8, BG=4, step-0.01 path, MMD² is 0.31198, 0.22242, 0.11378, 0.06404, 0.03831,
+0.06637 and 0.13400 at 50, 100, 200, 300, 400, 600 and 1000 iterations, respectively. The
+selected 400-step point repeats at 0.03684 and 0.04169 for seeds 29 and 47, giving
+`0.03895 ± 0.00249` across three seeds. This is a 90.7% reduction from standard K=1, although
+it remains above 0.01 and the teacher null scale.
+
+**What did not.** Standard-init capacity is almost flat from K=2 through K=16 while runtime grows
+roughly linearly. Oracle K=16 is worse than K=8. Increasing BG from 4 to 16 or 64 reduces the
+late gradient-noise scale but does not improve held-out MMD² or SWD and costs 4×/16× as much.
+Continuing K=8 at step 0.1 to 1000 iterations worsens MMD² (0.17536), and even the small-step
+trajectory degrades after 400 iterations. More optimization is therefore not monotonically
+better under the evaluation metric.
+
+**Bottleneck diagnosis.** Initialisation/local basin discovery is the first bottleneck, but not
+the residual one. At the 400-step optimum, mean component distance is 48.3 and normalized mean
+separation is 21.9; at 1000 steps these contract to 25.6 and 11.8 while all eight components remain
+separated. Thus the U-shaped MMD curve is objective-driven over-contraction, not numerical failure
+or mixture collapse. IBW descends reverse KL for the continuous-time Bayes conditional, whereas
+evaluation uses samples from a discretized reverse-SDE transition and DINOv2 MMD/SWD.
+
+The variational family is also restrictive. It fixes uniform weights and one isotropic pixel-space
+variance per component. The K=8 discovery clusters contain `[2,15,9,6,1,17,13,1]` of the 64
+teacher samples, versus eight each under uniform weights (empirical total-variation gap 0.344).
+This makes mixture weights a concrete capacity hypothesis; anisotropic covariance is the next one.
+The 400-step point was selected using the same 128-sample reference used for its exploratory
+metric, so the three-seed result is strong evidence of repeatability, not yet an unbiased final
+test estimate.
+
+### Experiment 1 — eight-state combined result
+
+Five new fixed noisy states use 128 paired rollouts per endpoint and fresh seeds; combined with
+the original cohort this gives eight states. Negative `BIC(K=2)-BIC(K=1)` favors K=2.
+
+| transition length | states favoring K=2 | mean ΔBIC ± SD | median ΔBIC [IQR] |
+|---:|---:|---:|---:|
+| 0.02 | 1/8 | 27.74 ± 19.89 | 30.06 [20.68, 43.57] |
+| 0.10 | 1/8 | 23.40 ± 49.68 | 36.59 [28.83, 41.93] |
+| 0.15 | 3/8 | 4.84 ± 58.57 | 18.50 [-13.93, 46.57] |
+| 0.25 | 4/8 | -10.91 ± 67.72 | 7.67 [-32.96, 26.28] |
+
+The prevalence trend supports the original claim—evidence for a two-component alternative is
+more common for longer transitions—but it is not universal or monotone within every state. Three
+states remain K=1 throughout, two develop evidence only at longer endpoints, and one state is
+already strongly multimodal at the shortest endpoint. The mean is influenced by this last state,
+so the report retains individual trajectories, the median/IQR and Wilson intervals rather than
+claiming a population effect from eight states.
+
+### Prioritized next optimization steps
+
+These steps deliberately stay within the existing GMM/IBW pipeline; the conditional neural
+network remains out of scope.
+
+1. **Lock an unbiased early-stopping estimate.** Use one 128-sample half of the existing
+   256-teacher pool only for checkpoint selection, then evaluate the selected checkpoint once on
+   the untouched half with at least three independent mixture-sampling seeds. This needs no new
+   teacher rollouts and prevents selection on the reported test metric.
+2. **Test weights before adding more components.** Re-sample the cached 400-step K=8 checkpoints
+   using teacher-cluster frequencies as fixed diagnostic weights, then compare with the current
+   uniform 1/K sampler under identical evaluation seeds. If this materially closes the gap,
+   implement optimized mixture weights. Also run the cheaper K=4, BG=4, step-0.01 early-stopping
+   path; its discovery clusters are less imbalanced and it costs about half as much as K=8.
+3. **Separate family capacity from score optimization.** Fit a direct teacher-sample isotropic
+   mixture with learned weights as a non-IBW upper-bound control. If that control approaches 0.01
+   while IBW does not, optimization/objective mismatch dominates; if it also plateaus, extend the
+   family to channelwise/diagonal or low-rank-plus-isotropic covariance before revisiting K.
+4. **Measure continuous-target versus discrete-teacher mismatch.** Repeat the teacher transition
+   with a refined reverse-SDE discretization and compare it with the current teacher at the same
+   128–256-sample DINOv2 MMD/SWD scale. A cross-integrator discrepancy above the teacher–teacher
+   floor would quantify how much of the IBW gap cannot be removed by optimizing the present
+   continuous target more accurately.
+5. **Deprioritize brute-force BG/K sweeps.** BG=64 costs about 16× BG=4 without improving either
+   metric, and K=16 is already worse than K=8. Further BG or K expansion is justified only after
+   the weight, covariance and target-mismatch controls.
+
+For fair comparisons, future rows should keep the fixed noisy state, DINOv2 preprocessing,
+128-sample evaluation size, metric seeds and teacher reference split constant, and report both
+MMD² and SWD mean ± SD together with fit runtime and score-network evaluations.
+
+Continuation artifacts are in `outputs/exp3_ibw_capacity`,
+`outputs/exp1_transition_multimodality_expanded`, and
+`outputs/exp1_transition_multimodality_combined`.
+
 ## Follow-up experiments 1–3
 
 ### Overall conclusion
