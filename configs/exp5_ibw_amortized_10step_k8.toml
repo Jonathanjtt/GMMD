@@ -47,9 +47,13 @@ n_pilot_train = 8               # the pilot uses train trajectories 0..7
 [ibw]
 n_components = 8
 n_grad_samples = 4
-step_c = 0.5                    # gamma_j = step_c * v_anc_j  (set from the P0 step-size check)
-max_iterations = 400            # maximum budget; snapshots below
-snapshot_iterations = [25, 50, 100, 200, 300, 400]
+# P0 (2026-10-19, prior-free K = 8, val trajectories 0-1, intervals 1/4/7, 400 iterations): c = 0.2 / 0.5 /
+# 1.0 reach the gradient plateau after ~100 / 50-75 / 50 iterations; the stationary jitter roughly doubles
+# per step (mean drift at j = 4: 0.006 / 0.011 / 0.017); the converged stage-A excess is the same (mean
+# DINOv2 excess at 400 it 0.577 / 0.566 / 0.592).  Chosen on convergence, not fidelity: c = 0.5, budget 300.
+step_c = 0.5                    # gamma_j = step_c * v_anc_j
+max_iterations = 300            # maximum budget; snapshots below
+snapshot_iterations = [25, 50, 100, 200, 300]
 diag_every = 25
 anchor_batch = 4                # anchors fitted in lockstep per network batch
 terminal_bank = 32              # pushforward samples T(z), z ~ q_IBW, cached per terminal fit
