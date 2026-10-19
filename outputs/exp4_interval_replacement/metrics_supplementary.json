@@ -1,0 +1,174 @@
+{
+  "n_reference": 30000,
+  "rows": [
+    {
+      "method": "teacher",
+      "n": 192,
+      "fid": 56.567814339192495,
+      "real_subset_fid_same_n": 50.45441733030637,
+      "precision": 0.7760416865348816,
+      "recall": 0.5416666865348816,
+      "f_score": 0.6380105606812225
+    },
+    {
+      "method": "teacher",
+      "n": 448,
+      "fid": 37.3549504504721,
+      "real_subset_fid_same_n": 29.8000442709465,
+      "precision": 0.7723214030265808,
+      "recall": 0.4866071343421936,
+      "f_score": 0.5970427924421889
+    },
+    {
+      "method": "teacher",
+      "n": 1024,
+      "fid": 22.552345775689588,
+      "real_subset_fid_same_n": 15.057124227929819,
+      "precision": 0.7685546875,
+      "recall": 0.4638671875,
+      "f_score": 0.5785475064381933
+    },
+    {
+      "method": "coarse",
+      "n": 448,
+      "fid": 38.61463153690502,
+      "real_subset_fid_same_n": 29.8000442709465,
+      "precision": 0.7321428656578064,
+      "recall": 0.4419642984867096,
+      "f_score": 0.55119501506197
+    }
+  ],
+  "paired_448": {
+    "teacher": {
+      "sd": 1.3696766193669658
+    },
+    "coarse": {
+      "sd": 1.317255907338106,
+      "diff_vs_teacher_ci95": [
+        -0.7927740905478942,
+        3.4824493571658697
+      ]
+    }
+  },
+  "provenance": {
+    "timestamp": "2026-10-19T05:48:15+00:00",
+    "git": {
+      "commit": "985d848d56b4fcb6ae3242be92885013f501870c",
+      "branch": "main",
+      "dirty": true
+    },
+    "config": {
+      "output": {
+        "dir": "outputs/exp4_interval_replacement"
+      },
+      "teacher": {
+        "config": "ve/celebahq_256_ncsnpp_continuous",
+        "checkpoint": "checkpoints/ve/celebahq_256_ncsnpp_continuous/checkpoint_48.pth",
+        "use_ema": true,
+        "allow_tf32": false,
+        "predictor": "reverse_diffusion",
+        "corrector": "none",
+        "noise_removal": true,
+        "batch_size": 64
+      },
+      "candidates": [
+        {
+          "name": "short",
+          "t": 0.6,
+          "s": 0.58,
+          "n_anchors": 16
+        },
+        {
+          "name": "long",
+          "t": 0.6,
+          "s": 0.45,
+          "n_anchors": 8
+        }
+      ],
+      "gmmd": {
+        "n_components": 1,
+        "n_grad_samples": 4,
+        "step_size": 0.1,
+        "n_iterations": 300,
+        "snapshot_iterations": [
+          100,
+          200,
+          300
+        ],
+        "init": "prior_free",
+        "init_spread": 1.0
+      },
+      "validation": {
+        "xT_seed_base": 500000,
+        "rollout_seed_base": 510000,
+        "gmmd_seed_base": 520000,
+        "n_per_set": 64,
+        "feature": "dinov2_vitb14",
+        "n_perm": 500,
+        "n_projections": 256,
+        "pixel_downsample": 8
+      },
+      "selection": {
+        "primary": "excess_mmd2_dinov2",
+        "n_boot": 10000,
+        "boot_seed": 0,
+        "alpha": 0.05
+      },
+      "generation": {
+        "n_images": 1024,
+        "n_pilot": 192,
+        "chunk": 64,
+        "xT_seed_base": 1000000,
+        "coarse_steps": 4,
+        "methods": [
+          "teacher",
+          "coarse",
+          "gmmd"
+        ]
+      },
+      "fid": {
+        "reference_splits": [
+          "train",
+          "validation"
+        ],
+        "extractor": "inception-v3-compat",
+        "pr_extractor": "vgg16/fc2_relu",
+        "pr_k": 3,
+        "pr_reference_size": "match",
+        "pr_subset_seed": 0,
+        "n_boot": 2000
+      },
+      "name": "exp4_interval_replacement"
+    },
+    "packages": {
+      "python": "3.12.13",
+      "numpy": "2.4.6",
+      "scipy": "1.17.1",
+      "torch": "2.12.1+cu130",
+      "jax": "0.10.1",
+      "jaxlib": "0.10.1",
+      "sklearn": "1.9.0",
+      "umap": "0.5.12",
+      "matplotlib": "3.10.9",
+      "PIL": "12.2.0",
+      "pyarrow": "25.0.1",
+      "einops": "0.8.2",
+      "torchvision": "0.27.1+cu130"
+    },
+    "machine": {
+      "hostname": "atlas",
+      "platform": "Linux-6.8.0-90-generic-x86_64-with-glibc2.39",
+      "torch_cuda": "13.0",
+      "gpu": {
+        "name": "NVIDIA H200 NVL",
+        "index": 0,
+        "total_memory_gb": 139.8,
+        "cudnn_deterministic": false,
+        "allow_tf32": true
+      }
+    },
+    "argv": [
+      "run/exp4_supplementary_fid.py"
+    ]
+  }
+}

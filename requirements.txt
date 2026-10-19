@@ -19,3 +19,4 @@ umap-learn==0.5.12
 # gdown                # `python -m gmmd.download --checkpoint ...` (Google Drive)
 # einops               # only for tests/test_ibw_reference_parity.py (the reference code imports it)
 # torchvision          # only for features.extractor = "inception_pool3"
+# torch-fidelity       # exp4 FID / precision-recall (pulls torchvision; may upgrade torch -- check after)

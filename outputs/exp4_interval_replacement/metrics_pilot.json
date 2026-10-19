@@ -1,0 +1,244 @@
+{
+  "tag": "pilot",
+  "n_images": 192,
+  "chunks": [
+    0,
+    1,
+    2
+  ],
+  "n_reference": 30000,
+  "reference_splits": [
+    "train",
+    "validation"
+  ],
+  "pr_real_subset_size": 192,
+  "fid_extractor": "inception-v3-compat/2048",
+  "pr_extractor": "vgg16/fc2_relu",
+  "pr_k": 3,
+  "methods": {
+    "teacher": {
+      "fid": 56.56776525572613,
+      "precision": 0.7760416865348816,
+      "recall": 0.5416666865348816,
+      "f_score": 0.6380105606812225,
+      "bootstrap": {
+        "sd": 2.159763979762385
+      }
+    },
+    "coarse": {
+      "fid": 57.99330794685534,
+      "precision": 0.71875,
+      "recall": 0.4583333432674408,
+      "f_score": 0.5597345206823221,
+      "bootstrap": {
+        "sd": 2.1457268291193596,
+        "diff_vs_teacher_ci95": [
+          -2.1980385141984264,
+          4.990017320032493
+        ]
+      }
+    },
+    "gmmd": {
+      "fid": 58.05337558618217,
+      "precision": 0.7864583134651184,
+      "recall": 0.5,
+      "f_score": 0.6113360263860915,
+      "bootstrap": {
+        "sd": 2.2982427299300423,
+        "diff_vs_teacher_ci95": [
+          -2.2833234025078553,
+          5.06702010511363
+        ]
+      }
+    }
+  },
+  "real_subset_fid_same_n": 50.45441733030637,
+  "costs": {
+    "teacher": {
+      "n_images": 192,
+      "segment_s_per_img": 1.4571151960505329,
+      "segment_nfe_per_img": 40.0,
+      "prefix_s_per_img": 29.464785768912407,
+      "prefix_nfe_per_img": 800.0,
+      "suffix_s_per_img": 42.30531736357079,
+      "suffix_nfe_per_img": 1160.0,
+      "full_s_per_img": 73.22721832853374,
+      "full_nfe_per_img": 2000.0,
+      "throughput_img_per_gpu_hour": 49.16204769445985,
+      "peak_gb": 48.44522190093994,
+      "non_finite": 0,
+      "x0_range": [
+        -0.01342146098613739,
+        1.0408697128295898
+      ],
+      "frac_clipped": 0.007727888131436582
+    },
+    "coarse": {
+      "n_images": 192,
+      "segment_s_per_img": 0.14943322122659689,
+      "segment_nfe_per_img": 4.0,
+      "prefix_s_per_img": 29.464785768912407,
+      "prefix_nfe_per_img": 800.0,
+      "suffix_s_per_img": 42.64065480847785,
+      "suffix_nfe_per_img": 1160.0,
+      "full_s_per_img": 72.25487379861686,
+      "full_nfe_per_img": 1964.0,
+      "throughput_img_per_gpu_hour": 49.8236286459186,
+      "peak_gb": 48.44522190093994,
+      "non_finite": 0,
+      "x0_range": [
+        -0.025222131982445717,
+        1.1158610582351685
+      ],
+      "frac_clipped": 0.008288622212906679
+    },
+    "gmmd": {
+      "n_images": 192,
+      "segment_s_per_img": 43.75219183831359,
+      "segment_nfe_per_img": 1200.0,
+      "prefix_s_per_img": 29.464785768912407,
+      "prefix_nfe_per_img": 800.0,
+      "suffix_s_per_img": 42.774140302736974,
+      "suffix_nfe_per_img": 1160.0,
+      "full_s_per_img": 115.99111790996297,
+      "full_nfe_per_img": 3160.0,
+      "throughput_img_per_gpu_hour": 31.03685924291605,
+      "peak_gb": 49.85147666931152,
+      "non_finite": 0,
+      "x0_range": [
+        -0.022876862436532974,
+        1.0253076553344727
+      ],
+      "frac_clipped": 0.006880177665152587,
+      "fit_s_per_img": 43.75201520738483,
+      "sample_s_per_img": 0.00017663092876318842,
+      "fit_failures": 0
+    }
+  },
+  "provenance": {
+    "timestamp": "2026-10-18T17:58:59+00:00",
+    "git": {
+      "commit": "985d848d56b4fcb6ae3242be92885013f501870c",
+      "branch": "main",
+      "dirty": true
+    },
+    "config": {
+      "output": {
+        "dir": "outputs/exp4_interval_replacement"
+      },
+      "teacher": {
+        "config": "ve/celebahq_256_ncsnpp_continuous",
+        "checkpoint": "checkpoints/ve/celebahq_256_ncsnpp_continuous/checkpoint_48.pth",
+        "use_ema": true,
+        "allow_tf32": false,
+        "predictor": "reverse_diffusion",
+        "corrector": "none",
+        "noise_removal": true,
+        "batch_size": 64
+      },
+      "candidates": [
+        {
+          "name": "short",
+          "t": 0.6,
+          "s": 0.58,
+          "n_anchors": 16
+        },
+        {
+          "name": "long",
+          "t": 0.6,
+          "s": 0.45,
+          "n_anchors": 8
+        }
+      ],
+      "gmmd": {
+        "n_components": 1,
+        "n_grad_samples": 4,
+        "step_size": 0.1,
+        "n_iterations": 300,
+        "snapshot_iterations": [
+          100,
+          200,
+          300
+        ],
+        "init": "prior_free",
+        "init_spread": 1.0
+      },
+      "validation": {
+        "xT_seed_base": 500000,
+        "rollout_seed_base": 510000,
+        "gmmd_seed_base": 520000,
+        "n_per_set": 64,
+        "feature": "dinov2_vitb14",
+        "n_perm": 500,
+        "n_projections": 256,
+        "pixel_downsample": 8
+      },
+      "selection": {
+        "primary": "excess_mmd2_dinov2",
+        "n_boot": 10000,
+        "boot_seed": 0,
+        "alpha": 0.05
+      },
+      "generation": {
+        "n_images": 1024,
+        "n_pilot": 192,
+        "chunk": 64,
+        "xT_seed_base": 1000000,
+        "coarse_steps": 4,
+        "methods": [
+          "teacher",
+          "coarse",
+          "gmmd"
+        ]
+      },
+      "fid": {
+        "reference_splits": [
+          "train",
+          "validation"
+        ],
+        "extractor": "inception-v3-compat",
+        "pr_extractor": "vgg16/fc2_relu",
+        "pr_k": 3,
+        "pr_reference_size": "match",
+        "pr_subset_seed": 0,
+        "n_boot": 2000
+      },
+      "name": "exp4_interval_replacement"
+    },
+    "packages": {
+      "python": "3.12.13",
+      "numpy": "2.4.6",
+      "scipy": "1.17.1",
+      "torch": "2.12.1+cu130",
+      "jax": "0.10.1",
+      "jaxlib": "0.10.1",
+      "sklearn": "1.9.0",
+      "umap": "0.5.12",
+      "matplotlib": "3.10.9",
+      "PIL": "12.2.0",
+      "pyarrow": "25.0.1",
+      "einops": "0.8.2",
+      "torchvision": "0.27.1+cu130"
+    },
+    "machine": {
+      "hostname": "atlas",
+      "platform": "Linux-6.8.0-90-generic-x86_64-with-glibc2.39",
+      "torch_cuda": "13.0",
+      "gpu": {
+        "name": "NVIDIA H200 NVL",
+        "index": 0,
+        "total_memory_gb": 139.8,
+        "cudnn_deterministic": false,
+        "allow_tf32": true
+      }
+    },
+    "argv": [
+      "/home/juntingwu/.gmmd/gmmd/experiments/interval_replacement.py",
+      "evaluate",
+      "--n-chunks",
+      "3",
+      "--tag",
+      "pilot"
+    ]
+  }
+}

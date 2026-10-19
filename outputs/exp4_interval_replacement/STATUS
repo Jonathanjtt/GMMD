@@ -1,0 +1,8 @@
+2026-10-18T08:38:27Z chain started (pid 1126441, GPUs 0 1)
+2026-10-18T08:38:58Z chain started (pid 1127466, GPUs 0 1)
+2026-10-18T10:40:08Z selection frozen: short 800 -> 840 | 300 IBW iterations
+2026-10-18T10:40:31Z smoke test passed
+2026-10-18T10:40:31Z pilot started
+2026-10-18T17:59:13Z pilot passed: outputs/exp4_interval_replacement/results_table_pilot.md
+2026-10-18T17:59:13Z 1,024-image run started
+2026-10-19T05:44:31Z STOPPED by user decision: 1,024-image run not needed; report from the 192-image pilot

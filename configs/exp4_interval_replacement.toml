@@ -1,0 +1,104 @@
+# GMMD / exp4 -- single-interval replacement inside full CelebA-HQ 256 generation.
+#
+# Question: with the same pretrained score-SDE teacher, how does replacing ONE sampling interval
+# [i_t, i_s) of the 2000-step reverse-diffusion sampler with a per-anchor IBW mixture fit affect
+# final image quality (FID, precision/recall) and real computational cost?
+#
+# Stage 1 (validation):  python -m gmmd.experiments.interval_validation --config exp4_interval_replacement
+# Stage 2 (generation):  python -m gmmd.experiments.interval_replacement --config exp4_interval_replacement ...
+# Everything written under outputs/exp4_interval_replacement/.
+#
+# Time convention: Song et al.  t in [1e-5, 1] on the official grid linspace(1, 1e-5, 2000);
+# VE sigma(t) = 0.01 * (348/0.01)^t.  Grid index i <-> the state after steps [0, i).
+
+[output]
+dir = "outputs/exp4_interval_replacement"
+
+[teacher]
+config = "ve/celebahq_256_ncsnpp_continuous"
+checkpoint = "checkpoints/ve/celebahq_256_ncsnpp_continuous/checkpoint_48.pth"   # under the data root
+use_ema = true
+allow_tf32 = false             # full fp32, as every earlier GMMD experiment
+predictor = "reverse_diffusion"
+corrector = "none"             # user decision: predictor-only is the "original pipeline"
+noise_removal = true           # official celebahq default: return the last predictor mean
+batch_size = 64                # images per score-network call, every stage and every method
+
+# ---------------------------------------------------------------------------------------------
+# Candidate intervals: the only two with existing GMMD evaluations (results/conditional_multimodality,
+# outputs/exp3_*).  Both start at grid index 800 (t = 0.5998, sigma 5.30).
+#   short: 800 -> 840  (40 steps)   existing K=1 DINOv2 MMD^2 ~ 0.012 on one anchor (n = 64)
+#   long : 800 -> 1099 (299 steps)  existing K=1 prior-free 0.46; oracle teacher-init K=8 0.039,
+#          but oracle init needs teacher samples per anchor (>= 64 x 299 NFE), excluded below.
+[[candidates]]
+name = "short"
+t = 0.60
+s = 0.58
+n_anchors = 16
+
+[[candidates]]
+name = "long"
+t = 0.60
+s = 0.45
+n_anchors = 8                   # anchors 0-7, shared with "short" (its reference is a snapshot of the same rollouts)
+
+# ---------------------------------------------------------------------------------------------
+# The GMMD configuration family under validation.  Fixed from existing evidence before this run:
+# K = 1 (K = 2..40 gave no gain with prior-free init on either interval), B = 4, step 0.1
+# (the K = 1 step-size scan's winner on both intervals), prior-free init N(x_t, (sigma_t^2 -
+# sigma_s^2) I), which uses NO teacher samples.  Only the iteration count is validated, by
+# snapshotting one 300-iteration run.
+[gmmd]
+n_components = 1
+n_grad_samples = 4
+step_size = 0.1
+n_iterations = 300
+snapshot_iterations = [100, 200, 300]
+init = "prior_free"
+init_spread = 1.0
+
+# ---------------------------------------------------------------------------------------------
+[validation]
+xT_seed_base = 500000            # anchor a: x_T from seed 500000 + a, then the teacher prefix [0, 800)
+rollout_seed_base = 510000       # teacher rollout r of anchor a: image seed 510000 + 1000 a + r
+gmmd_seed_base = 520000          # IBW noise of anchor a: 520000 + a;  mixture draws: 530000 + a
+n_per_set = 64                   # teacher set A (reference), teacher set B (floor), GMMD set: 64 each
+feature = "dinov2_vitb14"        # on Tweedie-denoised states E[x_0 | x_s], as in exp1/exp3
+n_perm = 500
+n_projections = 256
+pixel_downsample = 8
+
+# Pre-registered selection rule (fixed before any validation result was examined).
+#   Per anchor a:  bandwidth h_a = median heuristic on the pooled teacher features A_a U B_a;
+#   E_a = MMD^2_u(GMMD_a, A_a; h_a),  F_a = MMD^2_u(B_a, A_a; h_a)  (teacher-teacher floor),
+#   excess X_a = E_a - F_a.  Numerical failure: fit stopped early or non-finite samples.
+#   Detection: permutation p < 0.05 for GMMD vs A (reported next to the B-vs-A rate).
+# 1. Interval: at 300 iterations, compare candidates on their SHARED anchors (0-7) by mean X;
+#    the lower wins unless the 95% paired-bootstrap CI of the difference contains 0, in which
+#    case prefer (a) lower numerical-failure rate, (b) lower detection rate, (c) longer interval.
+# 2. Iterations (within the chosen interval, all its anchors): the SMALLEST snapshot whose
+#    paired-bootstrap 95% CI of X_it - X_best has lower bound <= 0 and whose failure rate is
+#    not higher than the best snapshot's.
+[selection]
+primary = "excess_mmd2_dinov2"
+n_boot = 10000
+boot_seed = 0
+alpha = 0.05
+
+# ---------------------------------------------------------------------------------------------
+[generation]
+n_images = 1024                  # per method; user budget (GPUs 0+1); 5k is a resumable extension
+n_pilot = 192                    # first 192 of the same 1024 (3 chunks)
+chunk = 64
+xT_seed_base = 1000000           # test image k: seed 1000000 + k  (disjoint from validation)
+coarse_steps = 4                 # method B: 4 SMLD steps over the interval instead of its fine steps
+methods = ["teacher", "coarse", "gmmd"]
+
+[fid]
+reference_splits = ["train", "validation"]     # all 30 000 CelebA-HQ 256 images
+extractor = "inception-v3-compat"              # torch-fidelity's FID Inception (pool3, 2048-d)
+pr_extractor = "vgg16/fc2_relu"                # torch-fidelity's prc default (Kynkaanniemi et al.)
+pr_k = 3
+pr_reference_size = "match"                    # P/R against a fixed random real subset of n_images
+pr_subset_seed = 0
+n_boot = 2000

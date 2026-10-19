@@ -1,0 +1,225 @@
+{
+  "anchor": 9,
+  "xT_seed": 500009,
+  "candidates": {
+    "short": {
+      "interval": {
+        "name": "short",
+        "i_t": 800,
+        "i_s": 840,
+        "t": 0.5998038649559021,
+        "s": 0.5797941088676453,
+        "sigma_t": 5.297327041625977,
+        "sigma_s": 4.297153472900391,
+        "n_steps": 40,
+        "n_anchors": 16
+      },
+      "teacher_cost": {
+        "seconds": 186.37289192620665,
+        "nfe": 5120
+      },
+      "prefix_seconds_per_anchor": 46.48040761600714,
+      "nfe_prefix_per_anchor": 800,
+      "fit_seconds_per_anchor": 46.004566972726025,
+      "fit_nfe_per_anchor": 1200,
+      "stopped_early": null,
+      "grad_norm_first": 206.36289978027344,
+      "grad_norm_last": 4.002137660980225,
+      "floor_teacher": null,
+      "snapshots": {
+        "100": {
+          "dinov2": {
+            "bandwidth": 24.18852888039974,
+            "mmd2_gmmd": 1.3339081030202091,
+            "p_gmmd": 0.001996007984031936,
+            "mmd2_floor": -0.002154884524683931,
+            "p_floor": 0.7724550898203593,
+            "excess": 1.336062987544893,
+            "swd_gmmd": 1.5467497803812953,
+            "swd_floor": 0.13508540249252812
+          },
+          "pixel": {
+            "bandwidth": 25.044809820555685,
+            "mmd2_gmmd": 0.04051529446399149,
+            "p_gmmd": 0.001996007984031936,
+            "mmd2_floor": 0.00014124711208562957,
+            "p_floor": 0.2774451097804391,
+            "excess": 0.04037404735190586
+          },
+          "finite": true,
+          "variance": 6.940751552581787
+        },
+        "200": {
+          "dinov2": {
+            "bandwidth": 24.18852888039974,
+            "mmd2_gmmd": 0.3631898002907592,
+            "p_gmmd": 0.001996007984031936,
+            "mmd2_floor": -0.002154884524683931,
+            "p_floor": 0.7724550898203593,
+            "excess": 0.36534468481544313,
+            "swd_gmmd": 0.5925196922867894,
+            "swd_floor": 0.13508540249252812
+          },
+          "pixel": {
+            "bandwidth": 25.044809820555685,
+            "mmd2_gmmd": 0.0027325805005871118,
+            "p_gmmd": 0.001996007984031936,
+            "mmd2_floor": 0.00014124711208562957,
+            "p_floor": 0.2774451097804391,
+            "excess": 0.002591333388501482
+          },
+          "finite": true,
+          "variance": 6.526330947875977
+        },
+        "300": {
+          "dinov2": {
+            "bandwidth": 24.18852888039974,
+            "mmd2_gmmd": 0.019258213572800553,
+            "p_gmmd": 0.001996007984031936,
+            "mmd2_floor": -0.002154884524683931,
+            "p_floor": 0.7724550898203593,
+            "excess": 0.021413098097484484,
+            "swd_gmmd": 0.1870617364070835,
+            "swd_floor": 0.13508540249252812
+          },
+          "pixel": {
+            "bandwidth": 25.044809820555685,
+            "mmd2_gmmd": 0.00012986600088749078,
+            "p_gmmd": 0.31736526946107785,
+            "mmd2_floor": 0.00014124711208562957,
+            "p_floor": 0.2774451097804391,
+            "excess": -1.1381111198138782e-05
+          },
+          "finite": true,
+          "variance": 6.425502777099609
+        }
+      }
+    }
+  },
+  "provenance": {
+    "timestamp": "2026-10-18T10:09:04+00:00",
+    "git": {
+      "commit": "985d848d56b4fcb6ae3242be92885013f501870c",
+      "branch": "main",
+      "dirty": true
+    },
+    "config": {
+      "output": {
+        "dir": "outputs/exp4_interval_replacement"
+      },
+      "teacher": {
+        "config": "ve/celebahq_256_ncsnpp_continuous",
+        "checkpoint": "checkpoints/ve/celebahq_256_ncsnpp_continuous/checkpoint_48.pth",
+        "use_ema": true,
+        "allow_tf32": false,
+        "predictor": "reverse_diffusion",
+        "corrector": "none",
+        "noise_removal": true,
+        "batch_size": 64
+      },
+      "candidates": [
+        {
+          "name": "short",
+          "t": 0.6,
+          "s": 0.58,
+          "n_anchors": 16
+        },
+        {
+          "name": "long",
+          "t": 0.6,
+          "s": 0.45,
+          "n_anchors": 8
+        }
+      ],
+      "gmmd": {
+        "n_components": 1,
+        "n_grad_samples": 4,
+        "step_size": 0.1,
+        "n_iterations": 300,
+        "snapshot_iterations": [
+          100,
+          200,
+          300
+        ],
+        "init": "prior_free",
+        "init_spread": 1.0
+      },
+      "validation": {
+        "xT_seed_base": 500000,
+        "rollout_seed_base": 510000,
+        "gmmd_seed_base": 520000,
+        "n_per_set": 64,
+        "feature": "dinov2_vitb14",
+        "n_perm": 500,
+        "n_projections": 256,
+        "pixel_downsample": 8
+      },
+      "selection": {
+        "primary": "excess_mmd2_dinov2",
+        "n_boot": 10000,
+        "boot_seed": 0,
+        "alpha": 0.05
+      },
+      "generation": {
+        "n_images": 1024,
+        "n_pilot": 192,
+        "chunk": 64,
+        "xT_seed_base": 1000000,
+        "coarse_steps": 4,
+        "methods": [
+          "teacher",
+          "coarse",
+          "gmmd"
+        ]
+      },
+      "fid": {
+        "reference_splits": [
+          "train",
+          "validation"
+        ],
+        "extractor": "inception-v3-compat",
+        "pr_k": 3,
+        "pr_reference_size": "match",
+        "pr_subset_seed": 0,
+        "n_boot": 2000
+      },
+      "name": "exp4_interval_replacement"
+    },
+    "packages": {
+      "python": "3.12.13",
+      "numpy": "2.4.6",
+      "scipy": "1.17.1",
+      "torch": "2.12.1+cu130",
+      "jax": "0.10.1",
+      "jaxlib": "0.10.1",
+      "sklearn": "1.9.0",
+      "umap": "0.5.12",
+      "matplotlib": "3.10.9",
+      "PIL": "12.2.0",
+      "pyarrow": "25.0.1",
+      "einops": "0.8.2",
+      "torchvision": "0.27.1+cu130"
+    },
+    "machine": {
+      "hostname": "atlas",
+      "platform": "Linux-6.8.0-90-generic-x86_64-with-glibc2.39",
+      "torch_cuda": "13.0",
+      "gpu": {
+        "name": "NVIDIA H200 NVL",
+        "index": 0,
+        "total_memory_gb": 139.8,
+        "cudnn_deterministic": true,
+        "allow_tf32": false
+      }
+    },
+    "argv": [
+      "/home/juntingwu/.gmmd/gmmd/experiments/interval_validation.py",
+      "--config",
+      "exp4_interval_replacement",
+      "--shard",
+      "1",
+      "--n-shards",
+      "2"
+    ]
+  }
+}

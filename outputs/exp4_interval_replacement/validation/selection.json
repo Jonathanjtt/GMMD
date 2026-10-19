@@ -1,0 +1,71 @@
+{
+  "frozen_at": "2026-10-18T10:38:59+0000",
+  "interval": {
+    "name": "short",
+    "t": 0.5998038649559021,
+    "s": 0.5797941088676453,
+    "i_t": 800,
+    "i_s": 840,
+    "sigma_t": 5.297327041625977,
+    "sigma_s": 4.297153472900391,
+    "teacher_steps": 40
+  },
+  "gmmd": {
+    "n_components": 1,
+    "n_grad_samples": 4,
+    "step_size": 0.1,
+    "n_iterations": 300,
+    "init": "prior_free",
+    "init_spread": 1.0
+  },
+  "rule1": {
+    "shared_anchors": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "diff": "X[short] - X[long]",
+    "mean": -0.3137421378870521,
+    "ci": [
+      -0.3596525533809517,
+      -0.2758020487671838
+    ],
+    "chosen": "short",
+    "reason": "short has lower excess MMD^2 on all shared anchors' mean (CI excludes 0)"
+  },
+  "rule2": {
+    "best": "300",
+    "comparisons": {
+      "100": {
+        "mean": 1.2801724742326845,
+        "ci": [
+          1.2383561668138132,
+          1.3179876841114233
+        ],
+        "failure_rate": 0.0
+      },
+      "200": {
+        "mean": 0.5536520718639759,
+        "ci": [
+          0.5004603528898561,
+          0.6053206982862153
+        ],
+        "failure_rate": 0.0
+      },
+      "300": {
+        "mean": 0.0,
+        "ci": [
+          0.0,
+          0.0
+        ],
+        "failure_rate": 0.0
+      }
+    },
+    "chosen_iterations": 300
+  }
+}
