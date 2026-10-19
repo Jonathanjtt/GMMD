@@ -181,3 +181,20 @@
   0.125 → 0.124 (teacher 0.257), intensity SD over images 0.116 → 0.139 (teacher 0.120).
   → Rollout shift was a real but secondary problem; correcting it with more targets of the same
   (detail-losing) construction does not recover the images.
+
+## 2026-10-19 post-hoc checks while the ablation runs
+
+* Precision (`frozen_fp32`: the frozen configuration with IDENTICAL seeds, TF32 off; test trajs
+  0–1 × 10 intervals; `gmmd/exp5/diag_precision.py`): component means move 0.0001–0.0008
+  component SDs (fresh-seed replicate centroid: 0.0007–0.15 SDs), variance ratio 1.0000 ± 0.0002,
+  paired stage-A excess fp32 − TF32: DINOv2 −0.0003 ± 0.0008 (mean 0.456), pixel −0.00002 ±
+  0.00006 (mean 0.035). → TF32 is irrelevant to the target quality.
+* Early test stage A/B/C (16–17 pairs, mostly trajs 0–1; preliminary, the full 80 pairs come after
+  the test references): same pattern as the pilot on val — stage B small, stage C ≈ stage A for
+  main, the untrained init closer to the teacher than the IBW targets at j2–j8.
+* Final images: the Laplacian energy of every student's output is nearly constant over images
+  (init 0.062 ± 0.002, main 0.060 ± 0.005) → dominated by the final draw's noise, not detail.
+  The IBW terminal fits have SD 0.0135 per pixel (> σ_min = 0.01), and their T(z) bank keeps a
+  spread of 0.0083 (train) / 0.0101 (refine) around its mean — the residual noise the student
+  learns to add. Refined images: Laplacian 0.086 ± 0.045 (teacher 0.090 ± 0.023) at contrast 0.124
+  → grain (visible in `figures/diag/fig_samples_same_xT_refined`), not detail.

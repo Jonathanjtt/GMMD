@@ -252,11 +252,13 @@ move from p ≤ 0.05 to p = 0.06–0.32 — not significant at n = 32, which is 
 paired bootstrap): FID 117.46 ± 1.16 vs 111.73 ± 0.81 for main, refined − main [+4.2, +8.2];
 refined − ancestral-10 [+20.8, +26.6]; refined − untrained init [+37.8, +42.9]. Precision rises
 (0.649 → 0.679), recall stays 0, per-image contrast is unchanged (0.124 vs 0.125; teacher 0.257),
-and the spread of mean intensity over images grows past the teacher's (SD 0.116 → 0.139; teacher
-0.120). Refinement corrects the coarse statistics of where the rollouts go — the boundary
+the spread of mean intensity over images grows past the teacher's (SD 0.116 → 0.139; teacher
+0.120), and more raw values leave [0, 1] before the common uint8 quantisation (3.1 % of values
+clipped vs 1.0 % for main, raw range −3.9 … 2.4 vs −0.7 … 1.5; every image finite). Refinement corrects the coarse statistics of where the rollouts go — the boundary
 dispersion above — but not what each IBW target does to fine detail (§3), and FID does not reward
 the trade (`figures/fig_trajectory_student_refined`: the refined rollouts are still smooth,
-low-contrast faces).
+low-contrast faces; `figures/diag/fig_samples_same_xT_refined`: on the same x_T the refined
+images are as washed out as main's and carry visible high-frequency colour grain).
 
 ## 7. Ablation: the same network trained on teacher endpoints
 
@@ -272,6 +274,36 @@ trajectories 2.4, IBW fits 3.1), student training 1.8 GPU-h; one-off P0/P1 selec
 evaluation-only work 3.6 GPU-h and counting. The standalone sampler's record for every generated
 chunk: 10 network evaluations and 10 mixture draws per image, 0 teacher score evaluations, 0
 teachers constructed, 0 IBW iterations, inference mode, no gradients, 0 optimizer steps.
+
+## 9. Limitations
+
+* **The target family is fixed by the existing IBW implementation**: uniform-weight isotropic
+  mixtures, fitted by reverse KL. No richer covariance was tried, because the implementation does
+  not support one and the task forbids silently replacing it; the student uses the same isotropic
+  family per component. The detail loss of §3 is consistent with a structural bias of exactly this
+  combination (mode-seeking reverse KL, one variance per component in d = 196,608), which the knobs
+  the implementation exposes — step size, initialisation, initial covariance, iteration count —
+  did not remove (P0, P1, fine grid). Whether a diagonal or low-rank-plus-isotropic IBW would
+  remove it is untested.
+* **The selected targets are early-stopped transients** (25 iterations), chosen on 40 validation
+  pairs from 4 trajectories; converged fits scored worse. Their quality depends on the init seed,
+  which is why stage B is compared with an independent replicate fit, not with a second sample set
+  of the same fit.
+* **Metric reach.** DINOv2 on Tweedie-denoised states is not a fidelity measure at j0–j2 (the
+  teacher's own states denoise to colour noise there); 8×-pooled pixel MMD has little power at high
+  noise. Each conditional comparison uses 32 vs 32 + 32 samples, so a non-significant test is not
+  equality. FID at n = 1,024 carries a common upward bias (real-vs-real 15.1); only paired
+  differences between methods on the same 1,024 x_T are interpreted.
+* **Scope.** One teacher (CelebA-HQ 256, VE, predictor-only SMLD), one partition (10 × 200 steps),
+  K = 8, one refinement round (32 trajectories), one endpoint budget for the ablation (E = 4).
+  GPUs 0 and 1 were shared with other users' jobs, so wall-clock costs include contention.
+* **Precision.** IBW fits and the student ran with TF32 (user decision); every teacher reference,
+  endpoint and evaluation feature is fp32. TF32 does not matter for the targets: refitting 20 test
+  pairs (2 trajectories × 10 intervals) in fp32 with identical init, noise and evaluation seeds
+  (`frozen_fp32`, `gmmd/exp5/diag_precision.py`, `figures/diag/precision_check_test.json`) moves the
+  component means by 0.0001–0.0008 component SDs (an independent replicate's centroid moves
+  0.0007–0.15 SDs), leaves the variances unchanged to 2 × 10⁻⁴, and changes the stage-A excess by
+  −0.0003 ± 0.0008 (DINOv2; mean excess 0.46) and −0.00002 ± 0.00006 (pixel; mean 0.035).
 
 
 ---
@@ -302,7 +334,7 @@ variant)` so reruns reproduce the same fits and samples.
 | ablation | `$M endpoints --split train --n-endpoints 4`; `$M train --tag ablation_endpoints --data endpoints` | |
 | timing | `bash run/exp5_timing.sh` | uncached, synchronised, fp32 and TF32 |
 | diagnostics | `$M generate --method ibwchain --n 64`; `$M generate --method hybrid:<a>:<b>:<mask> --n 192`; `python -m gmmd.exp5.diag_detail --split {val,test} --students ...`; `$M figtraj --method student:main`; `python -m gmmd.exp5.diag --split val --its 25 50 300` | online-IBW chain, hybrid samplers, per-interval detail, trajectories, IBW snapshots |
-| tables, costs, figures | `$M tables`, `$M costs --student main refined`, `python -m gmmd.exp5.figures` | |
+| tables, costs, figures | `$M tables`, `$M costs --student main` (or `main refined` to charge the refinement), `python -m gmmd.exp5.figures` | |
 
 The full main run as executed: `run/exp5_main.sh` (both chains; GPU0's chain was handed over to
 `run/exp5_main_part2.sh` after the main student's shift — see RUNLOG).

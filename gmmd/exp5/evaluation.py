@@ -39,9 +39,9 @@ def _ckpt(cfg, tag, which="best"):
     return C.out_dir(cfg) / "student" / tag / f"ckpt_{which}.pt"
 
 
-def _student(cfg, tag, which, device):
+def _student(cfg, tag, which, device, final_noise=True):
     from gmmd.exp5.sampler import StudentSampler
-    return StudentSampler(_ckpt(cfg, tag, which), device=device, precision="tf32")
+    return StudentSampler(_ckpt(cfg, tag, which), device=device, precision="tf32", final_noise=final_noise)
 
 
 # ============================================================================== stage A/B/C
@@ -257,8 +257,9 @@ def _chunk_seeds(cfg, c):
 
 
 def stage_generate(cfg, a, rest):
-    """``--method student:<tag>[:<ckpt>]``, ``coarse:<kind>:<n_steps>`` or ``ibwchain[:<variant>]``
-    (the online-IBW diagnostic, :mod:`gmmd.exp5.oracle`); ``--n`` images."""
+    """``--method student:<tag>[:<ckpt>[:meanlast]]``, ``coarse:<kind>:<n_steps>`` or
+    ``ibwchain[:<variant>]`` (the online-IBW diagnostic, :mod:`gmmd.exp5.oracle`); ``--n`` images.
+    ``meanlast`` is a diagnostic: the last transition returns the drawn component's mean."""
     ap = argparse.ArgumentParser(prog="generate", allow_abbrev=False)
     ap.add_argument("--method", required=True)
     ap.add_argument("--n", type=int, default=None)
@@ -274,7 +275,8 @@ def stage_generate(cfg, a, rest):
     kind, *args = o.method.split(":")
     dev = torch.device(a.device)
     if kind == "student":
-        S = _student(cfg, args[0], args[1] if len(args) > 1 else "best", a.device)
+        S = _student(cfg, args[0], args[1] if len(args) > 1 else "best", a.device,
+                     final_noise=not (len(args) > 2 and args[2] == "meanlast"))
     elif kind == "hybrid":                         # loads its two students per chunk
         teacher = None
     elif kind == "ibwchain":                       # same precision as the offline IBW fits
@@ -354,12 +356,20 @@ def _images(cfg, method, n):
 
 
 def image_stats(imgs):
-    """Per-image contrast (SD over all pixels and channels, [0, 1] scale) and mean intensity of
-    uint8 images (n, H, W, 3): mean and SD over images."""
+    """Per-image contrast (SD over all pixels and channels, [0, 1] scale), mean intensity and
+    high-frequency energy (RMS of the 3x3 Laplacian per channel, as in ``diag_detail``) of uint8
+    images (n, H, W, 3): mean and SD over images.  The Laplacian energy counts noise as well as
+    detail, so it is read together with the contrast and the images."""
     x = imgs.reshape(len(imgs), -1).astype(np.float64) / 255.0
     c, mu = x.std(1), x.mean(1)
+    lap = []
+    for k in range(0, len(imgs), 128):
+        y = imgs[k:k + 128].astype(np.float64) / 255.0
+        L = (y[:, :-2, 1:-1] + y[:, 2:, 1:-1] + y[:, 1:-1, :-2] + y[:, 1:-1, 2:] - 4 * y[:, 1:-1, 1:-1])
+        lap.append(np.sqrt((L ** 2).reshape(len(y), -1).mean(1)))
+    lap = np.concatenate(lap)
     return dict(contrast_mean=float(c.mean()), contrast_sd=float(c.std()), intensity_mean=float(mu.mean()),
-                intensity_sd=float(mu.std()))
+                intensity_sd=float(mu.std()), laplacian_rms_mean=float(lap.mean()), laplacian_rms_sd=float(lap.std()))
 
 
 def stage_fid(cfg, a, rest):

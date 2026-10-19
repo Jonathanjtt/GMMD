@@ -357,7 +357,9 @@ METHOD_LABELS = {"teacher": "teacher (2,000-step SMLD)", "student:main": "IBW-GM
                  "student:refined": "IBW-GMMD student, refined", "student:ablation_endpoints": "ablation: endpoint NLL",
                  "student:init_main": "untrained init (Tweedie + noise)", "student:pilot": "pilot student",
                  "student:init_pilot": "untrained init (pilot)",
-                 "ibwchain": "IBW chain (online IBW, no network)"}
+                 "ibwchain": "IBW chain (online IBW, no network)",
+                 "student:main:best:meanlast": "IBW-GMMD student, noise-free last step (diagnostic)",
+                 "student:refined:best:meanlast": "refined, noise-free last step (diagnostic)"}
 
 
 def method_label(m):

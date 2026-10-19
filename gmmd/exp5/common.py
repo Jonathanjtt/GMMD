@@ -98,7 +98,7 @@ def variant_cfg(cfg, name):
         c = float(name[len("p0_c"):].replace("p", "."))
         return 100 + int(round(100 * c)), dict(name=name, scheme="prior_free", spread=1.0, var="gap",
                                                 step_c=c)
-    if name == "frozen" or name.startswith("frozen_r"):
+    if name in ("frozen", "frozen_fp32") or name.startswith("frozen_r"):
         # "frozen_r<k>": an independent replicate of the frozen configuration (fresh init and noise
         # seeds), used as the IBW-vs-IBW floor of stage B
         sel = json.loads((out_dir(cfg) / "selection.json").read_text())
@@ -107,6 +107,10 @@ def variant_cfg(cfg, name):
                  n_iterations=sel["iterations"])
         if name == "frozen":
             return k, v
+        if name == "frozen_fp32":
+            # post-hoc precision check: the frozen configuration with IDENTICAL seeds, fitted with
+            # TF32 off (``--set precision.ibw_tf32=false``) -- any difference is due to precision
+            return k, dict(v, precision_check="fp32 (run with precision.ibw_tf32=false)")
         rep = int(name[len("frozen_r"):])
         return 1000 + rep, dict(v, replicate=rep)
     raise KeyError(f"unknown IBW variant {name!r}")

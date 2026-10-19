@@ -38,7 +38,7 @@ __all__ = ["StudentSampler", "main"]
 
 
 class StudentSampler:
-    def __init__(self, ckpt, device="cuda", precision="tf32", weights="ema"):
+    def __init__(self, ckpt, device="cuda", precision="tf32", weights="ema", final_noise=True):
         ck = torch.load(ckpt, map_location="cpu", weights_only=False)
         self.ckpt_path = str(ckpt)
         self.meta = ck["meta"]
@@ -54,6 +54,10 @@ class StudentSampler:
         self.image_shape = tuple(self.net.image_shape)
         self.sigma_max = float(self.meta["sigma_max"])
         self.step = int(ck.get("step", -1))
+        # final_noise=False is a post-hoc DIAGNOSTIC, not the method: the last transition returns the
+        # drawn component's mean (same x_T, components and states as the regular sampler; the last
+        # noise draw is made and discarded), to measure what the final draw's noise costs
+        self.final_noise = bool(final_noise)
 
     def _set_precision(self):
         on = self.precision == "tf32"
@@ -77,7 +81,10 @@ class StudentSampler:
             k = torch.stack([torch.multinomial(p[b], 1, generator=gens.gens[b])[0] for b in range(B)])
             eps = gens.randn(self.image_shape)
             idx = torch.arange(B, device=x.device)
-            x = means[idx, k] + (0.5 * logv[idx, k]).exp().view(B, 1, 1, 1) * eps   # ONE GMM draw
+            sd = (0.5 * logv[idx, k]).exp().view(B, 1, 1, 1)
+            if j == self.n_intervals - 1 and not self.final_noise:
+                sd = torch.zeros_like(sd)                          # diagnostic only (see __init__)
+            x = means[idx, k] + sd * eps                           # ONE GMM draw
             draws += B
             comps.append(k.cpu())
             if keep:
@@ -114,7 +121,7 @@ class StudentSampler:
             ibw_iterations=ibw_batched.ITERATION_COUNTER[0] - c0["ibw_iterations"],
             inference_mode=True, any_param_requires_grad=any(p.requires_grad for p in self.net.parameters()),
             any_param_grad=any(p.grad is not None for p in self.net.parameters()),
-            optimizer_steps=0, precision=self.precision, weights=self.weights,
+            optimizer_steps=0, precision=self.precision, weights=self.weights, final_noise=self.final_noise,
             student_parameters=count_parameters(self.net), checkpoint=self.ckpt_path, step=self.step)
         rec["verified"] = bool(rec["network_evals_per_image"] == self.n_intervals
                                and rec["gmm_draws_per_image"] == self.n_intervals

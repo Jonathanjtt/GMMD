@@ -74,5 +74,5 @@ fp32 37 ms/img/NFE, TF32 11 ms, bf16 10 ms (batch 64–128); training fwd+bwd 10
       student:ablation_endpoints student:init_main coarse:reverse_diffusion:10 coarse:ancestral:10
       coarse:ancestral:20 coarse:ancestral:50` (one file, one bootstrap), figures
       (`python -m gmmd.exp5.figures`; stage ABC + kernels vs teacher on test; quality vs NFE),
-      `$M tables --abc main refined ablation_endpoints init_main --fid n1024`, `$M costs --student main refined`,
+      `$M tables --abc main refined ablation_endpoints init_main --fid n1024`, `$M costs --student main` (break-even of the deployed main student; refinement data is its own category),
       REPORT.md short answer + sections 4-8, commit locally.
