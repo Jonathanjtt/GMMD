@@ -135,7 +135,7 @@
 
 * Main student (`student/main`, 64 train trajectories, 12,000 steps, 1.80 h on GPU0): val NLL
   1.4273 → 1.4084, flat from ≈ 4,500 steps; KL(q_IBW‖q_φ)/dim at the end: j5 0.0005, j7 0.003,
-  j8 0.0079 (pilot 0.0086); weight entropy 0.23–0.29 nats (collapse as in the pilot).
+  j8 0.0079 (pilot 0.0086); weight entropy 0.23–0.29 nats on the last training batches (raw weights; collapse as in the pilot). At generation (EMA best checkpoint, student states): H(π) 0.27 at j0, 0.89–1.07 at j1–j9; draw perplexity 1.4–3.1.
 * IBW chain (`ibwchain`, 64 images, frozen config online at all 10 transitions from the same x_T;
   8,001 teacher evaluations per image, 14,854 s on the shared GPU1 = 232 s/image; peak 33.6 GB):
   washed-out faces like the student's. n_eff of the online fits 1.0 at j0–j1 (components on top of

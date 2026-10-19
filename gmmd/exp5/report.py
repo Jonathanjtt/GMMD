@@ -118,8 +118,9 @@ def _sum_json(paths, keys):
 
 
 # cost categories: what the break-even charges to the amortised sampler, and what it does not
-COST_TRAINING_DATA, COST_TRAINING, COST_SELECTION, COST_EVAL, COST_ABLATION = (
-    "training data", "student training", "selection (one-off: P0/P1 on val)", "evaluation only", "ablation")
+COST_TRAINING_DATA, COST_TRAINING, COST_SELECTION, COST_EVAL, COST_ABLATION, COST_REFINE = (
+    "training data", "student training", "selection (one-off: P0/P1 on val)", "evaluation only", "ablation",
+    "refinement data (student-rollout anchors + fits)")
 
 
 def _cost_category(kind, split, variant=None, student=None, student_tag=None):
@@ -133,7 +134,9 @@ def _cost_category(kind, split, variant=None, student=None, student_tag=None):
         return COST_EVAL if (variant or "").startswith("frozen_r") else COST_SELECTION
     if split == "test" or kind == "refs" or (variant or "").startswith("frozen_r"):
         return COST_EVAL
-    return COST_TRAINING_DATA                              # train / refine anchors and their fits
+    if split == "refine":                                  # charged only to a refined student
+        return COST_REFINE
+    return COST_TRAINING_DATA                              # train anchors and their fits
 
 
 def stage_costs(cfg, a, rest):
@@ -189,8 +192,12 @@ def stage_costs(cfg, a, rest):
         by_cat[v["category"]] = by_cat.get(v["category"], 0.0) + v["gpu_s"]
     out = dict(rows=rows, by_category_gpu_s=by_cat, timing=timing, students_charged=o.student)
     # break-even, at MATCHED precision and batch: images after which the amortised sampler's
-    # offline cost (training data + student training) is repaid by its per-image saving
-    offline = by_cat.get(COST_TRAINING_DATA, 0.0) + by_cat.get(COST_TRAINING, 0.0)
+    # offline cost (training data + student training [+ refinement data for a refined student]) is
+    # repaid by its per-image saving
+    refined = any(t.startswith("refined") for t in o.student)
+    offline = (by_cat.get(COST_TRAINING_DATA, 0.0) + by_cat.get(COST_TRAINING, 0.0)
+               + (by_cat.get(COST_REFINE, 0.0) if refined else 0.0))
+    out["offline_charged"] = [COST_TRAINING_DATA, COST_TRAINING] + ([COST_REFINE] if refined else [])
     out["break_even"] = {}
     tag = o.student[-1]
     for prec in ("fp32", "tf32"):
@@ -220,7 +227,8 @@ def stage_costs(cfg, a, rest):
                          f"{v['images_per_gpu_hour']:.0f} | {v['peak_gb']:.1f} |")
     for k, b in out["break_even"].items():
         lines += ["", f"Break-even ({k}, student {tag} vs teacher): offline {b['offline_gpu_s'] / 3600:.1f} GPU-h "
-                      f"(training data + student training) / saving {b['saving_s_per_image']:.2f} s per image "
+                      f"({' + '.join(out['offline_charged'])}; students {', '.join(o.student)}) / saving "
+                      f"{b['saving_s_per_image']:.2f} s per image "
                       f"(speed-up {b['speedup']:.0f}x) = {b['images_to_amortise']:.0f} images "
                       f"({b['images_to_amortise_with_selection']:.0f} including the one-off selection)"]
     text = "\n".join(lines)

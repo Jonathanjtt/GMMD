@@ -167,9 +167,13 @@ has fallen to 0.1 % (j0) … 24 % (j9) of its initial value. Tables: `fitsummary
 draw an interval uniformly, then a pair, then fresh samples from the cached mixture (terminal
 interval: rows of its cached 32-sample pushforward bank, since `T` needs the teacher). Validation NLL 1.4273 → 1.4084 nats/dim, flat from
 ≈ 4,500 steps (the best checkpoint is step 4,750); KL(q_IBW ‖ q_φ) per dimension at the end:
-≤ 0.0005 at j0–j5, 0.0013 (j6), 0.0033 (j7), 0.0079 (j8). The global mixture weights collapse onto
-one or two components (weight entropy 0.23–0.29 nats; §3 explains why this is nearly
-forward-KL-optimal for these targets). Every variance is positive by construction
+≤ 0.0005 at j0–j5, 0.0013 (j6), 0.0033 (j7), 0.0079 (j8). **Component usage** (the sampler's own
+draws, 1,024 images, best checkpoint): the per-state weight entropy is 0.27 nats at j0 and
+0.89–1.07 at j1–j9 (uniform: ln 8 = 2.08), and over images two or three components take almost
+every draw (perplexity of the drawn components 1.4 at j0, 2.4–3.1 at j1–j9; components 3 and 6
+at j3–j7, component 7 at j8–j9). The weights are not uniform like the IBW targets' because in
+d = 196,608 the eight target components differ by ~10⁻⁴ nats per dimension and a few slightly
+wider isotropic components are nearly forward-KL optimal (§3). Every variance is positive by construction
 (`log v = log v_ref + 6 tanh(·/6)`); every generated image is finite (raw range −0.70 … 1.48,
 ≤ 3.1 % of values clipped by the common uint8 quantisation).
 
