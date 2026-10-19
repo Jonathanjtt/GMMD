@@ -1,0 +1,114 @@
+{
+  "tag": "n1024_init",
+  "n_images": 1024,
+  "n_reference": 30000,
+  "reference_splits": [
+    "train",
+    "validation"
+  ],
+  "fid_extractor": "inception-v3-compat/2048",
+  "pr_extractor": "vgg16/fc2_relu",
+  "pr_k": 3,
+  "preprocessing": "sampler float output -> clip(x*255, 0, 255).astype(uint8), identical for every method",
+  "methods": {
+    "teacher": {
+      "fid": 22.552345775689588,
+      "precision": 0.7685546875,
+      "recall": 0.4638671875,
+      "f_score": 0.5785475064381933,
+      "image_stats": {
+        "contrast_mean": 0.25745324113218293,
+        "contrast_sd": 0.039377642220595054,
+        "intensity_mean": 0.417916521897503,
+        "intensity_sd": 0.11975746926056924
+      },
+      "bootstrap": {
+        "sd": 0.6796646143152738
+      }
+    },
+    "student:init_main": {
+      "fid": 77.6067483581439,
+      "precision": 0.5771484375,
+      "recall": 0.0009765625,
+      "f_score": 0.001949825802364865,
+      "image_stats": {
+        "contrast_mean": 0.17625562659488658,
+        "contrast_sd": 0.03195505695666063,
+        "intensity_mean": 0.42414528587285205,
+        "intensity_sd": 0.0956344918795103
+      },
+      "bootstrap": {
+        "sd": 0.800424073499566,
+        "diff_vs_teacher_ci95": [
+          49.31939604736915,
+          53.289198642378246
+        ]
+      }
+    },
+    "student:main": {
+      "fid": 111.73391799216279,
+      "precision": 0.6494140625,
+      "recall": 0.0,
+      "f_score": 0.0,
+      "image_stats": {
+        "contrast_mean": 0.12497500947080095,
+        "contrast_sd": 0.037233677130649186,
+        "intensity_mean": 0.397095553781472,
+        "intensity_sd": 0.11571068297641966
+      },
+      "bootstrap": {
+        "sd": 0.8080385415369427,
+        "diff_vs_teacher_ci95": [
+          83.5822212490329,
+          87.52183392579443
+        ]
+      }
+    },
+    "coarse:ancestral:10": {
+      "fid": 94.37983339376268,
+      "precision": 0.5224609375,
+      "recall": 0.0,
+      "f_score": 0.0,
+      "image_stats": {
+        "contrast_mean": 0.17403528330776674,
+        "contrast_sd": 0.030459871531158006,
+        "intensity_mean": 0.40653196411584713,
+        "intensity_sd": 0.0899456208059124
+      },
+      "bootstrap": {
+        "sd": 0.9813239717086043,
+        "diff_vs_teacher_ci95": [
+          65.64977574137218,
+          70.14591391006053
+        ]
+      }
+    }
+  },
+  "pairwise_diff_ci95": {
+    "teacher - student:init_main": [
+      -53.289198642378246,
+      -49.31939604736915
+    ],
+    "teacher - student:main": [
+      -87.52183392579443,
+      -83.5822212490329
+    ],
+    "teacher - coarse:ancestral:10": [
+      -70.14591391006053,
+      -65.64977574137218
+    ],
+    "student:init_main - student:main": [
+      -36.23477221961322,
+      -32.469117801108816
+    ],
+    "student:init_main - coarse:ancestral:10": [
+      -19.305903315705525,
+      -14.171629449122392
+    ],
+    "student:main - coarse:ancestral:10": [
+      15.001170934745259,
+      19.862291087916443
+    ]
+  },
+  "real_subset_fid_same_n": 15.057124227929819
+}

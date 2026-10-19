@@ -40,16 +40,34 @@ fp32 37 ms/img/NFE, TF32 11 ms, bf16 10 ms (batch 64–128); training fwd+bwd 10
       diagnostic (`gmmd/exp5/oracle.py`, `generate --method ibwchain`), `prior_free_fine` iteration grid,
       claims for generation chunks and evaluation pairs (both GPUs can share them).
 
-## Running (tmux)
-- `exp5-p2`: run/exp5_pilot_p2.sh — pilot fits done (trajs 0-7); pilot student (3,000 steps, GPU0),
-  then stage A/B/C on val, 192-image rollouts (student, RD10, ANC10), preliminary FID, shift.
-  Background: main train fits trajs 8-63 on GPU1 (`run/logs/exp5_main_fits_gpu1.log`).
-- `exp5-fine`: post-hoc fine iteration grid on val (fit + evalfits).  `exp5-rep`: val frozen_r1 fits.
-- GPU1 shared with another user's jobs since ~15:40 UTC (3-5x slower); GPU0 carries the critical path.
+## Done (2026-10-19, main run so far)
+- [x] P2 pilot (8 trajs, 3,000 steps): stage B at the IBW replicate floor j0-j8; end to end the trained
+      pilot is WORSE than its untrained init (FID n=192: 126.2 vs 98.3); IBW targets carry a mean bias
+      (the Tweedie Gaussian is closer to the teacher per interval). Commit f749bc1.
+- [x] Main fits: train 640 (64 trajs), test 80 + replicate frozen_r1 80. Main student (12,000 steps,
+      val NLL 1.4084, flat from ~4,500; ckpt_best = step 4,750). Commits 73ce166, c9f418c.
+- [x] IBW chain (online IBW, 64 images, 8,001 teacher evals/img): washed out like the student.
+- [x] FID n = 1,024 (paired bootstrap): teacher 22.55, untrained init 77.61, ANC10 94.38,
+      **main 111.73**, RD10 442.16 (`fid_n1024_first.json`, `fid_n1024_init.json`); n = 64 incl. the IBW
+      chain in `fid_n64_ibwchain.json`.
+- [x] Detail diagnostic (`gmmd/exp5/diag_detail.py`, val): IBW targets keep 0.24-0.65 of the teacher's
+      fine detail at j1-j7, the Tweedie Gaussian 0.87-1.04; the student copies the targets.
+- [x] Rollout shift (main): pixel dispersion of boundary states 0.98 (b1) -> 0.59 (b6) -> 0.51 (b9) of
+      the teacher's (pilot 0.73 at b9) -> refinement is warranted and is running.
+
+## Running (tmux; check `tail outputs/exp5_ibw_amortized_10step_k8/RUNLOG`)
+- `exp5-main0b` (GPU0): `run/exp5_main_part2.sh` -- refinement (32 student-rollout anchors, 288 frozen
+  IBW fits, fine-tune 4,000 steps from main, 1,024 images, shift) -> ablation (train endpoints E = 4,
+  student `ablation_endpoints`, 1,024 images) -> FID n1024_students -> test refs (shared) ->
+  evalstudent on test (main, refined, ablation_endpoints, init_main) -> detail on test -> timing.
+- `exp5-main1` (GPU1, shared with another user): `ONLY=gpu1 bash run/exp5_main.sh` -- test refs
+  (80 pairs, fp32) -> endpoints (shared claims) -> ANC20/50 1,024 images -> (IBW chain: done).
+- If a session dies: rerun the same script; every stage skips finished units and reclaims stale claims.
 
 ## Next
-- [ ] Pilot gate (val NLL falls, covariances valid, components used, 10-transition generation works,
-      FID vs RD10/ANC10 at n = 192, shift) -> `tmux new-session -d -s exp5-main 'bash run/exp5_main.sh'`
-      (v2: shared claims; ablation endpoints E = 4 = the IBW targets' 800 score evaluations per anchor).
-- [ ] Refinement if the shift is substantial (`run/exp5_refine.sh`); timing (`run/exp5_timing.sh`,
-      fp32 and TF32 on both sides, GPU0 quiet); FID n = 1,024 for all; figures; costs; REPORT.md.
+- [ ] After both chains: `$M fid --tag n1024 --n 1024 --methods student:main student:refined
+      student:ablation_endpoints student:init_main coarse:reverse_diffusion:10 coarse:ancestral:10
+      coarse:ancestral:20 coarse:ancestral:50` (one file, one bootstrap), figures
+      (`python -m gmmd.exp5.figures`; stage ABC + kernels vs teacher on test; quality vs NFE),
+      `$M tables --abc main refined ablation_endpoints init_main --fid n1024`, `$M costs --student main refined`,
+      REPORT.md short answer + sections 4-8, commit locally.

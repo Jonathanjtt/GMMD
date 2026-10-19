@@ -528,10 +528,15 @@ def stage_figtraj(cfg, a, rest):
         states = [C.load_anchor(cfg, "train", k, j) for j in range(len(parts))]
         rows.append(_denoised_row(teacher, parts, states, None))
         labels.append(f"teacher {k}")
-    style = apply_publication_style(FigureStyle(width_in=6.9, height_in=0.62 * len(rows) + 0.3))
-    fig, axes = plt.subplots(len(rows), len(rows[0]), figsize=(style.width_in, style.height_in),
-                             gridspec_kw=dict(wspace=0.03, hspace=0.05))
-    titles = [f"b{j} σ={iv.sigma_start:.3g}" for j, iv in enumerate(parts)] + ["output"]
+    ncol, label_in, title_in, W = len(rows[0]), 0.62, 0.32, 6.9
+    tile = (W - label_in - 0.05) / ncol                   # square tiles, rows sized from the width
+    H = tile * len(rows) * 1.03 + title_in + 0.05
+    style = apply_publication_style(FigureStyle(width_in=W, height_in=H))
+    fig, axes = plt.subplots(len(rows), ncol, figsize=(style.width_in, style.height_in),
+                             gridspec_kw=dict(wspace=0.03, hspace=0.03, left=label_in / W, right=1 - 0.05 / W,
+                                              top=1 - title_in / H, bottom=0.05 / H))
+    titles = [f"b{j}\nσ = {iv.sigma_start:.0f}" if iv.sigma_start >= 10 else f"b{j}\nσ = {iv.sigma_start:.2g}"
+              for j, iv in enumerate(parts)] + ["output\n"]
     for r, (row, lab) in enumerate(zip(rows, labels)):
         for c, im in enumerate(row):
             ax = axes[r, c]

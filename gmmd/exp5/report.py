@@ -152,7 +152,8 @@ def stage_costs(cfg, a, rest):
     for split in ("train", "val", "test", "refine"):
         t, n = _sum_json((root / "anchors" / split).glob("traj*.json"), ["nfe", "seconds"])
         if n:
-            add(f"anchor trajectories ({split}; teacher fp32{', student rollouts' if split == 'refine' else ''})",
+            add(f"anchor states (refine; student rollouts, TF32)" if split == "refine"
+                else f"anchor trajectories ({split}; teacher fp32)",
                 _cost_category("anchors", split), n, t["nfe"], t["seconds"])
         t, n = _sum_json((root / "refs" / split).glob("traj*_j*.json"), ["nfe", "seconds", "feature_seconds"])
         if n:
@@ -167,7 +168,12 @@ def stage_costs(cfg, a, rest):
             t, n = _sum_json(vdir.glob("traj*_j*.json"), ["cost.fit_nfe", "cost.fit_seconds", "cost.init_nfe",
                                                           "cost.init_seconds", "bank.nfe", "bank.seconds"])
             if n:
-                add(f"IBW fits {split}/{vdir.name} (TF32; principal-direction init fp32)",
+                try:
+                    scheme = C.variant_cfg(cfg, vdir.name)[1]["scheme"]
+                except (KeyError, ValueError, FileNotFoundError):
+                    scheme = "?"
+                init = "principal-direction init fp32" if scheme.startswith("principal") else f"{scheme} init"
+                add(f"IBW fits {split}/{vdir.name} (TF32; {init})",
                     _cost_category("fits", split, vdir.name), n,
                     t["cost.fit_nfe"] + t["cost.init_nfe"] + t["bank.nfe"],
                     t["cost.fit_seconds"] + t["cost.init_seconds"] + t["bank.seconds"])
