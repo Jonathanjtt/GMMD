@@ -70,100 +70,106 @@ def stage_evalstudent(cfg, a, rest):
     vid, _ = C.variant_cfg(cfg, o.fit_variant)
     nm, nkl, R = int(ce["n_model"]), int(ce["n_kl"]), int(ce["n_ref"])
     for n, j in tasks:
-        iv = parts[j]
-        x = C.load_anchor(cfg, a.split, n, j).to(a.device)[None]
-        d = x[0].numel()
-        with torch.inference_mode(), IT.tf32(True):
-            logits, means, logv = net(x, j)
-        logits, means, logv = logits[0].float(), means[0].reshape(net.K, -1).float(), logv[0].float()
-        pi = torch.softmax(logits, -1)
-        g = torch.Generator(device=a.device).manual_seed(G.seed_of(C.NS_EVAL, C.sid(a.split), n, j, 999))
-        ys, ks = IT.sample_mixture(means, (logv.exp()), nm, g, weights=pi)
-        with np.load(C.fit_path(cfg, a.split, o.fit_variant, n, j)) as z:
-            fm = torch.as_tensor(z["means"]).to(a.device)
-            fv = torch.as_tensor(z["variances"]).to(a.device).float()
-        g2 = torch.Generator(device=a.device).manual_seed(G.seed_of(C.NS_EVAL, C.sid(a.split), n, j, vid, 0))
-        zi, _ = IT.sample_mixture(fm, fv, 2 * nm, g2)
-        yi = zi.reshape(2 * nm, *teacher.image_shape)
-        if iv.terminal:
-            with IT.tf32(False):
-                yi, _ = G.terminal_denoise(teacher, yi, bs)
-        rz = np.load(C.ref_path(cfg, a.split, n, j))
-        refA, refB = (rz["dino"][:R], rz["pixel"][:R]), (rz["dino"][R:], rz["pixel"][R:])
-        fS = MT.featurize(teacher, iv, ys.reshape(nm, *teacher.image_shape).cpu(), ce, bs, a.device)
-        fI = MT.featurize(teacher, iv, yi.cpu(), ce, bs, a.device)
-        fIA, fIB = (fI[0][:nm], fI[1][:nm]), (fI[0][nm:], fI[1][nm:])
-        seed = n * 100 + j
-        out = dict(split=a.split, n=n, j=j, tag=a.tag, ckpt=str(_ckpt(cfg, a.tag, o.ckpt)), step=S.step,
-                   stage_A=MT.compare(refA, refB, fIA, ce, seed),
-                   stage_B=MT.compare(fIA, fIB, fS, ce, seed),
-                   stage_C=MT.compare(refA, refB, fS, ce, seed))
-        # IBW-vs-IBW floor of stage B: an independent replicate fit (fresh init + noise seeds) of the
-        # same anchor, scored exactly like the student.  The early-stopped targets depend on the init
-        # seed, so this -- not two sample sets of one fit -- is what a perfect amortisation can reach.
-        rep_path = C.fit_path(cfg, a.split, o.rep_variant, n, j)
-        rm = rv = None
-        if rep_path.with_suffix(".json").exists():
-            with np.load(rep_path) as z:
-                rm = torch.as_tensor(z["means"]).to(a.device)
-                rv = torch.as_tensor(z["variances"]).to(a.device).float()
-            vid_r, _ = C.variant_cfg(cfg, o.rep_variant)
-            g3 = torch.Generator(device=a.device).manual_seed(G.seed_of(C.NS_EVAL, C.sid(a.split), n, j, vid_r, 0))
-            zr, _ = IT.sample_mixture(rm, rv, nm, g3)
-            yr = zr.reshape(nm, *teacher.image_shape)
+        lock = C.lock_path(cfg, "evalstudent", a.split, a.tag, n, j)
+        if have(n, j) or not C.claim(lock):                 # done, or another GPU has it
+            continue
+        try:
+            iv = parts[j]
+            x = C.load_anchor(cfg, a.split, n, j).to(a.device)[None]
+            d = x[0].numel()
+            with torch.inference_mode(), IT.tf32(True):
+                logits, means, logv = net(x, j)
+            logits, means, logv = logits[0].float(), means[0].reshape(net.K, -1).float(), logv[0].float()
+            pi = torch.softmax(logits, -1)
+            g = torch.Generator(device=a.device).manual_seed(G.seed_of(C.NS_EVAL, C.sid(a.split), n, j, 999))
+            ys, ks = IT.sample_mixture(means, (logv.exp()), nm, g, weights=pi)
+            with np.load(C.fit_path(cfg, a.split, o.fit_variant, n, j)) as z:
+                fm = torch.as_tensor(z["means"]).to(a.device)
+                fv = torch.as_tensor(z["variances"]).to(a.device).float()
+            g2 = torch.Generator(device=a.device).manual_seed(G.seed_of(C.NS_EVAL, C.sid(a.split), n, j, vid, 0))
+            zi, _ = IT.sample_mixture(fm, fv, 2 * nm, g2)
+            yi = zi.reshape(2 * nm, *teacher.image_shape)
             if iv.terminal:
                 with IT.tf32(False):
-                    yr, _ = G.terminal_denoise(teacher, yr, bs)
-            fR = MT.featurize(teacher, iv, yr.cpu(), ce, bs, a.device)
-            out["stage_B_rep"] = MT.compare(fIA, fIB, fR, ce, seed)
-            out["stage_A_rep"] = MT.compare(refA, refB, fR, ce, seed)
-        # likelihood-based stage B (exact densities of both mixtures; standardised coordinates)
-        sc = float(np.exp(0.5 * net.log_vref[j].item()))
-        xf = x.reshape(1, -1)
-        lw = torch.log_softmax(logits, -1)
-        with torch.no_grad():
-            gk = torch.Generator(device=a.device).manual_seed(G.seed_of(C.NS_EVAL, C.sid(a.split), n, j, 998))
-            if not iv.terminal:
-                zk, _ = IT.sample_mixture(fm, fv, nkl, gk)                         # z ~ q_IBW
-                u = (zk - xf) / sc
-                lq_ibw = IT.isotropic_log_prob(u, (fm - xf) / sc, fv / sc ** 2)
-                lq_stu = mixture_log_prob(u[None].float(), ((means - xf) / sc)[None], (logv - 2 * np.log(sc))[None],
-                                          logits[None])[0].double()
-                yk, _ = IT.sample_mixture(means, logv.exp(), nkl, gk, weights=pi)  # y ~ q_phi
-                v_ = (yk - xf) / sc
-                rq_ibw = IT.isotropic_log_prob(v_, (fm - xf) / sc, fv / sc ** 2)
-                rq_stu = mixture_log_prob(v_[None].float(), ((means - xf) / sc)[None], (logv - 2 * np.log(sc))[None],
-                                          logits[None])[0].double()
-                out["kl_forward_per_dim"] = float((lq_ibw - lq_stu).mean() / d)   # KL(q_IBW || q_phi)
-                out["kl_reverse_per_dim"] = float((rq_stu - rq_ibw).mean() / d)   # KL(q_phi || q_IBW)
-                out["nll_ibw_samples_per_dim_std"] = float(-lq_stu.mean() / d)
-                out["ibw_entropy_per_dim_std"] = float(-lq_ibw.mean() / d)
-                if rm is not None:                                                 # the same KLs, replicate vs fit
-                    lq_rep = IT.isotropic_log_prob(u, (rm - xf) / sc, rv / sc ** 2)
-                    zr2, _ = IT.sample_mixture(rm, rv, nkl, gk)
-                    w_ = (zr2 - xf) / sc
-                    out["rep_kl_forward_per_dim"] = float((lq_ibw - lq_rep).mean() / d)
-                    out["rep_kl_reverse_per_dim"] = float((IT.isotropic_log_prob(w_, (rm - xf) / sc, rv / sc ** 2)
-                                                           - IT.isotropic_log_prob(w_, (fm - xf) / sc, fv / sc ** 2)).mean() / d)
-                    out["rep_nll_ibw_samples_per_dim_std"] = float(-lq_rep.mean() / d)
-            else:
-                u = (yi.reshape(2 * nm, -1).float() - xf) / sc
-                lq_stu = mixture_log_prob(u[None], ((means - xf) / sc)[None], (logv - 2 * np.log(sc))[None],
-                                          logits[None])[0].double()
-                out["nll_ibw_samples_per_dim_std"] = float(-lq_stu.mean() / d)
-        out["student"] = dict(weights=pi.tolist(), weight_entropy=float(-(pi * pi.clamp_min(1e-30).log()).sum()),
-                              weight_perplexity=float(torch.exp(-(pi * pi.clamp_min(1e-30).log()).sum())),
-                              sampled_components=torch.bincount(ks, minlength=net.K).tolist(),
-                              variances_over_vref=(logv.exp() / np.exp(net.log_vref[j].item())).tolist(),
-                              stats=IT.component_stats(means, logv.exp()))
-        out["ibw"] = dict(stats=IT.component_stats(fm, fv), variances=fv.tolist())
-        if rm is not None:
-            out["ibw_rep"] = dict(variant=o.rep_variant, stats=IT.component_stats(rm, rv), variances=rv.tolist())
-        C.dump(out, root / f"traj{n:03d}_j{j}.json")
-        log(f"evalstudent {a.split} traj {n} j {j}: DINOv2 excess A {out['stage_A']['dinov2']['excess']:+.4f} "
-            f"B {out['stage_B']['dinov2']['excess']:+.4f} C {out['stage_C']['dinov2']['excess']:+.4f}; "
-            f"KL fwd {out.get('kl_forward_per_dim', float('nan')):.4f}; pi perplexity "
-            f"{out['student']['weight_perplexity']:.2f}")
+                    yi, _ = G.terminal_denoise(teacher, yi, bs)
+            rz = np.load(C.ref_path(cfg, a.split, n, j))
+            refA, refB = (rz["dino"][:R], rz["pixel"][:R]), (rz["dino"][R:], rz["pixel"][R:])
+            fS = MT.featurize(teacher, iv, ys.reshape(nm, *teacher.image_shape).cpu(), ce, bs, a.device)
+            fI = MT.featurize(teacher, iv, yi.cpu(), ce, bs, a.device)
+            fIA, fIB = (fI[0][:nm], fI[1][:nm]), (fI[0][nm:], fI[1][nm:])
+            seed = n * 100 + j
+            out = dict(split=a.split, n=n, j=j, tag=a.tag, ckpt=str(_ckpt(cfg, a.tag, o.ckpt)), step=S.step,
+                       stage_A=MT.compare(refA, refB, fIA, ce, seed),
+                       stage_B=MT.compare(fIA, fIB, fS, ce, seed),
+                       stage_C=MT.compare(refA, refB, fS, ce, seed))
+            # IBW-vs-IBW floor of stage B: an independent replicate fit (fresh init + noise seeds) of the
+            # same anchor, scored exactly like the student.  The early-stopped targets depend on the init
+            # seed, so this -- not two sample sets of one fit -- is what a perfect amortisation can reach.
+            rep_path = C.fit_path(cfg, a.split, o.rep_variant, n, j)
+            rm = rv = None
+            if rep_path.with_suffix(".json").exists():
+                with np.load(rep_path) as z:
+                    rm = torch.as_tensor(z["means"]).to(a.device)
+                    rv = torch.as_tensor(z["variances"]).to(a.device).float()
+                vid_r, _ = C.variant_cfg(cfg, o.rep_variant)
+                g3 = torch.Generator(device=a.device).manual_seed(G.seed_of(C.NS_EVAL, C.sid(a.split), n, j, vid_r, 0))
+                zr, _ = IT.sample_mixture(rm, rv, nm, g3)
+                yr = zr.reshape(nm, *teacher.image_shape)
+                if iv.terminal:
+                    with IT.tf32(False):
+                        yr, _ = G.terminal_denoise(teacher, yr, bs)
+                fR = MT.featurize(teacher, iv, yr.cpu(), ce, bs, a.device)
+                out["stage_B_rep"] = MT.compare(fIA, fIB, fR, ce, seed)
+                out["stage_A_rep"] = MT.compare(refA, refB, fR, ce, seed)
+            # likelihood-based stage B (exact densities of both mixtures; standardised coordinates)
+            sc = float(np.exp(0.5 * net.log_vref[j].item()))
+            xf = x.reshape(1, -1)
+            lw = torch.log_softmax(logits, -1)
+            with torch.no_grad():
+                gk = torch.Generator(device=a.device).manual_seed(G.seed_of(C.NS_EVAL, C.sid(a.split), n, j, 998))
+                if not iv.terminal:
+                    zk, _ = IT.sample_mixture(fm, fv, nkl, gk)                         # z ~ q_IBW
+                    u = (zk - xf) / sc
+                    lq_ibw = IT.isotropic_log_prob(u, (fm - xf) / sc, fv / sc ** 2)
+                    lq_stu = mixture_log_prob(u[None].float(), ((means - xf) / sc)[None], (logv - 2 * np.log(sc))[None],
+                                              logits[None])[0].double()
+                    yk, _ = IT.sample_mixture(means, logv.exp(), nkl, gk, weights=pi)  # y ~ q_phi
+                    v_ = (yk - xf) / sc
+                    rq_ibw = IT.isotropic_log_prob(v_, (fm - xf) / sc, fv / sc ** 2)
+                    rq_stu = mixture_log_prob(v_[None].float(), ((means - xf) / sc)[None], (logv - 2 * np.log(sc))[None],
+                                              logits[None])[0].double()
+                    out["kl_forward_per_dim"] = float((lq_ibw - lq_stu).mean() / d)   # KL(q_IBW || q_phi)
+                    out["kl_reverse_per_dim"] = float((rq_stu - rq_ibw).mean() / d)   # KL(q_phi || q_IBW)
+                    out["nll_ibw_samples_per_dim_std"] = float(-lq_stu.mean() / d)
+                    out["ibw_entropy_per_dim_std"] = float(-lq_ibw.mean() / d)
+                    if rm is not None:                                                 # the same KLs, replicate vs fit
+                        lq_rep = IT.isotropic_log_prob(u, (rm - xf) / sc, rv / sc ** 2)
+                        zr2, _ = IT.sample_mixture(rm, rv, nkl, gk)
+                        w_ = (zr2 - xf) / sc
+                        out["rep_kl_forward_per_dim"] = float((lq_ibw - lq_rep).mean() / d)
+                        out["rep_kl_reverse_per_dim"] = float((IT.isotropic_log_prob(w_, (rm - xf) / sc, rv / sc ** 2)
+                                                               - IT.isotropic_log_prob(w_, (fm - xf) / sc, fv / sc ** 2)).mean() / d)
+                        out["rep_nll_ibw_samples_per_dim_std"] = float(-lq_rep.mean() / d)
+                else:
+                    u = (yi.reshape(2 * nm, -1).float() - xf) / sc
+                    lq_stu = mixture_log_prob(u[None], ((means - xf) / sc)[None], (logv - 2 * np.log(sc))[None],
+                                              logits[None])[0].double()
+                    out["nll_ibw_samples_per_dim_std"] = float(-lq_stu.mean() / d)
+            out["student"] = dict(weights=pi.tolist(), weight_entropy=float(-(pi * pi.clamp_min(1e-30).log()).sum()),
+                                  weight_perplexity=float(torch.exp(-(pi * pi.clamp_min(1e-30).log()).sum())),
+                                  sampled_components=torch.bincount(ks, minlength=net.K).tolist(),
+                                  variances_over_vref=(logv.exp() / np.exp(net.log_vref[j].item())).tolist(),
+                                  stats=IT.component_stats(means, logv.exp()))
+            out["ibw"] = dict(stats=IT.component_stats(fm, fv), variances=fv.tolist())
+            if rm is not None:
+                out["ibw_rep"] = dict(variant=o.rep_variant, stats=IT.component_stats(rm, rv), variances=rv.tolist())
+            C.dump(out, root / f"traj{n:03d}_j{j}.json")
+            log(f"evalstudent {a.split} traj {n} j {j}: DINOv2 excess A {out['stage_A']['dinov2']['excess']:+.4f} "
+                f"B {out['stage_B']['dinov2']['excess']:+.4f} C {out['stage_C']['dinov2']['excess']:+.4f}; "
+                f"KL fwd {out.get('kl_forward_per_dim', float('nan')):.4f}; pi perplexity "
+                f"{out['student']['weight_perplexity']:.2f}")
+        finally:
+            C.release(lock)
     summarize_eval(cfg, a.tag, a.split)
 
 
@@ -274,40 +280,52 @@ def stage_generate(cfg, a, rest):
     else:
         teacher = C.build_teacher(cfg, a.device, tf32=cfg["precision"]["teacher_reference_tf32"])
     for c in todo:
-        seeds = _chunk_seeds(cfg, c)
-        torch.cuda.synchronize(dev)
-        torch.cuda.reset_peak_memory_stats(dev)
-        t0 = time.perf_counter()
-        extra = {}
-        if kind == "student":
-            out, rec = S.sample(seeds, batch_size=len(seeds), keep_intermediates=(c == 0))
-            x0 = out["images"]
-            extra["components"] = out["components"].numpy()
-            extra["weight_entropy"] = out["weight_entropy"].numpy()
-            if c == 0:
-                extra["states"] = out["states"].half().numpy()          # (B, 11, C, H, W)
-            nfe, teacher_nfe = rec["network_evals_per_image"] * len(seeds), 0
-        elif kind == "ibwchain":
-            from gmmd.exp5 import oracle
-            x0, rec = oracle.ibw_chain(cfg, teacher, seeds, variant=args[0] if args else "frozen",
-                                       batch_size=int(cfg["teacher"]["batch_size"]))
-            x0 = x0.cpu()
-            nfe = teacher_nfe = rec["score_evals"]
-        else:
-            x0, nfe = G.coarse_trajectory(teacher, seeds, int(args[1]), kind=args[0],
-                                          batch_size=int(cfg["teacher"]["batch_size"]))
-            x0 = x0.cpu()
-            rec, teacher_nfe = dict(kind=args[0], n_steps=int(args[1])), nfe
-        torch.cuda.synchronize(dev)
-        secs = time.perf_counter() - t0
-        rng = dict(min=float(x0.min()), max=float(x0.max()), frac_clipped=float(((x0 < 0) | (x0 > 1)).float().mean()),
-                   finite=bool(torch.isfinite(x0).all()))
-        C.save_npz_atomic(root / f"chunk{c:03d}.npz", images=FID.to_uint8_upstream(x0), seeds=np.asarray(seeds), **extra)
-        C.dump(dict(method=o.method, chunk=c, n=len(seeds), seconds=secs, network_evals=nfe,
-                    teacher_score_evals=teacher_nfe, peak_gb=torch.cuda.max_memory_allocated(dev) / 2 ** 30,
-                    range=rng, record=rec, precision=C.env_precision(), gpu=torch.cuda.get_device_name(dev)),
-               root / f"chunk{c:03d}.json")
-        log(f"generate {o.method} chunk {c}: {secs:.1f}s for {len(seeds)} images; range [{rng['min']:.3f}, {rng['max']:.3f}]")
+        lock = C.lock_path(cfg, "generate", o.method.replace(":", "_"), c)
+        if (root / f"chunk{c:03d}.npz").exists() or not C.claim(lock):    # done, or another GPU has it
+            continue
+        try:
+            _generate_chunk(cfg, o, kind, args, root, c, dev, S if kind == "student" else None,
+                            None if kind == "student" else teacher)
+        finally:
+            C.release(lock)
+
+
+def _generate_chunk(cfg, o, kind, args, root, c, dev, S, teacher):
+    """One chunk of ``--method`` images (``S``: student sampler, else the teacher)."""
+    seeds = _chunk_seeds(cfg, c)
+    torch.cuda.synchronize(dev)
+    torch.cuda.reset_peak_memory_stats(dev)
+    t0 = time.perf_counter()
+    extra = {}
+    if kind == "student":
+        out, rec = S.sample(seeds, batch_size=len(seeds), keep_intermediates=(c == 0))
+        x0 = out["images"]
+        extra["components"] = out["components"].numpy()
+        extra["weight_entropy"] = out["weight_entropy"].numpy()
+        if c == 0:
+            extra["states"] = out["states"].half().numpy()          # (B, 11, C, H, W)
+        nfe, teacher_nfe = rec["network_evals_per_image"] * len(seeds), 0
+    elif kind == "ibwchain":
+        from gmmd.exp5 import oracle
+        x0, rec = oracle.ibw_chain(cfg, teacher, seeds, variant=args[0] if args else "frozen",
+                                   batch_size=int(cfg["teacher"]["batch_size"]))
+        x0 = x0.cpu()
+        nfe = teacher_nfe = rec["score_evals"]
+    else:
+        x0, nfe = G.coarse_trajectory(teacher, seeds, int(args[1]), kind=args[0],
+                                      batch_size=int(cfg["teacher"]["batch_size"]))
+        x0 = x0.cpu()
+        rec, teacher_nfe = dict(kind=args[0], n_steps=int(args[1])), nfe
+    torch.cuda.synchronize(dev)
+    secs = time.perf_counter() - t0
+    rng = dict(min=float(x0.min()), max=float(x0.max()), frac_clipped=float(((x0 < 0) | (x0 > 1)).float().mean()),
+               finite=bool(torch.isfinite(x0).all()))
+    C.save_npz_atomic(root / f"chunk{c:03d}.npz", images=FID.to_uint8_upstream(x0), seeds=np.asarray(seeds), **extra)
+    C.dump(dict(method=o.method, chunk=c, n=len(seeds), seconds=secs, network_evals=nfe,
+                teacher_score_evals=teacher_nfe, peak_gb=torch.cuda.max_memory_allocated(dev) / 2 ** 30,
+                range=rng, record=rec, precision=C.env_precision(), gpu=torch.cuda.get_device_name(dev)),
+           root / f"chunk{c:03d}.json")
+    log(f"generate {o.method} chunk {c}: {secs:.1f}s for {len(seeds)} images; range [{rng['min']:.3f}, {rng['max']:.3f}]")
 
 
 def _images(cfg, method, n):

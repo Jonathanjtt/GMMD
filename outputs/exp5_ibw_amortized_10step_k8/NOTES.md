@@ -81,3 +81,19 @@
 * IBW chain (`gmmd/exp5/oracle.py`, `generate --method ibwchain`): online IBW with the frozen
   configuration at every transition from the same x_T — a diagnostic ceiling for the amortised
   sampler (no amortisation error, no rollout shift), 8,000 TF32 score evaluations per image.
+
+## 2026-10-19 Post-hoc fine iteration grid (prior_free_fine, fresh seeds, val 40 pairs) — sensitivity only
+
+* Reproducibility: the fresh-seed fits reproduce P1 at the shared snapshots (25 it: 0.393 vs 0.391;
+  50 it: 0.570 vs 0.566; per-pair correlation 0.995) — the stage-A excess is a property of the anchor,
+  not of the init seed.
+* Mean DINOv2 / pixel excess vs iterations: 5: 1.08 / 0.385; 10: 0.99 / 0.198; 15: 0.64 / 0.114;
+  **20: 0.354 / 0.069; 25: 0.393 / 0.042; 30: 0.406 / 0.027**; 40: 0.50 / 0.019; 50: 0.57 / 0.020.
+  Rule (2) on this grid would pick 20, but 25 and 30 are not separable from 20 (paired CIs of the
+  difference [−0.031, +0.113] and [−0.027, +0.130]), while 5–15 and 40–50 are (CIs exclude 0).
+  → the pre-registered grid bracketed a broad optimum; the frozen 25 stays (it has the lower pixel
+  excess, and the 20-it DINOv2 advantage comes mostly from j0–j1, where the Tweedie-denoised DINOv2
+  metric rewards residual noise — the teacher-state artifact). Figure `figures/fig_posthoc_ibw_iterations`.
+* Interpretation: the useful IBW iterate lies between under-contraction (≤ 15 it: too much variance,
+  pixel excess 0.1–0.4) and over-contraction (≥ 40 it: content dispersion removed by the reverse-KL
+  flow). Consistent with P0: c = 0.2 was best at 50 it, c = 0.5 at 25 it (c × iterations ≈ 10–12).

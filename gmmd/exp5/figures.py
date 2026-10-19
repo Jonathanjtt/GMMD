@@ -133,6 +133,45 @@ def fig_stage_a_vs_iterations(cfg, variants, split="val", basename="fig_p1_stage
     return save_figure(fig, _fig_dir(cfg) / basename)
 
 
+def fig_posthoc_fine_grid(cfg, split="val", basename="fig_posthoc_ibw_iterations"):
+    """Post-hoc sensitivity of the frozen iteration count: stage-A excess (DINOv2, pixels) of the
+    prior-free initialisation against IBW iteration, fresh-seed fits on a 5-50 grid (lines; mean
+    and paired-bootstrap 95 % CI over the val pairs) with the pre-registered P1 fits (markers)."""
+    from gmmd.exp5.report import fit_rows
+    sel = json.loads((C.out_dir(cfg) / "selection.json").read_text())
+    fine = [r for r in fit_rows(cfg, split, "prior_free_fine") if "snapshots" in r]
+    p1 = [r for r in fit_rows(cfg, split, sel["variant"]) if "snapshots" in r]
+    style = apply_publication_style(FigureStyle(width_in=FULL, height_in=2.5))
+    fig, axes = plt.subplots(1, 2, figsize=(style.width_in, style.height_in), constrained_layout=True)
+    rng = np.random.default_rng(0)
+    for ax, key, lab in zip(axes, ("dino", "pixel"), ("DINOv2 excess MMD$^2$", "pixel excess MMD$^2$")):
+        its = sorted({int(t) for r in fine for t in r["snapshots"]})
+        vals = np.array([[r["snapshots"][str(t)][key] for t in its] for r in fine])      # (pairs, its)
+        boot = vals[rng.integers(0, len(vals), (4000, len(vals)))].mean(1)
+        color, ls, mk = style_for_series(0)
+        ax.fill_between(its, np.quantile(boot, 0.025, 0), np.quantile(boot, 0.975, 0), color=color, alpha=0.2, lw=0)
+        ax.plot(its, vals.mean(0), color=color, ls=ls, marker=mk, label="post-hoc fine grid (fresh seeds)")
+        its1 = sorted({int(t) for r in p1 for t in r["snapshots"]})
+        m1 = [np.mean([r["snapshots"][str(t)][key] for r in p1]) for t in its1]
+        c2, _, mk2 = style_for_series(1)
+        ax.plot(its1, m1, color=c2, ls="none", marker=mk2, label="pre-registered P1 snapshots")
+        ax.axvline(sel["iterations"], color=PALETTE["gray"], lw=0.8, ls="--")
+        ax.set_xscale("log")
+        ticks = [5, 10, 20, 50, 100, 300]
+        ax.set_xticks(ticks)
+        ax.xaxis.set_major_formatter(mticker.FuncFormatter(lambda x, _: f"{x:g}"))
+        ax.xaxis.set_minor_formatter(mticker.NullFormatter())
+        ax.set_xlabel("IBW iteration")
+        ax.set_ylabel(lab)
+        ax.set_ylim(bottom=0)
+    for ax, y in zip(axes, (0.03, 0.90)):                 # where each panel has no data near the line
+        ax.text(sel["iterations"] * 1.07, ax.get_ylim()[1] * y, f"frozen: {sel['iterations']} it", fontsize=7,
+                va="bottom", color=PALETTE["gray"])
+    axes[0].legend(loc="upper right", fontsize=7)
+    axes[0].set_title(f"mean over {len(fine)} {split} pairs (band: 95 % bootstrap CI)", fontsize=8)
+    return save_figure(fig, _fig_dir(cfg) / basename)
+
+
 # ---------------------------------------------------------------------------------- stage A/B/C
 STAGE_STYLE = {"stage_A": ("A: teacher → IBW", 0), "stage_B": ("B: IBW → student", 1),
                "stage_C": ("C: teacher → student", 2)}
@@ -276,7 +315,8 @@ def fig_quality_vs_nfe(cfg, fid_tag, timing=None):
 FIGURES = {"ibw_p0": lambda cfg: fig_ibw_step_size(cfg),
            "stage_a_p0": lambda cfg: fig_stage_a_vs_iterations(cfg, ["p0_c0p2", "p0_c0p5", "p0_c1p0"],
                                                                 basename="fig_p0_stage_a_vs_iterations"),
-           "stage_a_p1": lambda cfg: fig_stage_a_vs_iterations(cfg, [v["name"] for v in cfg["ibw"]["variants"]])}
+           "stage_a_p1": lambda cfg: fig_stage_a_vs_iterations(cfg, [v["name"] for v in cfg["ibw"]["variants"]]),
+           "posthoc_fine": lambda cfg: fig_posthoc_fine_grid(cfg)}
 
 
 def main(argv=None):

@@ -29,14 +29,27 @@ fp32 37 ms/img/NFE, TF32 11 ms, bf16 10 ms (batch 64–128); training fwd+bwd 10
 - [x] Principal-direction init checked on the real teacher: top Rayleigh quotients 1.0-2.0 x gap
       (multimodal/broad posterior directions), eigenvectors not converged (overlap 0.57-0.84), ~108 fp32 NFE.
 
+## Done (2026-10-19, continued)
+- [x] P1: 5 teacher-free inits x 40 val pairs x 300 it; stage-A evaluation at 25/50/100/200/300.
+      Pre-registered selection frozen 15:47 UTC: **prior_free @ 25 iterations, c = 0.5**
+      (`selection.json`; every other init +0.16..+0.19 DINOv2 excess, CIs exclude 0). All inits reach
+      the same fixed point by 300 it; the selected snapshot is an early-stopped transient (NOTES.md).
+      Figure `figures/fig_p1_stage_a_vs_iterations`. Commit dd2534a.
+- [x] Fixes: P1 evalfits race (`run/exp5_pilot_p1.sh` waits for the fit lock; `run/exp5_pilot_p1_finish.sh`).
+- [x] Added (post-hoc, labelled): `frozen_r1` replicate fits (stage-B IBW-vs-IBW floor), IBW-chain
+      diagnostic (`gmmd/exp5/oracle.py`, `generate --method ibwchain`), `prior_free_fine` iteration grid,
+      claims for generation chunks and evaluation pairs (both GPUs can share them).
+
 ## Running (tmux)
-- `exp5-gpu`: run/exp5_pilot_p0.sh — GPU0 val reference rollouts (40 pairs, ~13:25 UTC);
-  GPU1 test + train anchor trajectories.
-- `exp5-p1`: run/exp5_pilot_p1.sh — P1: 5 init variants x 40 val pairs (GPU1 now, GPU0 after refs),
-  stage-A evalfits, then the pre-registered selection -> selection.json (~15:20 UTC).
+- `exp5-p2`: run/exp5_pilot_p2.sh — pilot fits done (trajs 0-7); pilot student (3,000 steps, GPU0),
+  then stage A/B/C on val, 192-image rollouts (student, RD10, ANC10), preliminary FID, shift.
+  Background: main train fits trajs 8-63 on GPU1 (`run/logs/exp5_main_fits_gpu1.log`).
+- `exp5-fine`: post-hoc fine iteration grid on val (fit + evalfits).  `exp5-rep`: val frozen_r1 fits.
+- GPU1 shared with another user's jobs since ~15:40 UTC (3-5x slower); GPU0 carries the critical path.
 
 ## Next
-- [ ] P2 (run/exp5_pilot_p2.sh): freeze val, pilot train fits (trajs 0-7), pilot student (3k steps),
-      stage A/B/C on val, 192-image rollouts + FID (preliminary), rollout shift; GPU1 starts main fits.
-- [ ] Main: 64 train anchors, 8 test anchors (refs + eval fits), student, stage A/B/C, 1,024 images,
-      FID, timing, rollout-shift refinement, direct-NLL ablation, REPORT.md
+- [ ] Pilot gate (val NLL falls, covariances valid, components used, 10-transition generation works,
+      FID vs RD10/ANC10 at n = 192, shift) -> `tmux new-session -d -s exp5-main 'bash run/exp5_main.sh'`
+      (v2: shared claims; ablation endpoints E = 4 = the IBW targets' 800 score evaluations per anchor).
+- [ ] Refinement if the shift is substantial (`run/exp5_refine.sh`); timing (`run/exp5_timing.sh`,
+      fp32 and TF32 on both sides, GPU0 quiet); FID n = 1,024 for all; figures; costs; REPORT.md.
