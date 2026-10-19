@@ -353,6 +353,15 @@ def _images(cfg, method, n):
     return imgs, seeds
 
 
+def image_stats(imgs):
+    """Per-image contrast (SD over all pixels and channels, [0, 1] scale) and mean intensity of
+    uint8 images (n, H, W, 3): mean and SD over images."""
+    x = imgs.reshape(len(imgs), -1).astype(np.float64) / 255.0
+    c, mu = x.std(1), x.mean(1)
+    return dict(contrast_mean=float(c.mean()), contrast_sd=float(c.std()), intensity_mean=float(mu.mean()),
+                intensity_sd=float(mu.std()))
+
+
 def stage_fid(cfg, a, rest):
     ap = argparse.ArgumentParser(prog="fid", allow_abbrev=False)
     ap.add_argument("--methods", nargs="+", required=True)
@@ -382,10 +391,11 @@ def stage_fid(cfg, a, rest):
         f_prc = FID.extract(imgs[m], "prc", a.device)
         feats[m] = f_fid
         out["methods"][m] = dict(fid=FID.fid(f_fid, ref_stats),
-                                 **FID.precision_recall(f_prc, ref["prc"][real_idx], k=int(cfg["fid"]["pr_k"]), device=a.device))
+                                 **FID.precision_recall(f_prc, ref["prc"][real_idx], k=int(cfg["fid"]["pr_k"]), device=a.device),
+                                 image_stats=image_stats(imgs[m]))
         log(f"fid {a.tag} {m}: FID {out['methods'][m]['fid']:.2f} P {out['methods'][m]['precision']:.3f} "
             f"R {out['methods'][m]['recall']:.3f} (n = {o.n})")
-    boot = FID.bootstrap_fid(feats, ref_stats, int(cfg["fid"]["n_boot"]), 0)
+    boot, out["pairwise_diff_ci95"] = FID.bootstrap_fid(feats, ref_stats, int(cfg["fid"]["n_boot"]), 0, pairwise=True)
     for m in methods:
         out["methods"][m]["bootstrap"] = boot[m]
     f_real = ref["fid"][rng.choice(len(ref["fid"]), o.n, replace=False)]

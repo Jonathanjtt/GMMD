@@ -130,3 +130,33 @@
 * Consequence: the main run (64 trajectories) and the endpoint-NLL ablation are run as planned; the
   ablation now isolates the IBW target bias (an NLL fit to teacher endpoints targets the teacher's
   conditional mean). The untrained initialisation is reported as a zero-training control.
+
+## 2026-10-19 main run, first diagnostics (before the n = 1,024 FID)
+
+* Main student (`student/main`, 64 train trajectories, 12,000 steps, 1.80 h on GPU0): val NLL
+  1.4273 → 1.4084, flat from ≈ 4,500 steps; KL(q_IBW‖q_φ)/dim at the end: j5 0.0005, j7 0.003,
+  j8 0.0079 (pilot 0.0086); weight entropy 0.23–0.29 nats (collapse as in the pilot).
+* IBW chain (`ibwchain`, 64 images, frozen config online at all 10 transitions from the same x_T;
+  8,001 teacher evaluations per image, 14,854 s on the shared GPU1 = 232 s/image; peak 33.6 GB):
+  washed-out faces like the student's. n_eff of the online fits 1.0 at j0–j1 (components on top of
+  each other), 4.7 at j2, 8 from j3; v/v_anc 1.00 (j0) … 1.04 (j7), 1.46 (j8), 2.45 (j9).
+* FID at n = 64 (`fid_n64_ibwchain.json`, 500 paired bootstrap replicates; real-vs-real at n = 64
+  is 90.8, so these values are dominated by small-n bias and only the paired differences mean
+  anything): teacher 90.1, init 118.4, ANC10 136.5, IBW chain 141.7, pilot 142.5, main 152.4,
+  RD10 459.3. Paired 95 % CIs: IBW chain − init [+16.6, +29.1]; main − init [+26.6, +41.8];
+  main − IBW chain [+2.8, +18.3]; main − pilot [+3.9, +17.3]; IBW chain − pilot [−7.3, +6.8].
+  Contrast: teacher 0.266, init 0.177, ANC10 0.177, IBW chain 0.141, pilot 0.122, main 0.121.
+  → A perfect amortisation of the targets is no better than the untrained network; training
+  longer on them (pilot → main) moves the sampler further from the teacher.
+* Per-interval detail diagnostic (`gmmd/exp5/diag_detail.py`, val, 4 anchors × 10 intervals,
+  32 draws per kernel, Tweedie-denoised end states; `figures/fig_detail_per_interval_val`):
+  ratio to the teacher's 200-step kernel from the SAME anchor, contrast / Laplacian-RMS detail —
+  IBW targets j1–j3 0.53–0.66 / 0.24–0.38, j4–j7 0.80–0.98 / 0.24–0.65, j8–j9 ≈ 1.0 / 1.01–1.15;
+  untrained Tweedie Gaussian 0.89–1.00 / 0.87–1.04 at j1–j9; main student = IBW targets
+  (0.56–0.98 / 0.21–0.65 at j1–j7). j0 (0.5 / 0.4 for every kernel) is the teacher-state denoising
+  artifact. Interpretation (consistent with, not proof of, the mode-seeking hypothesis): the
+  reverse-KL fit with a narrow isotropic family drives the means toward a MODE of the Bayes
+  conditional; under a heavy-tailed image prior the mode shrinks small fine-scale coefficients
+  (MAP vs MMSE), so each IBW transition removes detail and contrast that the teacher's interval —
+  and the first-order Tweedie Gaussian — keep. The loss is concentrated at j1–j7 and compounds over
+  the chain; j8–j9 cannot restore it.

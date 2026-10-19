@@ -251,6 +251,40 @@ def fig_kernels_vs_teacher(cfg, tags, labels, split="test", basename=None):
 
 
 # ---------------------------------------------------------------------------------- training
+def fig_detail_per_interval(cfg, split="val", kinds=("ibw", "init_main", "main"), labels=None, basename=None):
+    """Contrast and fine-detail (3x3 Laplacian RMS) of each kernel's Tweedie-denoised end states,
+    as a ratio to the teacher's 200-step kernel from the same anchor (mean ± SD over anchors), from
+    ``figures/diag/detail_per_interval_<split>.json`` (:mod:`gmmd.exp5.diag_detail`)."""
+    d = json.loads((_fig_dir(cfg) / "diag" / f"detail_per_interval_{split}.json").read_text())
+    rows = d["rows"]
+    kinds = [k for k in kinds if k in rows[0]]
+    labels = labels or {"ibw": "IBW targets (cached fits)", "init_main": "untrained init (Tweedie Gaussian)",
+                        "main": "IBW-GMMD student", "refined": "IBW-GMMD student, refined",
+                        "ablation_endpoints": "ablation: endpoint NLL"}
+    js = sorted({r["j"] for r in rows})
+    style = apply_publication_style(FigureStyle(width_in=FULL, height_in=2.5))
+    fig, axes = plt.subplots(1, 2, figsize=(style.width_in, style.height_in), layout="constrained", sharex=True)
+    for ax, stat, name in zip(axes, ("contrast", "detail"), ("contrast (pixel SD)", "detail (Laplacian RMS)")):
+        ax.axhline(1.0, color=PALETTE["black"], lw=0.8, ls=":")
+        ax.axvspan(-0.5, 0.5, color="0.9", lw=0)
+        for i, k in enumerate(kinds):
+            color, ls, mk = style_for_series(i)
+            r = np.array([[x[k][stat] / x["teacher"][stat] for x in rows if x["j"] == j] for j in js])
+            ax.errorbar(np.array(js) + 0.08 * (i - (len(kinds) - 1) / 2), r.mean(1), yerr=r.std(1, ddof=1),
+                        color=color, ls=ls, marker=mk, ms=3.5, lw=1.0, capsize=2, label=labels.get(k, k))
+        ax.set_xticks(js)
+        ax.set_xlabel("interval j (0 = highest noise)")
+        ax.set_ylabel(f"{name}\nkernel / teacher")
+        ax.set_ylim(0, 1.45)
+    n_anc = len({r["n"] for r in rows})
+    axes[0].text(0, 0.04, "denoising\nartifact", ha="center", va="bottom", fontsize=5.5, color="0.35")
+    fig.legend(*axes[0].get_legend_handles_labels(), loc="outside lower center", ncol=len(kinds), fontsize=6.5,
+               frameon=False)
+    add_panel_labels(axes, x=-0.2, y=1.04)
+    print(f"detail figure: {split}, {n_anc} anchors per interval, {d['n_per_set']} samples per kernel")
+    return save_figure(fig, _fig_dir(cfg) / (basename or f"fig_detail_per_interval_{split}"))
+
+
 def fig_training_curves(cfg, tag):
     rows = [json.loads(l) for l in (C.out_dir(cfg) / "student" / tag / "curves.jsonl").read_text().splitlines()]
     vals = [r for r in rows if "val" in r]
@@ -291,8 +325,10 @@ def fig_samples(cfg, methods, labels, basename, n_grid=16, n_pair=8):
     """(top) the first ``n_grid`` images of each method (no selection), (bottom) the same x_T
     across methods for the first ``n_pair`` seeds."""
     imgs = {m: _first_images(cfg, m, max(n_grid, n_pair)) for m in methods}
-    style = apply_publication_style(FigureStyle(width_in=FULL, height_in=1.25 * len(methods) + 0.4))
-    fig, axes = plt.subplots(len(methods), 1, figsize=(style.width_in, style.height_in), constrained_layout=True)
+    label_in = 0.95                                       # row labels; rows sized from the image aspect
+    style = apply_publication_style(FigureStyle(width_in=FULL, height_in=len(methods) * (FULL - label_in) / n_pair + 0.1))
+    fig, axes = plt.subplots(len(methods), 1, figsize=(style.width_in, style.height_in),
+                             gridspec_kw=dict(left=label_in / FULL, right=0.995, top=0.99, bottom=0.01, hspace=0.04))
     for ax, m, lab in zip(np.atleast_1d(axes), methods, labels):
         row = np.concatenate([np.pad(im, ((2, 2), (2, 2), (0, 0)), constant_values=255)
                               for im in imgs[m][:n_pair]], axis=1)
@@ -317,46 +353,91 @@ def save_grid(cfg, method, n=64, basename=None):
 
 
 # ---------------------------------------------------------------------------------- quality vs cost
-def fig_quality_vs_nfe(cfg, fid_tag, timing=None):
-    """FID (n images, ± bootstrap SD) against network evaluations per image (log scale)."""
-    f = json.loads((C.out_dir(cfg) / f"fid_{fid_tag}.json").read_text())
-    style = apply_publication_style(FigureStyle(width_in=HALF, height_in=2.6))
-    fig, ax = plt.subplots(figsize=(style.width_in, style.height_in), constrained_layout=True)
-    groups = {"teacher (2,000-step SMLD)": [], "coarse ancestral": [], "coarse SMLD": [], "IBW-GMMD student": [],
-              "ablation (endpoint NLL)": []}
-    for m, r in f["methods"].items():
-        if m == "teacher":
-            groups["teacher (2,000-step SMLD)"].append((2000, r))
-        elif m.startswith("coarse:ancestral"):
-            groups["coarse ancestral"].append((int(m.split(":")[2]), r))
-        elif m.startswith("coarse:reverse_diffusion"):
-            groups["coarse SMLD"].append((int(m.split(":")[2]), r))
-        elif "ablation" in m:
-            groups["ablation (endpoint NLL)"].append((10, r))
-        elif m.startswith("student"):
-            groups["IBW-GMMD student"].append((10, r))
-    for i, (g, pts) in enumerate(groups.items()):
-        if not pts:
-            continue
-        pts.sort(key=lambda t: t[0])
+METHOD_LABELS = {"teacher": "teacher (2,000-step SMLD)", "student:main": "IBW-GMMD student",
+                 "student:refined": "IBW-GMMD student, refined", "student:ablation_endpoints": "ablation: endpoint NLL",
+                 "student:init_main": "untrained init (Tweedie + noise)", "student:pilot": "pilot student",
+                 "student:init_pilot": "untrained init (pilot)",
+                 "ibwchain": "IBW chain (online IBW, no network)"}
+
+
+def method_label(m):
+    if m in METHOD_LABELS:
+        return METHOD_LABELS[m]
+    if m.startswith("coarse:"):
+        _, kind, k = m.split(":")
+        return f"{dict(ancestral='ancestral', reverse_diffusion='SMLD').get(kind, kind)} {k} steps"
+    return m
+
+
+def nfe_per_image(cfg, method):
+    """Network evaluations per image, from the generation records (teacher: exp4's 2,000 steps)."""
+    if method == "teacher":
+        return int(json.loads((C.out_dir(cfg) / "partition.json").read_text())["n_grid"])
+    from gmmd.exp5.evaluation import _method_dir
+    recs = [json.loads(p.read_text()) for p in sorted(_method_dir(cfg, method).glob("chunk*.json"))]
+    return sum(r["network_evals"] for r in recs) / sum(r["n"] for r in recs)
+
+
+def _load_fids(cfg, fid_tags):
+    """Methods of one or more FID files; they must share n, reference and preprocessing."""
+    files = [json.loads((C.out_dir(cfg) / f"fid_{t}.json").read_text()) for t in fid_tags]
+    keys = ("n_images", "n_reference", "fid_extractor", "preprocessing")
+    for f in files[1:]:
+        bad = [k for k in keys if f[k] != files[0][k]]
+        if bad:
+            raise ValueError(f"FID files {fid_tags} differ in {bad}; refusing to plot them together")
+    methods = {}
+    for f in files:
+        methods.update(f["methods"])
+    return files[0], methods
+
+
+def fig_quality_vs_nfe(cfg, fid_tags, basename=None, order=None):
+    """FID (n images, ± paired-bootstrap SD) against network evaluations per image (log x).
+    One series per method; the coarse ancestral sampler at several step counts is one line."""
+    head, methods = _load_fids(cfg, fid_tags)
+    order = [m for m in (order or methods) if m in methods]
+    style = apply_publication_style(FigureStyle(width_in=HALF, height_in=2.8))
+    fig, ax = plt.subplots(figsize=(style.width_in, style.height_in), layout="constrained")
+    anc = sorted((m for m in order if m.startswith("coarse:ancestral")), key=lambda m: int(m.split(":")[2]))
+    singles = [m for m in order if m not in anc]
+    nfe = {m: nfe_per_image(cfg, m) for m in anc + singles}
+    x = {}
+    for v in sorted(set(nfe.values())):                  # dodge methods sharing an evaluation count
+        grp = [m for m in anc + singles if nfe[m] == v]
+        for k, m in enumerate(grp):
+            x[m] = v * 10 ** (0.035 * (k - (len(grp) - 1) / 2))
+    i = 0
+    if anc:
         color, ls, mk = style_for_series(i)
-        x = [p[0] for p in pts]
-        y = [p[1]["fid"] for p in pts]
-        e = [p[1]["bootstrap"]["sd"] for p in pts]
-        ax.errorbar(x, y, yerr=e, color=color, ls=ls if len(pts) > 1 else "none", marker=mk, ms=4, lw=1.0,
-                    capsize=2, label=g)
+        i += 1
+        ax.errorbar([x[m] for m in anc], [methods[m]["fid"] for m in anc],
+                    yerr=[methods[m]["bootstrap"]["sd"] for m in anc], color=color, ls=ls, marker=mk, ms=4, lw=1.0,
+                    capsize=2, label=f"ancestral ({', '.join(m.split(':')[2] for m in anc)} steps)")
+    for m in singles:
+        color, _, mk = style_for_series(i)
+        i += 1
+        ax.errorbar([x[m]], [methods[m]["fid"]], yerr=[methods[m]["bootstrap"]["sd"]],
+                    color=color, ls="none", marker=mk, ms=4, capsize=2, label=method_label(m))
     ax.set_xscale("log")
+    ax.set_yscale("log")
+    ax.yaxis.set_major_formatter(mticker.ScalarFormatter())
+    ax.yaxis.set_minor_formatter(mticker.NullFormatter())
+    ax.set_yticks([t for t in (20, 30, 50, 100, 200, 400) if t < 1.3 * max(r["fid"] for r in methods.values())])
     ax.set_xlabel("network evaluations per image")
-    ax.set_ylabel(f"FID (n = {f['n_images']})")
-    ax.legend(fontsize=6, loc="upper right")
-    return save_figure(fig, _fig_dir(cfg) / f"fig_quality_vs_nfe_{fid_tag}")
+    ax.set_ylabel(f"FID (n = {head['n_images']:,}; log scale)")
+    fig.legend(fontsize=6, loc="outside lower center", ncol=2, frameon=False)
+    return save_figure(fig, _fig_dir(cfg) / (basename or f"fig_quality_vs_nfe_{'_'.join(fid_tags)}"))
 
 
 FIGURES = {"ibw_p0": lambda cfg: fig_ibw_step_size(cfg),
            "stage_a_p0": lambda cfg: fig_stage_a_vs_iterations(cfg, ["p0_c0p2", "p0_c0p5", "p0_c1p0"],
                                                                 basename="fig_p0_stage_a_vs_iterations"),
            "stage_a_p1": lambda cfg: fig_stage_a_vs_iterations(cfg, [v["name"] for v in cfg["ibw"]["variants"]]),
-           "posthoc_fine": lambda cfg: fig_posthoc_fine_grid(cfg)}
+           "posthoc_fine": lambda cfg: fig_posthoc_fine_grid(cfg),
+           "detail_val": lambda cfg: fig_detail_per_interval(cfg, "val"),
+           "detail_test": lambda cfg: fig_detail_per_interval(
+               cfg, "test", kinds=("ibw", "init_main", "main", "refined", "ablation_endpoints"))}
 
 
 def main(argv=None):

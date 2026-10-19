@@ -228,24 +228,28 @@ def stage_costs(cfg, a, rest):
 def table_stage_abc(cfg, tag, split="test"):
     s = json.loads((C.out_dir(cfg) / "eval" / tag / f"{split}_summary.json").read_text())
     pi = s["per_interval"]
-    lines = [f"Held-out {split} anchors, {tag}: excess MMD² = MMD²(model, ref A) − MMD²(ref B, ref A) "
-             "(mean ± SD over anchors; detection = permutation p < 0.05; floor detection in brackets).", "",
-             "| j | A: teacher→IBW DINOv2 | B: IBW→student DINOv2 | C: teacher→student DINOv2 | A / B / C pixel | "
-             "A / C detected (DINOv2) | KL(q_IBW‖q_φ)/dim | student π perplexity | IBW / student n_eff | "
-             "DINOv2 dispersion ratio A / C |", "|" + "---|" * 10]
+    lines = [f"Held-out {split} anchors, {tag} ({s['n_pairs']} pairs): excess MMD² = MMD²(model, ref A) − "
+             "MMD²(ref B, ref A), DINOv2 on Tweedie-denoised states (mean ± SD over anchors). A = teacher → IBW "
+             "targets, B = IBW targets → student, B floor = IBW targets → an independent IBW fit of the same "
+             "anchor (what amortisation can at best reach), C = teacher → student. KL per dimension: "
+             "KL(q_IBW ‖ q_φ) / KL(q_IBW ‖ q_IBW′). Detection = permutation p < 0.05 (teacher-vs-teacher "
+             "floor in brackets).", "",
+             "| j | A | B | B floor | C | pixel A / B / B floor / C | A / C detected [floor] | KL student / replicate | "
+             "π perplexity | dispersion A / C |", "|" + "---|" * 10]
     for j in sorted(pi, key=int):
         e = pi[j]
-        f = lambda st, rep: f"{e[st][rep]['excess_mean']:+.3f} ± {e[st][rep]['excess_sd']:.3f}"
-        kl = e.get("kl_forward_per_dim", {})
+        f = lambda st: (f"{e[st]['dinov2']['excess_mean']:+.3f} ± {e[st]['dinov2']['excess_sd']:.3f}"
+                        if st in e else "—")
+        px = lambda st: f"{e[st]['pixel']['excess_mean']:+.4f}" if st in e else "—"
+        kl, rkl = (f"{e[k]['mean']:.4f}" if k in e else "—" for k in ("kl_forward_per_dim", "rep_kl_forward_per_dim"))
         disp = lambda st: e[st]["dinov2"].get("dispersion_ratio_mean", float("nan"))
         lines.append(
-            f"| {j} | {f('stage_A', 'dinov2')} | {f('stage_B', 'dinov2')} | {f('stage_C', 'dinov2')} | "
-            f"{e['stage_A']['pixel']['excess_mean']:+.4f} / {e['stage_B']['pixel']['excess_mean']:+.4f} / "
-            f"{e['stage_C']['pixel']['excess_mean']:+.4f} | "
+            f"| {j} | {f('stage_A')} | {f('stage_B')} | {f('stage_B_rep')} | {f('stage_C')} | "
+            f"{px('stage_A')} / {px('stage_B')} / {px('stage_B_rep')} / {px('stage_C')} | "
             f"{e['stage_A']['dinov2']['detect_rate']:.2f} / {e['stage_C']['dinov2']['detect_rate']:.2f} "
             f"[{e['stage_A']['dinov2']['floor_detect_rate']:.2f}] | "
-            f"{(str(round(kl['mean'], 4)) if kl else '—')} | {e['student_weight_perplexity']:.2f} | "
-            f"{e['ibw_n_effective']:.1f} / {e['student_n_effective']:.1f} | {disp('stage_A'):.2f} / {disp('stage_C'):.2f} |")
+            f"{kl} / {rkl} | "
+            f"{e['student_weight_perplexity']:.2f} | {disp('stage_A'):.2f} / {disp('stage_C'):.2f} |")
     return "\n".join(lines)
 
 
@@ -255,11 +259,15 @@ def table_fid(cfg, tag):
              f"{f['n_reference']} CelebA-HQ 256 images; real-vs-real FID at the same n: "
              f"{f['real_subset_fid_same_n']:.2f}. ± = bootstrap SD over images; CI = paired bootstrap 95% "
              "interval of FID(method) − FID(teacher).", "",
-             "| method | FID ↓ | paired Δ vs teacher (95% CI) | precision ↑ | recall ↑ |", "|---|---|---|---|---|"]
+             "| method | FID ↓ | paired Δ vs teacher (95% CI) | precision ↑ | recall ↑ | image contrast |",
+             "|---|---|---|---|---|---|"]
     for m, r in f["methods"].items():
         ci = r["bootstrap"].get("diff_vs_teacher_ci95")
+        st = r.get("image_stats")
+        contrast = "—" if st is None else f"{st['contrast_mean']:.3f}"
         lines.append(f"| {m} | {r['fid']:.2f} ± {r['bootstrap']['sd']:.2f} | "
-                     f"{'—' if ci is None else f'[{ci[0]:+.1f}, {ci[1]:+.1f}]'} | {r['precision']:.3f} | {r['recall']:.3f} |")
+                     f"{'—' if ci is None else f'[{ci[0]:+.1f}, {ci[1]:+.1f}]'} | {r['precision']:.3f} | {r['recall']:.3f} | "
+                     f"{contrast} |")
     return "\n".join(lines)
 
 

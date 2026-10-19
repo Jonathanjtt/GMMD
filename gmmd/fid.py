@@ -119,12 +119,14 @@ class _FastFID:
         return float(d @ d + torch.trace(S) + self.tr_r - 2 * ev.sqrt().sum())
 
 
-def bootstrap_fid(feats_by_method, ref_stats, n_boot, seed, baseline="teacher", device="cuda"):
+def bootstrap_fid(feats_by_method, ref_stats, n_boot, seed, baseline="teacher", device="cuda", pairwise=False):
     """Paired bootstrap over image indices (methods share x_T, so rows are paired).
 
     Returns per method the bootstrap SD of FID and, against ``baseline``, the 95% interval of
     the FID difference.  FID at n ~ 1000 is biased upward; the bias is common to equal-n methods
     but the interval below is for the n-image estimator, not for FID at n -> infinity.
+    ``pairwise=True`` also returns ``{"a - b": [lo, hi]}`` for every ordered pair a before b (the
+    same replicates, so the intervals are paired too).
     """
     fast = _FastFID(ref_stats, device)
     for m, f in feats_by_method.items():
@@ -145,4 +147,9 @@ def bootstrap_fid(feats_by_method, ref_stats, n_boot, seed, baseline="teacher", 
             d = boots[m] - boots[baseline]
             r[f"diff_vs_{baseline}_ci95"] = [float(np.quantile(d, 0.025)), float(np.quantile(d, 0.975))]
         out[m] = r
+    if pairwise:
+        ms = list(feats_by_method)
+        pw = {f"{a} - {b}": [float(np.quantile(boots[a] - boots[b], q)) for q in (0.025, 0.975)]
+              for i, a in enumerate(ms) for b in ms[i + 1:]}
+        return out, pw
     return out

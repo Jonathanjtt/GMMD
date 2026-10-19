@@ -128,6 +128,25 @@ biased upward — the teacher itself scores 56.6).
   were the true conditional, and the isotropic q lacks its content variance. The bias lives in the
   stiff directions that converge within ~10 iterations, so neither initialisation nor iteration
   count (P1, fine grid) removes it.
+* **A perfect amortisation of these targets would not help (IBW chain).** Running the frozen IBW
+  configuration online at every one of the ten transitions — at the chain's own current state, so
+  there is neither network error nor rollout shift; uniform weights, one draw, the teacher's noise
+  removal at the end (`gmmd/exp5/oracle.py`) — costs 8,001 teacher evaluations per image (4× the
+  teacher's 2,000; 232 s per image on the shared GPU 1) and gives the same washed-out faces as the
+  student (`figures/fig_samples_same_xT_prelim`): contrast 0.141 vs the teacher's 0.266 on the same
+  64 x_T. FID at n = 64 (diagnostic only; heavily biased — CIs in `fid_n64_ibwchain.json`):
+  teacher 90.1, untrained init 118.4, 10-step ancestral 136.5, **IBW chain 141.7**, pilot student
+  142.5, main student 152.4, 10-step SMLD 459.3. End-to-end quality is therefore bounded by the
+  targets (stage A), not by the network (stage B).
+* **Where the targets lose the images: fine detail at mid noise.** Per interval, from the same
+  anchor, the Tweedie-denoised end states of each kernel against the teacher's 200 steps
+  (`gmmd/exp5/diag_detail.py`, `figures/fig_detail_per_interval_val`; ratio kernel / teacher,
+  contrast / Laplacian-RMS detail): IBW targets 0.53–0.66 / 0.24–0.38 at j1–j3 and 0.80–0.98 /
+  0.24–0.65 at j4–j7, ≈ 1 at j8–j9; the untrained Tweedie Gaussian stays at 0.87–1.04 throughout
+  j1–j9; the trained student reproduces the IBW targets. This is what a mode-seeking fit predicts:
+  reverse KL with a narrow isotropic family drives the means toward a mode of the Bayes conditional,
+  and under a heavy-tailed image prior the mode shrinks fine-scale coefficients (MAP vs posterior
+  mean). It is consistent with — not a proof of — that mechanism.
 
 _(sections 4–8 — main run on held-out test anchors, 1,024-image FID, shift/refinement, ablation,
 cost — are filled from the result files at the end of the run)_

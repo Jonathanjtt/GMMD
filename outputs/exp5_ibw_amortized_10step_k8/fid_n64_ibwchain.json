@@ -1,0 +1,231 @@
+{
+  "tag": "n64_ibwchain",
+  "n_images": 64,
+  "n_reference": 30000,
+  "reference_splits": [
+    "train",
+    "validation"
+  ],
+  "fid_extractor": "inception-v3-compat/2048",
+  "pr_extractor": "vgg16/fc2_relu",
+  "pr_k": 3,
+  "preprocessing": "sampler float output -> clip(x*255, 0, 255).astype(uint8), identical for every method",
+  "methods": {
+    "teacher": {
+      "fid": 90.13492364483167,
+      "precision": 0.65625,
+      "recall": 0.6875,
+      "f_score": 0.6715116279069767,
+      "image_stats": {
+        "contrast_mean": 0.265641767774893,
+        "contrast_sd": 0.04444175146792583,
+        "intensity_mean": 0.4190577740762748,
+        "intensity_sd": 0.10606000912838538
+      },
+      "bootstrap": {
+        "sd": 4.339054055844052
+      }
+    },
+    "ibwchain": {
+      "fid": 141.67822243583652,
+      "precision": 0.90625,
+      "recall": 0.0,
+      "f_score": 0.0,
+      "image_stats": {
+        "contrast_mean": 0.14103525085383128,
+        "contrast_sd": 0.030887571663294158,
+        "intensity_mean": 0.3686775793437085,
+        "intensity_sd": 0.08455072502082878
+      },
+      "bootstrap": {
+        "sd": 2.668486470925345,
+        "diff_vs_teacher_ci95": [
+          36.500504212161026,
+          53.123361430104104
+        ]
+      }
+    },
+    "student:main": {
+      "fid": 152.36174698647227,
+      "precision": 0.9375,
+      "recall": 0.0,
+      "f_score": 0.0,
+      "image_stats": {
+        "contrast_mean": 0.12097018345334457,
+        "contrast_sd": 0.02792280680822248,
+        "intensity_mean": 0.36649167584437947,
+        "intensity_sd": 0.09582712472702111
+      },
+      "bootstrap": {
+        "sd": 3.726952532490907,
+        "diff_vs_teacher_ci95": [
+          43.90551772526955,
+          65.38253162783634
+        ]
+      }
+    },
+    "student:init_main": {
+      "fid": 118.35745508688359,
+      "precision": 0.828125,
+      "recall": 0.0,
+      "f_score": 0.0,
+      "image_stats": {
+        "contrast_mean": 0.17653980221671955,
+        "contrast_sd": 0.030112597992009667,
+        "intensity_mean": 0.4071952607896593,
+        "intensity_sd": 0.09869985293138314
+      },
+      "bootstrap": {
+        "sd": 2.6487032819989964,
+        "diff_vs_teacher_ci95": [
+          12.186914351962152,
+          30.1089429425542
+        ]
+      }
+    },
+    "student:pilot": {
+      "fid": 142.5343181112562,
+      "precision": 0.890625,
+      "recall": 0.0,
+      "f_score": 0.0,
+      "image_stats": {
+        "contrast_mean": 0.12217661499105029,
+        "contrast_sd": 0.025492216164732136,
+        "intensity_mean": 0.4351954647139007,
+        "intensity_sd": 0.16358819812502554
+      },
+      "bootstrap": {
+        "sd": 2.973618007201142,
+        "diff_vs_teacher_ci95": [
+          36.476951920911496,
+          54.211121665972385
+        ]
+      }
+    },
+    "coarse:ancestral:10": {
+      "fid": 136.511110042292,
+      "precision": 0.6875,
+      "recall": 0.015625,
+      "f_score": 0.030555555555555555,
+      "image_stats": {
+        "contrast_mean": 0.17662076897655202,
+        "contrast_sd": 0.029505203493357033,
+        "intensity_mean": 0.38736692004733614,
+        "intensity_sd": 0.08379733497849576
+      },
+      "bootstrap": {
+        "sd": 2.9534200000952437,
+        "diff_vs_teacher_ci95": [
+          30.953955477924925,
+          48.390441929848905
+        ]
+      }
+    },
+    "coarse:reverse_diffusion:10": {
+      "fid": 459.32615836215416,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f_score": 0.0,
+      "image_stats": {
+        "contrast_mean": 0.4996566533989352,
+        "contrast_sd": 1.7835108421422252e-05,
+        "intensity_mean": 0.4997814187816545,
+        "intensity_sd": 0.0009691542567424592
+      },
+      "bootstrap": {
+        "sd": 2.19522719239762,
+        "diff_vs_teacher_ci95": [
+          345.41210128744285,
+          363.057764427311
+        ]
+      }
+    }
+  },
+  "pairwise_diff_ci95": {
+    "teacher - ibwchain": [
+      -53.123361430104104,
+      -36.50050421216104
+    ],
+    "teacher - student:main": [
+      -65.38253162783634,
+      -43.90551772526955
+    ],
+    "teacher - student:init_main": [
+      -30.108942942554204,
+      -12.18691435196216
+    ],
+    "teacher - student:pilot": [
+      -54.211121665972385,
+      -36.476951920911496
+    ],
+    "teacher - coarse:ancestral:10": [
+      -48.390441929848905,
+      -30.95395547792493
+    ],
+    "teacher - coarse:reverse_diffusion:10": [
+      -363.057764427311,
+      -345.41210128744285
+    ],
+    "ibwchain - student:main": [
+      -18.3210053262533,
+      -2.7865083043233887
+    ],
+    "ibwchain - student:init_main": [
+      16.616777910566395,
+      29.067778808166207
+    ],
+    "ibwchain - student:pilot": [
+      -7.274972117246802,
+      6.809517174050597
+    ],
+    "ibwchain - coarse:ancestral:10": [
+      -1.8734659220882874,
+      12.421412009241783
+    ],
+    "ibwchain - coarse:reverse_diffusion:10": [
+      -316.74523178697797,
+      -304.20021007790115
+    ],
+    "student:main - student:init_main": [
+      26.619539869690566,
+      41.77845545642004
+    ],
+    "student:main - student:pilot": [
+      3.887938296496138,
+      17.34640800697608
+    ],
+    "student:main - coarse:ancestral:10": [
+      7.63602500221259,
+      23.34446658770437
+    ],
+    "student:main - coarse:reverse_diffusion:10": [
+      -307.8489058269923,
+      -291.36465098304694
+    ],
+    "student:init_main - student:pilot": [
+      -29.130779048568016,
+      -18.077210097665358
+    ],
+    "student:init_main - coarse:ancestral:10": [
+      -24.44856015578847,
+      -11.22613421223631
+    ],
+    "student:init_main - coarse:reverse_diffusion:10": [
+      -339.7497452247182,
+      -326.4280922708996
+    ],
+    "student:pilot - coarse:ancestral:10": [
+      -1.8536510029063775,
+      11.554310763065542
+    ],
+    "student:pilot - coarse:reverse_diffusion:10": [
+      -316.3062139113072,
+      -303.1348557509722
+    ],
+    "coarse:ancestral:10 - coarse:reverse_diffusion:10": [
+      -322.54772598455844,
+      -307.73087365902995
+    ]
+  },
+  "real_subset_fid_same_n": 90.81387999047882
+}

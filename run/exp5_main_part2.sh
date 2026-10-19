@@ -6,7 +6,8 @@
 #
 #   GPU0: refinement (student-rollout anchors -> frozen IBW fits -> fine-tune) -> ablation endpoints
 #         (fp32, E = 4) -> ablation student -> 1,024 images -> FID (n = 1,024) -> test refs (shared)
-#         -> stage A/B/C on test for main, refined, ablation, zero-training control -> timing
+#         -> stage A/B/C on test for main, refined, ablation, zero-training control -> per-interval
+#         detail diagnostic on test -> timing
 #
 #   tmux new-session -d -s exp5-main0b 'bash run/exp5_main_part2.sh'
 set -uo pipefail
@@ -56,6 +57,8 @@ ablation() {
     $M evalstudent --tag $t --split test || status "evalstudent $t FAILED"
   done
   status "stage A/B/C on test: main, refined, ablation, init"
+  python -m gmmd.exp5.diag_detail --split test --students init_main main refined ablation_endpoints \
+    && status "detail per interval on test (contrast / Laplacian energy vs the teacher's kernel)"
   TAG=main bash run/exp5_timing.sh
 } >> "$LOG" 2>&1
 status "main part 2 (GPU0) finished"
