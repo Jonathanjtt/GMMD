@@ -1,0 +1,46 @@
+{
+  "split": "test",
+  "trajectories": [
+    {
+      "n": 0,
+      "xT_seed": 3200000,
+      "traj_noise_seed": 8379387497391791189
+    },
+    {
+      "n": 1,
+      "xT_seed": 3200001,
+      "traj_noise_seed": 4235877620217654690
+    },
+    {
+      "n": 2,
+      "xT_seed": 3200002,
+      "traj_noise_seed": 5722568884438120554
+    },
+    {
+      "n": 3,
+      "xT_seed": 3200003,
+      "traj_noise_seed": 6401729328239510881
+    },
+    {
+      "n": 4,
+      "xT_seed": 3200004,
+      "traj_noise_seed": 3404159594888788151
+    },
+    {
+      "n": 5,
+      "xT_seed": 3200005,
+      "traj_noise_seed": 4623698981277422208
+    },
+    {
+      "n": 6,
+      "xT_seed": 3200006,
+      "traj_noise_seed": 9201432520694631380
+    },
+    {
+      "n": 7,
+      "xT_seed": 3200007,
+      "traj_noise_seed": 9069767190078335888
+    }
+  ],
+  "rule": "x_T seed = base + n; trajectory noise seed = seed_of(51, x_T seed); splits use disjoint x_T seed ranges, fixed before any target was generated"
+}

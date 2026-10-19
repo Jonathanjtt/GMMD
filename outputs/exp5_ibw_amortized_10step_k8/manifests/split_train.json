@@ -1,0 +1,326 @@
+{
+  "split": "train",
+  "trajectories": [
+    {
+      "n": 0,
+      "xT_seed": 3000000,
+      "traj_noise_seed": 1375118010220510198
+    },
+    {
+      "n": 1,
+      "xT_seed": 3000001,
+      "traj_noise_seed": 4807628030286401244
+    },
+    {
+      "n": 2,
+      "xT_seed": 3000002,
+      "traj_noise_seed": 2050019187291635212
+    },
+    {
+      "n": 3,
+      "xT_seed": 3000003,
+      "traj_noise_seed": 4605326854599786157
+    },
+    {
+      "n": 4,
+      "xT_seed": 3000004,
+      "traj_noise_seed": 6399886209611538316
+    },
+    {
+      "n": 5,
+      "xT_seed": 3000005,
+      "traj_noise_seed": 544961277292059572
+    },
+    {
+      "n": 6,
+      "xT_seed": 3000006,
+      "traj_noise_seed": 3849381570148935503
+    },
+    {
+      "n": 7,
+      "xT_seed": 3000007,
+      "traj_noise_seed": 5984180473984944155
+    },
+    {
+      "n": 8,
+      "xT_seed": 3000008,
+      "traj_noise_seed": 542712620008477041
+    },
+    {
+      "n": 9,
+      "xT_seed": 3000009,
+      "traj_noise_seed": 2796818291009841869
+    },
+    {
+      "n": 10,
+      "xT_seed": 3000010,
+      "traj_noise_seed": 7151382802276971704
+    },
+    {
+      "n": 11,
+      "xT_seed": 3000011,
+      "traj_noise_seed": 1017004463158487674
+    },
+    {
+      "n": 12,
+      "xT_seed": 3000012,
+      "traj_noise_seed": 5552881494977424339
+    },
+    {
+      "n": 13,
+      "xT_seed": 3000013,
+      "traj_noise_seed": 7559066034690794535
+    },
+    {
+      "n": 14,
+      "xT_seed": 3000014,
+      "traj_noise_seed": 7837520224537063638
+    },
+    {
+      "n": 15,
+      "xT_seed": 3000015,
+      "traj_noise_seed": 5479763012922532501
+    },
+    {
+      "n": 16,
+      "xT_seed": 3000016,
+      "traj_noise_seed": 5382664844230630557
+    },
+    {
+      "n": 17,
+      "xT_seed": 3000017,
+      "traj_noise_seed": 5184763043822871996
+    },
+    {
+      "n": 18,
+      "xT_seed": 3000018,
+      "traj_noise_seed": 7011964894442880894
+    },
+    {
+      "n": 19,
+      "xT_seed": 3000019,
+      "traj_noise_seed": 2230455218611446909
+    },
+    {
+      "n": 20,
+      "xT_seed": 3000020,
+      "traj_noise_seed": 7040572317376160337
+    },
+    {
+      "n": 21,
+      "xT_seed": 3000021,
+      "traj_noise_seed": 509736864483625277
+    },
+    {
+      "n": 22,
+      "xT_seed": 3000022,
+      "traj_noise_seed": 3780544380969378838
+    },
+    {
+      "n": 23,
+      "xT_seed": 3000023,
+      "traj_noise_seed": 8661982502104961226
+    },
+    {
+      "n": 24,
+      "xT_seed": 3000024,
+      "traj_noise_seed": 2945307662251015484
+    },
+    {
+      "n": 25,
+      "xT_seed": 3000025,
+      "traj_noise_seed": 7591245128476150263
+    },
+    {
+      "n": 26,
+      "xT_seed": 3000026,
+      "traj_noise_seed": 1005547307188666380
+    },
+    {
+      "n": 27,
+      "xT_seed": 3000027,
+      "traj_noise_seed": 5512689208195321112
+    },
+    {
+      "n": 28,
+      "xT_seed": 3000028,
+      "traj_noise_seed": 5207979441499461083
+    },
+    {
+      "n": 29,
+      "xT_seed": 3000029,
+      "traj_noise_seed": 3431808914551184414
+    },
+    {
+      "n": 30,
+      "xT_seed": 3000030,
+      "traj_noise_seed": 7118990449909644373
+    },
+    {
+      "n": 31,
+      "xT_seed": 3000031,
+      "traj_noise_seed": 8911893297457344034
+    },
+    {
+      "n": 32,
+      "xT_seed": 3000032,
+      "traj_noise_seed": 4201963231129925385
+    },
+    {
+      "n": 33,
+      "xT_seed": 3000033,
+      "traj_noise_seed": 9030375386232455669
+    },
+    {
+      "n": 34,
+      "xT_seed": 3000034,
+      "traj_noise_seed": 581425924680785723
+    },
+    {
+      "n": 35,
+      "xT_seed": 3000035,
+      "traj_noise_seed": 3275274252875310497
+    },
+    {
+      "n": 36,
+      "xT_seed": 3000036,
+      "traj_noise_seed": 4883625739835175936
+    },
+    {
+      "n": 37,
+      "xT_seed": 3000037,
+      "traj_noise_seed": 6940577452476072276
+    },
+    {
+      "n": 38,
+      "xT_seed": 3000038,
+      "traj_noise_seed": 2320643032800363966
+    },
+    {
+      "n": 39,
+      "xT_seed": 3000039,
+      "traj_noise_seed": 2518844592505770837
+    },
+    {
+      "n": 40,
+      "xT_seed": 3000040,
+      "traj_noise_seed": 2304816551692337593
+    },
+    {
+      "n": 41,
+      "xT_seed": 3000041,
+      "traj_noise_seed": 6376292931374546073
+    },
+    {
+      "n": 42,
+      "xT_seed": 3000042,
+      "traj_noise_seed": 2048771882951678558
+    },
+    {
+      "n": 43,
+      "xT_seed": 3000043,
+      "traj_noise_seed": 8980516394835173017
+    },
+    {
+      "n": 44,
+      "xT_seed": 3000044,
+      "traj_noise_seed": 5134980984533412808
+    },
+    {
+      "n": 45,
+      "xT_seed": 3000045,
+      "traj_noise_seed": 1674723728222816512
+    },
+    {
+      "n": 46,
+      "xT_seed": 3000046,
+      "traj_noise_seed": 7414675123429241544
+    },
+    {
+      "n": 47,
+      "xT_seed": 3000047,
+      "traj_noise_seed": 4085463641723599567
+    },
+    {
+      "n": 48,
+      "xT_seed": 3000048,
+      "traj_noise_seed": 1292748423269293194
+    },
+    {
+      "n": 49,
+      "xT_seed": 3000049,
+      "traj_noise_seed": 5683512066879071698
+    },
+    {
+      "n": 50,
+      "xT_seed": 3000050,
+      "traj_noise_seed": 292817038674955388
+    },
+    {
+      "n": 51,
+      "xT_seed": 3000051,
+      "traj_noise_seed": 2217576997307467213
+    },
+    {
+      "n": 52,
+      "xT_seed": 3000052,
+      "traj_noise_seed": 2967497387268031590
+    },
+    {
+      "n": 53,
+      "xT_seed": 3000053,
+      "traj_noise_seed": 8059652085718494121
+    },
+    {
+      "n": 54,
+      "xT_seed": 3000054,
+      "traj_noise_seed": 6257420883034041633
+    },
+    {
+      "n": 55,
+      "xT_seed": 3000055,
+      "traj_noise_seed": 26461395542885189
+    },
+    {
+      "n": 56,
+      "xT_seed": 3000056,
+      "traj_noise_seed": 1594461089101612195
+    },
+    {
+      "n": 57,
+      "xT_seed": 3000057,
+      "traj_noise_seed": 4779763050300751045
+    },
+    {
+      "n": 58,
+      "xT_seed": 3000058,
+      "traj_noise_seed": 7480732407018436815
+    },
+    {
+      "n": 59,
+      "xT_seed": 3000059,
+      "traj_noise_seed": 2046747612707637322
+    },
+    {
+      "n": 60,
+      "xT_seed": 3000060,
+      "traj_noise_seed": 6993318946655412981
+    },
+    {
+      "n": 61,
+      "xT_seed": 3000061,
+      "traj_noise_seed": 830992768753710367
+    },
+    {
+      "n": 62,
+      "xT_seed": 3000062,
+      "traj_noise_seed": 855706222062720878
+    },
+    {
+      "n": 63,
+      "xT_seed": 3000063,
+      "traj_noise_seed": 265871084550078420
+    }
+  ],
+  "rule": "x_T seed = base + n; trajectory noise seed = seed_of(51, x_T seed); splits use disjoint x_T seed ranges, fixed before any target was generated"
+}

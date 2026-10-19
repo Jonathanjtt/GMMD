@@ -44,7 +44,13 @@ from ._vendor.models.ema import ExponentialMovingAverage
 from ._vendor.provenance import UPSTREAM_COMMIT
 from .configs import SAMPLING_EPS, get_config, to_dict
 
-__all__ = ["ScoreSDETeacher", "Transition", "build_sde", "load_score_model", "file_sha256"]
+__all__ = ["ScoreSDETeacher", "Transition", "build_sde", "load_score_model", "file_sha256",
+           "SCORE_EXAMPLES", "INSTANCES"]
+
+# Process-wide instrumentation: score-network examples evaluated through ANY teacher, and
+# teachers constructed.  exp5's standalone sampler reads both to certify zero teacher calls.
+SCORE_EXAMPLES = [0]
+INSTANCES = [0]
 
 PREDICTORS = ("reverse_diffusion", "euler_maruyama", "ancestral_sampling")
 CORRECTORS = ("none", "langevin", "ald")
@@ -144,7 +150,13 @@ class ScoreSDETeacher:
     def __init__(self, sde, score_fn, image_shape, device="cpu", eps=None, *, config=None,
                  model=None, info=None, deterministic_cudnn=True):
         self.sde = sde
-        self._score_fn = score_fn
+        INSTANCES[0] += 1
+
+        def counted_score_fn(x, t, _raw=score_fn):
+            SCORE_EXAMPLES[0] += int(x.shape[0])
+            return _raw(x, t)
+
+        self._score_fn = counted_score_fn
         self.image_shape = tuple(int(v) for v in image_shape)
         self.device = torch.device(device)
         self.eps = float(SAMPLING_EPS.get(type(sde).__name__.lower(), 1e-3) if eps is None else eps)

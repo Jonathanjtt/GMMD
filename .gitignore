@@ -23,3 +23,7 @@ outputs/**/*.npz
 # exp4: per-anchor x_t arrays (regenerable from the seeds in each anchor JSON) and smoke-test runs
 outputs/**/*.npy
 outputs/_smoke*/
+
+# exp5: student checkpoints (~265 MB each) and transient work-claim locks
+outputs/**/*.pt
+outputs/**/locks/

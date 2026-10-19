@@ -1,0 +1,162 @@
+# GMMD / exp5 -- amortized IBW-GMMD: ten conditional 8-component mixture draws replace the complete
+# 2,000-step reverse-diffusion trajectory of the CelebA-HQ 256 score-SDE teacher.
+#
+#   offline A : teacher trajectories -> per-anchor IBW fits of each interval's conditional (K = 8)
+#   offline B : a conditional mixture network amortises the fits (forward KL from the IBW mixtures)
+#   inference : x_T -> 10 x (one network evaluation + one GMM draw) -> image; no teacher, no IBW
+#
+# Driver: python -m gmmd.experiments.ibw_amortized <stage> --config exp5_ibw_amortized_10step_k8
+# Outputs: outputs/exp5_ibw_amortized_10step_k8/
+
+[output]
+dir = "outputs/exp5_ibw_amortized_10step_k8"
+
+[teacher]                       # frozen; the exp4 "original pipeline"
+config = "ve/celebahq_256_ncsnpp_continuous"
+checkpoint = "checkpoints/ve/celebahq_256_ncsnpp_continuous/checkpoint_48.pth"
+use_ema = true
+predictor = "reverse_diffusion"
+corrector = "none"
+noise_removal = true
+batch_size = 64
+
+# Precision policy (user decision 2026-10-19): every TEACHER REFERENCE sample (anchor trajectories,
+# conditional reference rollouts, coarse baselines, ablation endpoints, evaluation denoising and
+# features) is full fp32 with TF32 off.  Offline IBW fitting, the terminal pushforward bank and the
+# student (training and its inference) run with TF32.  The finite-difference principal-direction
+# initialisation runs in fp32 inside the TF32 fitting process (TF32 rounding exceeds the difference).
+[precision]
+teacher_reference_tf32 = false
+ibw_tf32 = true
+student_tf32 = true
+
+[partition]
+n_intervals = 10                # 2,000 grid steps -> 10 x 200
+
+[splits]                        # independent parent trajectories; x_T seed = base + n
+train_base = 3000000
+val_base = 3100000
+test_base = 3200000
+refine_base = 3300000
+n_train = 64
+n_val = 4
+n_test = 8
+n_refine = 32
+n_pilot_train = 8               # the pilot uses train trajectories 0..7
+
+[ibw]
+n_components = 8
+n_grad_samples = 4
+step_c = 0.5                    # gamma_j = step_c * v_anc_j  (set from the P0 step-size check)
+max_iterations = 400            # maximum budget; snapshots below
+snapshot_iterations = [25, 50, 100, 200, 300, 400]
+diag_every = 25
+anchor_batch = 4                # anchors fitted in lockstep per network batch
+terminal_bank = 32              # pushforward samples T(z), z ~ q_IBW, cached per terminal fit
+
+# Convergence diagnostics (objective-level; reported, not used to choose the init):
+#   converged at iteration T  <=>  mean_drift over the last diag window < 0.02 AND
+#   max_k |log v_k(T) - log v_k(T - 25)| < 0.01 AND the fit did not stop early.
+[ibw.convergence]
+window = 25
+mean_drift_tol = 0.02
+logvar_drift_tol = 0.01
+
+# Teacher-free initialisation variants evaluated in pilot stage P1 (user decision: K = 8, components
+# started far apart, initial mean / covariance tuned on validation anchors).
+[[ibw.variants]]
+name = "prior_free"
+scheme = "prior_free"
+spread = 1.0
+var = "gap"
+
+[[ibw.variants]]
+name = "principal_r1"
+scheme = "principal"
+spread = 1.0
+var = "v_anc"
+
+[[ibw.variants]]
+name = "principal_r3"
+scheme = "principal"
+spread = 3.0
+var = "v_anc"
+
+[[ibw.variants]]
+name = "principal_r3_vgap"
+scheme = "principal"
+spread = 3.0
+var = "gap"
+
+[[ibw.variants]]
+name = "random_far"
+scheme = "random_far"
+spread = 1.0
+var = "v_anc"
+
+[principal]
+n_iter = 8
+oversample = 2
+rel_h = 0.05
+
+# P0 (exploratory, before P1): step-size check on val trajectories 0-1, intervals 1, 4, 7,
+# prior_free init, step_c in the list below.  Chosen by convergence diagnostics + DINOv2 excess.
+[p0]
+trajectories = [0, 1]
+intervals = [1, 4, 7]
+step_cs = [0.2, 0.5, 1.0]
+
+[evaluation]
+n_ref = 32                      # teacher set A (reference) and set B (floor), each
+n_model = 32                    # IBW / student samples per anchor-interval
+feature = "dinov2_vitb14"       # on Tweedie-denoised states E[x_0 | y] (the output itself for the terminal interval)
+pixel_downsample = 8
+n_perm = 500
+n_projections = 256
+n_kl = 64                       # Monte-Carlo samples for the stage-B forward-KL estimate
+
+# Pre-registered selection rule for the IBW configuration (written before P1 results exist).
+#   For every validation (trajectory, interval) pair and every (variant, snapshot):
+#     X = MMD^2_u(IBW, A) - MMD^2_u(B, A)  on DINOv2 features, bandwidth = median heuristic on A U B.
+#   A fit that stopped early or produced non-finite samples scores X = +inf.
+#   1. Variant: lowest mean X over the 40 val pairs at its best snapshot.  If the paired-bootstrap 95%
+#      CI of X[variant] - X[prior_free] (at each one's best snapshot) contains 0, ties are broken by
+#      (a) lower failure rate, (b) higher mean n_effective components.
+#   2. Iterations: within the chosen variant, the SMALLEST snapshot whose paired-bootstrap 95% CI of
+#      X(it) - X(best it) has lower bound <= 0 and whose failure rate is not higher.
+[selection]
+n_boot = 10000
+boot_seed = 0
+alpha = 0.05
+
+[student]
+n_components = 8
+head_width = 512
+embed_dim = 64
+perturb = 0.01
+lr = 2.0e-5
+lr_head = 2.0e-4
+weight_decay = 0.0
+warmup = 300
+batch_pairs = 16                # (anchor, interval) pairs per step
+samples_per_pair = 8            # fresh draws from each cached IBW mixture per step
+grad_clip = 1.0
+ema = 0.999
+eval_every = 250
+ckpt_every = 250
+pilot_steps = 3000
+main_steps = 12000
+
+[generation]
+xT_seed_base = 1000000          # shared with exp4's teacher images (same x_T)
+n_pilot = 192
+n_images = 1024
+chunk = 64
+coarse = [["reverse_diffusion", 10], ["ancestral", 10], ["ancestral", 20], ["ancestral", 50], ["ancestral", 100]]
+exp4_teacher_dir = "outputs/exp4_interval_replacement/generation/teacher"
+
+[fid]
+reference_splits = ["train", "validation"]
+pr_k = 3
+pr_subset_seed = 0
+n_boot = 2000

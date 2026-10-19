@@ -20,7 +20,11 @@ import time
 import numpy as np
 import torch
 
-__all__ = ["fit_batched", "sample_batched", "VEConditionalScores"]
+__all__ = ["fit_batched", "sample_batched", "VEConditionalScores", "ITERATION_COUNTER"]
+
+# Total IBW iterations run in this process (all anchors of one iteration count once).  The exp5
+# standalone sampler reads it before and after generation to certify that NO online fitting ran.
+ITERATION_COUNTER = [0]
 
 
 class VEConditionalScores:
@@ -76,16 +80,22 @@ def _mixture_score(means, variances, x):
 
 
 def fit_batched(score_fn, init_means, init_variances, seeds, n_iterations=300, step_size=0.1,
-                n_grad_samples=4, snapshot_at=(), dtype=torch.float32, device="cuda"):
+                n_grad_samples=4, snapshot_at=(), dtype=torch.float32, device="cuda",
+                diag_every=0):
     """Run IBW (Eq. 12) on ``A`` independent targets.
 
     ``score_fn(x (M, d), anchor (M,)) -> (M, d)``; ``init_means`` (A, K, d), ``init_variances``
     (A, K); ``seeds`` one per anchor (the noise generator ``ibw_gpu.fit`` would build from it).
     ``snapshot_at``: iteration counts at which to keep a copy of every anchor's mixture.
+    ``diag_every``: if > 0, every that many iterations record each anchor's variances and the
+    displacement of its means since the previous record (convergence diagnostics; no effect on
+    the iterates).
 
     Returns a dict with final ``means`` (A,K,d) / ``variances`` (A,K) as tensors on device,
     ``snapshots`` {iteration: (means, variances)}, ``grad_norms`` (n_iterations, A),
-    ``stopped_early`` (list per anchor, None or a message), ``runtime_s``.
+    ``stopped_early`` (list per anchor, None or a message), ``runtime_s``, and with
+    ``diag_every`` a ``diagnostics`` dict: ``iterations`` (n_rec,), ``variances`` (n_rec, A, K),
+    ``mean_drift`` (n_rec, A) = ``||m(it) - m(it - diag_every)||_F / sqrt(K d mean(v))``.
     """
     device = torch.device(device)
     means = torch.as_tensor(init_means, dtype=dtype, device=device).clone()
@@ -99,9 +109,14 @@ def fit_batched(score_fn, init_means, init_variances, seeds, n_iterations=300, s
     grad_norms = np.full((n_iterations, A), np.nan)
     snapshot_at = {int(v) for v in snapshot_at}
     snapshots = {}
+    diag_every = int(diag_every)
+    diag = dict(iterations=[0], variances=[variances.double().cpu().numpy()],
+                mean_drift=[np.full(A, np.nan)]) if diag_every > 0 else None
+    last_means = means.clone() if diag_every > 0 else None
     t0 = time.perf_counter()
 
     for it in range(n_iterations):
+        ITERATION_COUNTER[0] += 1
         noise = torch.stack([torch.randn((B, d), device=device, dtype=dtype, generator=g)
                              for g in gens])                                           # (A,B,d)
         samples = means[:, :, None, :] + variances.sqrt()[:, :, None, None] * noise[:, None]
@@ -128,14 +143,24 @@ def fit_batched(score_fn, init_means, init_variances, seeds, n_iterations=300, s
         variances = torch.where(sel, new_vars, variances)
         if (it + 1) in snapshot_at:
             snapshots[it + 1] = (means.clone(), variances.clone())
+        if diag_every > 0 and (it + 1) % diag_every == 0:
+            scale = (K * d * variances.mean(1)).sqrt()
+            drift = (means - last_means).reshape(A, -1).norm(dim=1) / scale
+            diag["iterations"].append(it + 1)
+            diag["variances"].append(variances.double().cpu().numpy())
+            diag["mean_drift"].append(drift.double().cpu().numpy())
+            last_means = means.clone()
 
     if device.type == "cuda":
         torch.cuda.synchronize(device)
-    return dict(means=means, variances=variances, snapshots=snapshots, grad_norms=grad_norms,
-                stopped_early=stopped, runtime_s=time.perf_counter() - t0,
-                settings=dict(method="ibw", step_size=step_size, n_grad_samples=B,
-                              n_components=K, dim=d, n_iterations=n_iterations,
-                              backend="torch_batched", dtype=str(dtype)))
+    out = dict(means=means, variances=variances, snapshots=snapshots, grad_norms=grad_norms,
+               stopped_early=stopped, runtime_s=time.perf_counter() - t0,
+               settings=dict(method="ibw", step_size=step_size, n_grad_samples=B,
+                             n_components=K, dim=d, n_iterations=n_iterations,
+                             backend="torch_batched", dtype=str(dtype)))
+    if diag is not None:
+        out["diagnostics"] = {k: np.asarray(v) for k, v in diag.items()}
+    return out
 
 
 def sample_batched(means, variances, n, gens):
