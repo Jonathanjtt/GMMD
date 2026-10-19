@@ -1,0 +1,64 @@
+{
+  "tag": "pilot_init",
+  "n_images": 192,
+  "n_reference": 30000,
+  "reference_splits": [
+    "train",
+    "validation"
+  ],
+  "fid_extractor": "inception-v3-compat/2048",
+  "pr_extractor": "vgg16/fc2_relu",
+  "pr_k": 3,
+  "preprocessing": "sampler float output -> clip(x*255, 0, 255).astype(uint8), identical for every method",
+  "methods": {
+    "teacher": {
+      "fid": 56.56776525572613,
+      "precision": 0.7760416865348816,
+      "recall": 0.5416666865348816,
+      "f_score": 0.6380105606812225,
+      "bootstrap": {
+        "sd": 2.159763979762385
+      }
+    },
+    "student:init_pilot": {
+      "fid": 98.27917740208002,
+      "precision": 0.625,
+      "recall": 0.010416666977107525,
+      "f_score": 0.02049180387938032,
+      "bootstrap": {
+        "sd": 1.672395713069013,
+        "diff_vs_teacher_ci95": [
+          30.510950678279876,
+          39.892976307794115
+        ]
+      }
+    },
+    "student:pilot": {
+      "fid": 126.20165446632366,
+      "precision": 0.5052083134651184,
+      "recall": 0.0,
+      "f_score": 0.0,
+      "bootstrap": {
+        "sd": 1.6446660560869308,
+        "diff_vs_teacher_ci95": [
+          57.96493169460997,
+          67.43768133898307
+        ]
+      }
+    },
+    "coarse:ancestral:10": {
+      "fid": 114.57898429248439,
+      "precision": 0.6614583134651184,
+      "recall": 0.010416666977107525,
+      "f_score": 0.02051033650954002,
+      "bootstrap": {
+        "sd": 2.183894506710372,
+        "diff_vs_teacher_ci95": [
+          46.604250413193604,
+          56.92929944925192
+        ]
+      }
+    }
+  },
+  "real_subset_fid_same_n": 50.45441733030637
+}

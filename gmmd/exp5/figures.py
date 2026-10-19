@@ -179,13 +179,14 @@ STAGE_STYLE = {"stage_A": ("A: teacher → IBW", 0), "stage_B": ("B: IBW → stu
 
 def fig_stage_abc(cfg, tag, split="test"):
     """Per-interval excess MMD^2 (model vs reference minus reference vs reference, mean ± SD over
-    held-out anchors) for the three approximation stages, DINOv2 (a) and pixels (b), plus the
-    stage-B forward KL per dimension (c)."""
+    held-out anchors) for the three approximation stages, DINOv2 (a) and pixels (b), with the
+    IBW-vs-IBW floor of stage B (an independent replicate fit scored like the student), plus the
+    stage-B forward KL per dimension and the same KL between the two IBW fits (c)."""
     summ = json.loads((C.out_dir(cfg) / "eval" / tag / f"{split}_summary.json").read_text())
     pi = summ["per_interval"]
     js = sorted(int(j) for j in pi)
-    style = apply_publication_style(FigureStyle(width_in=FULL, height_in=2.5))
-    fig, axes = plt.subplots(1, 3, figsize=(style.width_in, style.height_in), constrained_layout=True)
+    style = apply_publication_style(FigureStyle(width_in=FULL, height_in=2.8))
+    fig, axes = plt.subplots(1, 3, figsize=(style.width_in, style.height_in), layout="constrained")
     for st, (lab, i) in STAGE_STYLE.items():
         color, ls, mk = style_for_series(i)
         for ax, rep in zip(axes[:2], ("dinov2", "pixel")):
@@ -194,9 +195,18 @@ def fig_stage_abc(cfg, tag, split="test"):
             off = (i - 1) * 0.12
             ax.errorbar(np.array(js) + off, m, yerr=sd, color=color, ls=ls, marker=mk, ms=3.5, lw=1.0,
                         capsize=1.5, label=lab)
+    have_rep = all(pi[str(j)].get("stage_B_rep") for j in js)
+    if have_rep:
+        for ax, rep in zip(axes[:2], ("dinov2", "pixel")):
+            ax.plot(js, [pi[str(j)]["stage_B_rep"][rep]["excess_mean"] for j in js], color=PALETTE["gray"], lw=1.0,
+                    ls="--", marker="x", ms=3, label="B floor: IBW replicate → IBW")
     kl = [pi[str(j)].get("kl_forward_per_dim", {}).get("mean", np.nan) for j in js]
     color, ls, mk = style_for_series(1)
     axes[2].plot(js, kl, color=color, ls=ls, marker=mk, label=r"KL$(q_{\rm IBW}\,\|\,q_\phi)$ / dim")
+    klr = [pi[str(j)].get("rep_kl_forward_per_dim", {}).get("mean", np.nan) for j in js]
+    if np.isfinite(klr).any():
+        axes[2].plot(js, klr, color=PALETTE["gray"], ls="--", marker="x", ms=3,
+                     label=r"KL$(q_{\rm IBW}\,\|\,q_{\rm IBW\,replicate})$ / dim")
     for ax in axes:
         ax.axhline(0, color=PALETTE["gray"], lw=0.7, ls=":")
         ax.set_xlabel("interval j")
@@ -204,10 +214,40 @@ def fig_stage_abc(cfg, tag, split="test"):
     axes[0].set_ylabel("excess MMD$^2$ (DINOv2)")
     axes[1].set_ylabel("excess MMD$^2$ (pixels)")
     axes[2].set_ylabel("nats per dimension")
-    axes[0].legend(loc="upper left", fontsize=6.5)
-    axes[2].legend(loc="upper left", fontsize=6.5)
+    h, l = axes[0].get_legend_handles_labels()
+    fig.legend(h, l, loc="outside lower center", ncol=len(l), fontsize=6.5, frameon=False)
+    axes[2].legend(loc="upper left", fontsize=6)
     add_panel_labels(axes, x=-0.28)
     return save_figure(fig, _fig_dir(cfg) / f"fig_stage_abc_{tag}_{split}")
+
+
+def fig_kernels_vs_teacher(cfg, tags, labels, split="test", basename=None):
+    """Per interval, how far each one-step kernel is from the teacher's 200-step kernel at the same
+    held-out anchors: stage A of the IBW targets and stage C of every student tag (excess MMD^2,
+    mean ± SD over anchors), DINOv2 (a) and pixels (b)."""
+    S = {t: json.loads((C.out_dir(cfg) / "eval" / t / f"{split}_summary.json").read_text())["per_interval"] for t in tags}
+    js = sorted(int(j) for j in S[tags[0]])
+    series = [("IBW targets (stage A)", S[tags[0]], "stage_A")] + [(lab, S[t], "stage_C") for t, lab in zip(tags, labels)]
+    style = apply_publication_style(FigureStyle(width_in=FULL, height_in=2.6))
+    fig, axes = plt.subplots(1, 2, figsize=(style.width_in, style.height_in), constrained_layout=True)
+    k = len(series)
+    for i, (lab, pi, st) in enumerate(series):
+        color, ls, mk = style_for_series(i)
+        off = (i - (k - 1) / 2) * 0.1
+        for ax, rep in zip(axes, ("dinov2", "pixel")):
+            m = np.array([pi[str(j)][st][rep]["excess_mean"] for j in js])
+            sd = np.array([pi[str(j)][st][rep]["excess_sd"] for j in js])
+            ax.errorbar(np.array(js) + off, m, yerr=sd, color=color, ls=ls, marker=mk, ms=3.2, lw=1.0, capsize=1.2,
+                        label=lab)
+    for ax, rep in zip(axes, ("DINOv2", "pixels")):
+        ax.axhline(0, color=PALETTE["gray"], lw=0.7, ls=":")
+        ax.set_xlabel("interval j")
+        ax.set_xticks(js)
+        ax.set_ylabel(f"excess MMD$^2$ ({rep})")
+        ax.set_title("one-step kernel vs the teacher's 200 steps", fontsize=7.5)
+    axes[1].legend(loc="upper left", fontsize=6)
+    add_panel_labels(axes, x=-0.16, y=1.06)
+    return save_figure(fig, _fig_dir(cfg) / (basename or f"fig_kernels_vs_teacher_{split}"))
 
 
 # ---------------------------------------------------------------------------------- training
