@@ -46,7 +46,7 @@ def _student(cfg, tag, which, device):
 
 # ============================================================================== stage A/B/C
 def stage_evalstudent(cfg, a, rest):
-    ap = argparse.ArgumentParser(prog="evalstudent")
+    ap = argparse.ArgumentParser(prog="evalstudent", allow_abbrev=False)
     ap.add_argument("--ckpt", default="best")
     ap.add_argument("--fit-variant", default="frozen")
     o = ap.parse_args(rest)
@@ -158,7 +158,7 @@ def summarize_eval(cfg, tag, split):
 
 # ============================================================================== ablation data
 def stage_endpoints(cfg, a, rest):
-    ap = argparse.ArgumentParser(prog="endpoints")
+    ap = argparse.ArgumentParser(prog="endpoints", allow_abbrev=False)
     ap.add_argument("--n-endpoints", type=int, default=8)
     o = ap.parse_args(rest)
     import gmmd.experiments.ibw_amortized as D
@@ -216,7 +216,7 @@ def _chunk_seeds(cfg, c):
 
 def stage_generate(cfg, a, rest):
     """``--method student:<tag>[:<ckpt>]`` or ``coarse:<kind>:<n_steps>``; ``--n`` images."""
-    ap = argparse.ArgumentParser(prog="generate")
+    ap = argparse.ArgumentParser(prog="generate", allow_abbrev=False)
     ap.add_argument("--method", required=True)
     ap.add_argument("--n", type=int, default=None)
     o = ap.parse_args(rest)
@@ -285,7 +285,7 @@ def _images(cfg, method, n):
 
 
 def stage_fid(cfg, a, rest):
-    ap = argparse.ArgumentParser(prog="fid")
+    ap = argparse.ArgumentParser(prog="fid", allow_abbrev=False)
     ap.add_argument("--methods", nargs="+", required=True)
     ap.add_argument("--n", type=int, required=True)
     o = ap.parse_args(rest)
@@ -327,7 +327,7 @@ def stage_fid(cfg, a, rest):
 # ============================================================================== timing
 def stage_timing(cfg, a, rest):
     """Uncached x_T -> x_0 for ``--n`` fresh images in one batch after a warm-up batch, synchronised."""
-    ap = argparse.ArgumentParser(prog="timing")
+    ap = argparse.ArgumentParser(prog="timing", allow_abbrev=False)
     ap.add_argument("--method", required=True)        # student:<tag> | coarse:<kind>:<n> | teacher
     ap.add_argument("--n", type=int, default=64)
     ap.add_argument("--precision", choices=["fp32", "tf32"], default="fp32")
@@ -377,7 +377,7 @@ def stage_shift(cfg, a, rest):
     """Boundary-state distributions: student rollouts (first generation chunk, with intermediates)
     vs teacher trajectories (train anchors), DINOv2 on Tweedie-denoised states + pixels, n = 32,
     with a teacher-vs-teacher floor; and the final images vs exp4's teacher images."""
-    ap = argparse.ArgumentParser(prog="shift")
+    ap = argparse.ArgumentParser(prog="shift", allow_abbrev=False)
     ap.add_argument("--method", required=True)          # e.g. student:main
     o = ap.parse_args(rest)
     ce = cfg["evaluation"]
@@ -408,7 +408,7 @@ def stage_shift(cfg, a, rest):
 def stage_refine_anchors(cfg, a, rest):
     """Student rollouts from the refine seeds; their states at b_0..b_9 become the anchors of
     split ``refine`` (IBW-fitted afterwards with the frozen configuration, intervals 1..9)."""
-    ap = argparse.ArgumentParser(prog="refine-anchors")
+    ap = argparse.ArgumentParser(prog="refine-anchors", allow_abbrev=False)
     ap.add_argument("--ckpt", default="best")
     o = ap.parse_args(rest)
     S = _student(cfg, a.tag, o.ckpt, a.device)

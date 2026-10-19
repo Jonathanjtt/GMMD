@@ -75,10 +75,13 @@ class PairData:
                             raise RuntimeError(f"{p}: terminal fit without its pushforward bank")
                     else:
                         p = endpoint_path(cfg, split, n, j)
+                        if variant == "refs":          # validation endpoints = cached reference set A
+                            p = C.ref_path(cfg, split, n, j)
                         if not p.exists():
                             continue
                         with np.load(p) as z:
-                            rec["bank"] = torch.as_tensor(z["Y"]).reshape(len(z["Y"]), -1).to(self.device)
+                            Y = z["A"] if variant == "refs" else z["Y"]
+                            rec["bank"] = torch.as_tensor(Y).reshape(len(Y), -1).to(self.device)
                         rec["terminal"] = j == n_intervals - 1
                     rec["x"] = C.load_anchor(cfg, split, n, j).to(self.device)
                     self.pairs.append(rec)
@@ -179,7 +182,7 @@ def evaluate_pairs(student, data, log_vref, M, seed, batch=8):
 
 
 def _parse(rest):
-    ap = argparse.ArgumentParser(prog="train")
+    ap = argparse.ArgumentParser(prog="train", allow_abbrev=False)
     ap.add_argument("--data", choices=["ibw", "endpoints"], default="ibw")
     ap.add_argument("--steps", type=int, default=None)
     ap.add_argument("--train-trajs", type=int, nargs="*", default=None)
@@ -207,7 +210,12 @@ def stage_train(cfg, a, rest):
         sp, var = e.split(":")
         sources.append((sp, var, sorted({int(p.stem[4:7]) for p in (C.out_dir(cfg) / "fits" / sp / var).glob("traj*_j*.json")})))
     train = PairData(cfg, sources, nI, dev, kind=o.data)
-    val = PairData(cfg, [("val", "frozen", [n for n, _ in C.split_seeds(cfg, "val")])], nI, dev, kind="ibw")
+    # model selection uses the method's own kind of target: IBW fits for the main method; teacher
+    # endpoints (the cached reference set A at the val anchors) for the ablation, so no IBW
+    # information reaches the ablation at all
+    val_trajs = [n for n, _ in C.split_seeds(cfg, "val")]
+    val = (PairData(cfg, [("val", "frozen", val_trajs)], nI, dev, kind="ibw") if o.data == "ibw" else
+           PairData(cfg, [("val", "refs", val_trajs)], nI, dev, kind="endpoints"))
     log(f"train {a.tag}: {len(train)} training pairs over intervals {train.intervals} from {[(s, v, len(t)) for s, v, t in sources]}; "
         f"{len(val)} val pairs; data={o.data}")
 

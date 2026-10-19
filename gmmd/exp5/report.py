@@ -67,7 +67,7 @@ def _fmt(x, f="{:+.4f}"):
 
 
 def stage_fitsummary(cfg, a, rest):
-    ap = argparse.ArgumentParser(prog="fitsummary")
+    ap = argparse.ArgumentParser(prog="fitsummary", allow_abbrev=False)
     ap.add_argument("--variants", nargs="+", required=True)
     o = ap.parse_args(rest)
     lines = []

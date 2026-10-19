@@ -505,7 +505,7 @@ def stage_freeze(cfg, a):
 
 # ============================================================================== main
 def main(argv=None):
-    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0], allow_abbrev=False)
     ap.add_argument("stage")
     ap.add_argument("--config", default="exp5_ibw_amortized_10step_k8")
     ap.add_argument("--split", default="val")
