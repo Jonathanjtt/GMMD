@@ -36,3 +36,48 @@
   noise (j = 7: 0.965, j = 8: 0.872, j = 9 [σ = 0.01]: 0.171). Conclusion for evaluation: at the
   high-noise intervals the DINOv2-on-Tweedie metric (and its dispersion) is dominated by this
   effect plus clamping; pixel metrics and the end-to-end FID carry the interpretable signal there.
+
+## 2026-10-19 P1 (5 teacher-free initialisations x 40 val pairs, 300 iterations, c = 0.5) -> selection
+
+* Pre-registered selection (`selection.json`, frozen 15:47 UTC): **prior_free @ 25 iterations**.
+  Mean DINOv2 excess over the 40 val pairs at the best snapshot: prior_free 0.391 (25 it);
+  principal_r3_vgap 0.550, principal_r3 0.575, principal_r1 0.578, random_far 0.579 (all at 25 it).
+  Paired bootstrap of (variant − prior_free): +0.16 … +0.19, every 95 % CI excludes 0.
+  Figure: `figures/fig_p1_stage_a_vs_iterations.{png,pdf}`; tables `fitsummary_val_*.md`.
+* At 300 iterations every initialisation reaches the same place (mean excess 0.617–0.625; n_eff 6.6;
+  v/v_anc 1.00 at j0 → 1.09 at j8, 1.23 at j9): the IBW fixed point does not depend on the start,
+  including random_far (initial separations ≈ 313 σ collapse to 0.5–4 σ).
+* The selected snapshot is a TRANSIENT, not a converged fit (drift test: 0/4 converged at 25 it by
+  construction). Mechanism: the prior-free start puts every component mean at `x + sqrt(gap) z` with
+  variance gap; the mean update contracts each direction at rate ≈ γ·precision, i.e. c = 0.5 per
+  iteration in stiff (noise-like, precision ≈ 1/v_anc) directions, but only ≈ c·v_anc/gap ≈ 0.06 in
+  soft content directions (precision ≈ 1/gap). After 25 iterations the stiff directions have
+  converged while ≈ 20 % of the random content-direction offsets remain → the mixture keeps content
+  dispersion the reverse-KL fixed point removes. The principal/random_far starts lack these offsets
+  (they start at the Tweedie mean) and gain little from early stopping.
+* Where it helps (prior_free 25 it vs 300 it, DINOv2 excess): j3 0.17/0.20, j4 0.13/0.22, j5 0.21/0.36,
+  j6 0.30/0.53, j7 0.22/0.75, j8 0.46/1.01, j9 0.31/1.04; j0–j2 identical (≈ 0.7, the teacher-state
+  denoising artifact). Pixel excess is slightly WORSE at 25 it in j7–j9 (0.09/0.05, 0.14/0.06,
+  0.10/0.09) while pixel dispersion is closer to the teacher (j8 0.70 vs 0.58; j9 0.62 vs 0.41).
+* Images (`figures/diag/samples_val000_j{4,7,9}_prior_free_it25-50-300.png`): at j4 the teacher's
+  200-step kernel produces visibly different faces (pose, expression, hat), every IBW snapshot gives
+  near-identical blurry faces — the isotropic K = 8 family captures little of the content spread at
+  mid noise, early stopping or not; at j7 and j9 all sets are visually close (differences are fine
+  texture), so the large DINOv2 excesses there are small systematic differences measured against a
+  tiny within-set spread (median-heuristic bandwidth).
+* Process fix: GPU 0 started the stage-A evaluation of principal_r3_vgap while GPU 1 was still
+  fitting its last three intervals (12 pairs unevaluated → the selection refused to freeze);
+  `run/exp5_pilot_p1.sh` now waits for the variant's fit lock, `run/exp5_pilot_p1_finish.sh`
+  evaluated the missing 12 pairs (no fit was redone).
+
+## Post-hoc additions after the freeze (labelled as such everywhere)
+
+* `prior_free_fine` (val, fresh seeds): snapshots 5–50 iterations — the frozen 25 was the lowest
+  point of the pre-registered grid, so this checks whether the grid bracketed the optimum.
+  Sensitivity analysis only; `selection.json` is not overwritten.
+* `frozen_r1` replicate fits (fresh init + noise seeds) at val and test anchors: the IBW-vs-IBW
+  floor for stage B. The early-stopped targets depend on the init seed, so two sample sets of ONE
+  fit understate what a perfect amortisation can reach.
+* IBW chain (`gmmd/exp5/oracle.py`, `generate --method ibwchain`): online IBW with the frozen
+  configuration at every transition from the same x_T — a diagnostic ceiling for the amortised
+  sampler (no amortisation error, no rollout shift), 8,000 TF32 score evaluations per image.

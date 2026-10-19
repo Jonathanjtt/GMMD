@@ -49,6 +49,8 @@ def stage_evalstudent(cfg, a, rest):
     ap = argparse.ArgumentParser(prog="evalstudent", allow_abbrev=False)
     ap.add_argument("--ckpt", default="best")
     ap.add_argument("--fit-variant", default="frozen")
+    ap.add_argument("--rep-variant", default="frozen_r1",
+                    help="independent IBW replicate (fresh seeds): the IBW-vs-IBW floor of stage B, if fitted")
     o = ap.parse_args(rest)
     ce = cfg["evaluation"]
     root = C.out_dir(cfg) / "eval" / a.tag / a.split
@@ -96,6 +98,25 @@ def stage_evalstudent(cfg, a, rest):
                    stage_A=MT.compare(refA, refB, fIA, ce, seed),
                    stage_B=MT.compare(fIA, fIB, fS, ce, seed),
                    stage_C=MT.compare(refA, refB, fS, ce, seed))
+        # IBW-vs-IBW floor of stage B: an independent replicate fit (fresh init + noise seeds) of the
+        # same anchor, scored exactly like the student.  The early-stopped targets depend on the init
+        # seed, so this -- not two sample sets of one fit -- is what a perfect amortisation can reach.
+        rep_path = C.fit_path(cfg, a.split, o.rep_variant, n, j)
+        rm = rv = None
+        if rep_path.with_suffix(".json").exists():
+            with np.load(rep_path) as z:
+                rm = torch.as_tensor(z["means"]).to(a.device)
+                rv = torch.as_tensor(z["variances"]).to(a.device).float()
+            vid_r, _ = C.variant_cfg(cfg, o.rep_variant)
+            g3 = torch.Generator(device=a.device).manual_seed(G.seed_of(C.NS_EVAL, C.sid(a.split), n, j, vid_r, 0))
+            zr, _ = IT.sample_mixture(rm, rv, nm, g3)
+            yr = zr.reshape(nm, *teacher.image_shape)
+            if iv.terminal:
+                with IT.tf32(False):
+                    yr, _ = G.terminal_denoise(teacher, yr, bs)
+            fR = MT.featurize(teacher, iv, yr.cpu(), ce, bs, a.device)
+            out["stage_B_rep"] = MT.compare(fIA, fIB, fR, ce, seed)
+            out["stage_A_rep"] = MT.compare(refA, refB, fR, ce, seed)
         # likelihood-based stage B (exact densities of both mixtures; standardised coordinates)
         sc = float(np.exp(0.5 * net.log_vref[j].item()))
         xf = x.reshape(1, -1)
@@ -117,6 +138,14 @@ def stage_evalstudent(cfg, a, rest):
                 out["kl_reverse_per_dim"] = float((rq_stu - rq_ibw).mean() / d)   # KL(q_phi || q_IBW)
                 out["nll_ibw_samples_per_dim_std"] = float(-lq_stu.mean() / d)
                 out["ibw_entropy_per_dim_std"] = float(-lq_ibw.mean() / d)
+                if rm is not None:                                                 # the same KLs, replicate vs fit
+                    lq_rep = IT.isotropic_log_prob(u, (rm - xf) / sc, rv / sc ** 2)
+                    zr2, _ = IT.sample_mixture(rm, rv, nkl, gk)
+                    w_ = (zr2 - xf) / sc
+                    out["rep_kl_forward_per_dim"] = float((lq_ibw - lq_rep).mean() / d)
+                    out["rep_kl_reverse_per_dim"] = float((IT.isotropic_log_prob(w_, (rm - xf) / sc, rv / sc ** 2)
+                                                           - IT.isotropic_log_prob(w_, (fm - xf) / sc, fv / sc ** 2)).mean() / d)
+                    out["rep_nll_ibw_samples_per_dim_std"] = float(-lq_rep.mean() / d)
             else:
                 u = (yi.reshape(2 * nm, -1).float() - xf) / sc
                 lq_stu = mixture_log_prob(u[None], ((means - xf) / sc)[None], (logv - 2 * np.log(sc))[None],
@@ -128,6 +157,8 @@ def stage_evalstudent(cfg, a, rest):
                               variances_over_vref=(logv.exp() / np.exp(net.log_vref[j].item())).tolist(),
                               stats=IT.component_stats(means, logv.exp()))
         out["ibw"] = dict(stats=IT.component_stats(fm, fv), variances=fv.tolist())
+        if rm is not None:
+            out["ibw_rep"] = dict(variant=o.rep_variant, stats=IT.component_stats(rm, rv), variances=rv.tolist())
         C.dump(out, root / f"traj{n:03d}_j{j}.json")
         log(f"evalstudent {a.split} traj {n} j {j}: DINOv2 excess A {out['stage_A']['dinov2']['excess']:+.4f} "
             f"B {out['stage_B']['dinov2']['excess']:+.4f} C {out['stage_C']['dinov2']['excess']:+.4f}; "
@@ -136,14 +167,19 @@ def stage_evalstudent(cfg, a, rest):
     summarize_eval(cfg, a.tag, a.split)
 
 
+# stage_B_rep / stage_A_rep: the independent IBW replicate fit scored like the student (floors)
+EVAL_STAGES = ("stage_A", "stage_B", "stage_C", "stage_B_rep", "stage_A_rep")
+
+
 def summarize_eval(cfg, tag, split):
     root = C.out_dir(cfg) / "eval" / tag / split
     rows = [json.loads(p.read_text()) for p in sorted(root.glob("traj*_j*.json"))]
     out = dict(tag=tag, split=split, n_pairs=len(rows), per_interval={}, overall={})
     for j in sorted({r["j"] for r in rows}):
         rs = [r for r in rows if r["j"] == j]
-        e = {st: MT.summarize_rows([r[st] for r in rs]) for st in ("stage_A", "stage_B", "stage_C")}
-        for k in ("kl_forward_per_dim", "kl_reverse_per_dim", "nll_ibw_samples_per_dim_std"):
+        e = {st: MT.summarize_rows([r[st] for r in rs if st in r]) for st in EVAL_STAGES}
+        for k in ("kl_forward_per_dim", "kl_reverse_per_dim", "nll_ibw_samples_per_dim_std",
+                  "rep_kl_forward_per_dim", "rep_kl_reverse_per_dim", "rep_nll_ibw_samples_per_dim_std"):
             v = [r[k] for r in rs if k in r]
             if v:
                 e[k] = dict(mean=float(np.mean(v)), sd=float(np.std(v, ddof=1)) if len(v) > 1 else 0.0)
@@ -151,7 +187,7 @@ def summarize_eval(cfg, tag, split):
         e["student_n_effective"] = float(np.mean([r["student"]["stats"]["n_effective"] for r in rs]))
         e["ibw_n_effective"] = float(np.mean([r["ibw"]["stats"]["n_effective"] for r in rs]))
         out["per_interval"][str(j)] = e
-    out["overall"] = {st: MT.summarize_rows([r[st] for r in rows]) for st in ("stage_A", "stage_B", "stage_C")}
+    out["overall"] = {st: MT.summarize_rows([r[st] for r in rows if st in r]) for st in EVAL_STAGES}
     C.dump(out, C.out_dir(cfg) / "eval" / tag / f"{split}_summary.json")
     return out
 
@@ -215,7 +251,8 @@ def _chunk_seeds(cfg, c):
 
 
 def stage_generate(cfg, a, rest):
-    """``--method student:<tag>[:<ckpt>]`` or ``coarse:<kind>:<n_steps>``; ``--n`` images."""
+    """``--method student:<tag>[:<ckpt>]``, ``coarse:<kind>:<n_steps>`` or ``ibwchain[:<variant>]``
+    (the online-IBW diagnostic, :mod:`gmmd.exp5.oracle`); ``--n`` images."""
     ap = argparse.ArgumentParser(prog="generate", allow_abbrev=False)
     ap.add_argument("--method", required=True)
     ap.add_argument("--n", type=int, default=None)
@@ -232,6 +269,8 @@ def stage_generate(cfg, a, rest):
     dev = torch.device(a.device)
     if kind == "student":
         S = _student(cfg, args[0], args[1] if len(args) > 1 else "best", a.device)
+    elif kind == "ibwchain":                       # same precision as the offline IBW fits
+        teacher = C.build_teacher(cfg, a.device, tf32=cfg["precision"]["ibw_tf32"])
     else:
         teacher = C.build_teacher(cfg, a.device, tf32=cfg["precision"]["teacher_reference_tf32"])
     for c in todo:
@@ -248,6 +287,12 @@ def stage_generate(cfg, a, rest):
             if c == 0:
                 extra["states"] = out["states"].half().numpy()          # (B, 11, C, H, W)
             nfe, teacher_nfe = rec["network_evals_per_image"] * len(seeds), 0
+        elif kind == "ibwchain":
+            from gmmd.exp5 import oracle
+            x0, rec = oracle.ibw_chain(cfg, teacher, seeds, variant=args[0] if args else "frozen",
+                                       batch_size=int(cfg["teacher"]["batch_size"]))
+            x0 = x0.cpu()
+            nfe = teacher_nfe = rec["score_evals"]
         else:
             x0, nfe = G.coarse_trajectory(teacher, seeds, int(args[1]), kind=args[0],
                                           batch_size=int(cfg["teacher"]["batch_size"]))

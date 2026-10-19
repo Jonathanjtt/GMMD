@@ -98,6 +98,18 @@ scheme = "random_far"
 spread = 1.0
 var = "v_anc"
 
+# Post-hoc, AFTER the frozen P1 selection (prior_free @ 25 iterations, 2026-10-19): the selected snapshot
+# was the lowest of the pre-registered grid, so the grid is extended downward on the same val pairs with
+# fresh fits (independent seeds, the prior_free init law).  A sensitivity analysis; it does not
+# overwrite selection.json.
+[[ibw.posthoc_variants]]
+name = "prior_free_fine"
+scheme = "prior_free"
+spread = 1.0
+var = "gap"
+n_iterations = 50
+snapshot_iterations = [5, 10, 15, 20, 25, 30, 40, 50]
+
 [principal]
 n_iter = 8
 oversample = 2

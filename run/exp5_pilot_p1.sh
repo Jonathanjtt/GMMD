@@ -28,7 +28,11 @@ worker() {          # worker <gpu> <variants in claim order...>
   for v in "$@"; do claim_and_run "$gpu" "fit_val_$v" fit --split val --variant "$v" || return 1; done
   # stage-A evaluation needs every val reference; wait for them
   until grep -q "val refs done" "$OUT/RUNLOG" 2>/dev/null; do sleep 60; done
-  for v in "$@"; do claim_and_run "$gpu" "evalfits_val_$v" evalfits --split val --variant "$v" || return 1; done
+  for v in "$@"; do
+    # the variant's fits may still be running on the other GPU: wait for them (or for their failure)
+    until [[ -f "$LOCK/fit_val_$v/done" || ! -d "$LOCK/fit_val_$v" ]]; do sleep 60; done
+    claim_and_run "$gpu" "evalfits_val_$v" evalfits --split val --variant "$v" || return 1
+  done
 }
 
 status "P1 started: variants ${VARIANTS[*]} ${SET}"

@@ -16,6 +16,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
+import matplotlib.ticker as mticker  # noqa: E402
 import numpy as np  # noqa: E402
 
 from gmmd.config import load_config, parse_overrides  # noqa: E402
@@ -81,21 +82,26 @@ def fig_ibw_step_size(cfg, variants=("p0_c0p2", "p0_c0p5", "p0_c1p0"), intervals
 
 def fig_stage_a_vs_iterations(cfg, variants, split="val", basename="fig_p1_stage_a_vs_iterations"):
     """Stage A (teacher -> IBW) DINOv2 excess MMD^2 vs IBW iteration: mean over all evaluated
-    (anchor, interval) pairs (left) and per interval (small multiples)."""
+    (anchor, interval) pairs (left) and per interval (small multiples, one per interval)."""
     from gmmd.exp5.report import fit_rows
     data = {v: fit_rows(cfg, split, v) for v in variants}
     js = sorted({r["j"] for rows in data.values() for r in rows})
-    style = apply_publication_style(FigureStyle(width_in=FULL, height_in=4.6))
+    ncol = (len(js) + 1) // 2
+    style = apply_publication_style(FigureStyle(width_in=FULL, height_in=4.2))
     fig = plt.figure(figsize=(style.width_in, style.height_in), constrained_layout=True)
-    gs = fig.add_gridspec(2, 6)
+    gs = fig.add_gridspec(2, 2 + ncol, width_ratios=[1.15, 1.15] + [1] * ncol)
     ax0 = fig.add_subplot(gs[:, :2])
-    small = [fig.add_subplot(gs[r, 2 + c]) for r in range(2) for c in range(4)][:len(js)]
+    small = [fig.add_subplot(gs[r, 2 + c]) for r in range(2) for c in range(ncol)][:len(js)]
+    all_its = set()
+    n_pairs = 0
     for i, v in enumerate(variants):
         color, ls, mk = style_for_series(i)
         rows = [r for r in data[v] if "snapshots" in r]
         if not rows:
             continue
+        n_pairs = max(n_pairs, len(rows))
         its = sorted({int(t) for r in rows for t in r["snapshots"]})
+        all_its |= set(its)
         mean = [np.nanmean([r["snapshots"][str(t)]["dino"] for r in rows if str(t) in r["snapshots"]]) for t in its]
         ax0.plot(its, mean, color=color, ls=ls, marker=mk, label=v)
         for ax, j in zip(small, js):
@@ -103,16 +109,27 @@ def fig_stage_a_vs_iterations(cfg, variants, split="val", basename="fig_p1_stage
             if rj:
                 m = [np.nanmean([r["snapshots"][str(t)]["dino"] for r in rj if str(t) in r["snapshots"]]) for t in its]
                 ax.plot(its, m, color=color, ls=ls, marker=mk, ms=2.5, lw=1.0)
-    ax0.set_xscale("log")
+    ticks = sorted(all_its)
+    labelled = [t for t in ticks if t != 200] if {100, 200, 300} <= set(ticks) else ticks   # 200|300 collide on log axes
+    for ax in [ax0] + small:
+        ax.set_xscale("log")
+        ax.set_xticks(labelled)
+        ax.set_xticks([t for t in ticks if t not in labelled], minor=True)
+        ax.xaxis.set_major_formatter(mticker.FuncFormatter(lambda x, _: f"{x:g}"))
+        ax.xaxis.set_minor_formatter(mticker.NullFormatter())
     ax0.set_xlabel("IBW iteration")
     ax0.set_ylabel("DINOv2 excess MMD$^2$ (IBW vs teacher)")
+    ax0.text(0.06, 0.50, f"mean over {n_pairs} {split}\n(anchor, interval) pairs", transform=ax0.transAxes,
+             va="top", fontsize=7.5)
     ax0.axhline(0, color=PALETTE["gray"], lw=0.8, ls=":")
-    ax0.legend(loc="upper right")
-    for ax, j in zip(small, js):
-        ax.set_xscale("log")
+    ax0.legend(loc="lower right", bbox_to_anchor=(1.0, 0.06))
+    for k, (ax, j) in enumerate(zip(small, js)):
         ax.set_title(f"j = {j}", fontsize=8)
         ax.axhline(0, color=PALETTE["gray"], lw=0.6, ls=":")
-        ax.tick_params(labelsize=6.5)
+        ax.tick_params(labelsize=6)
+        ax.set_ylim(bottom=0)
+        if k // ncol == 1:
+            ax.set_xlabel("iteration", fontsize=7)
     return save_figure(fig, _fig_dir(cfg) / basename)
 
 

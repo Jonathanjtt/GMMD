@@ -91,16 +91,24 @@ def variant_cfg(cfg, name):
     for k, v in enumerate(cfg["ibw"]["variants"]):
         if v["name"] == name:
             return k, dict(v)
+    for k, v in enumerate(cfg["ibw"].get("posthoc_variants", [])):    # added after the frozen selection
+        if v["name"] == name:
+            return 50 + k, dict(v)
     if name.startswith("p0_c"):                    # P0 step-size check: prior-free init
         c = float(name[len("p0_c"):].replace("p", "."))
         return 100 + int(round(100 * c)), dict(name=name, scheme="prior_free", spread=1.0, var="gap",
                                                 step_c=c)
-    if name == "frozen":
+    if name == "frozen" or name.startswith("frozen_r"):
+        # "frozen_r<k>": an independent replicate of the frozen configuration (fresh init and noise
+        # seeds), used as the IBW-vs-IBW floor of stage B
         sel = json.loads((out_dir(cfg) / "selection.json").read_text())
         k, v = variant_cfg(cfg, sel["variant"])
-        v = dict(v, name="frozen", source_variant=sel["variant"], step_c=sel["step_c"],
+        v = dict(v, name=name, source_variant=sel["variant"], step_c=sel["step_c"],
                  n_iterations=sel["iterations"])
-        return k, v
+        if name == "frozen":
+            return k, v
+        rep = int(name[len("frozen_r"):])
+        return 1000 + rep, dict(v, replicate=rep)
     raise KeyError(f"unknown IBW variant {name!r}")
 
 

@@ -236,3 +236,24 @@ def test_claims_are_exclusive_and_stale_locks_reclaimed(tmp_path):
     host = (lk / "owner").read_text().split()[0]
     (lk / "owner").write_text(f"{host} 999999999")      # owner process no longer exists
     assert Cm.claim(lk) and (lk / "owner").read_text().split()[1] == str(os.getpid())
+
+
+def test_ibw_chain_counts_and_prior(teacher):
+    """The IBW-chain diagnostic starts at the teacher's x_T, fits every interval at the current
+    state with the configured budget, and ends with the teacher's noise removal."""
+    from gmmd.exp5 import oracle
+    cfg = {"partition": {"n_intervals": 10},
+           "ibw": {"n_components": 8, "n_grad_samples": 4, "step_c": 0.5, "max_iterations": 3,
+                   "snapshot_iterations": [], "diag_every": 0,
+                   "variants": [{"name": "prior_free", "scheme": "prior_free", "spread": 1.0, "var": "gap"}]}}
+    seeds = [11, 12, 13]
+    x0, rec = oracle.ibw_chain(cfg, teacher, seeds, variant="prior_free", batch_size=16)
+    assert x0.shape == (3, *teacher.image_shape) and torch.isfinite(x0).all()
+    # 10 intervals x 3 iterations x K x B score evaluations per image, plus the terminal noise removal
+    assert rec["score_evals"] == len(seeds) * (10 * 3 * 8 * 4 + 1)
+    assert len(rec["per_interval"]) == 10 and rec["iterations"] == 3
+    # same seeds -> same images; a different seed changes only its own image
+    x1, _ = oracle.ibw_chain(cfg, teacher, seeds, variant="prior_free", batch_size=16)
+    assert torch.equal(x0, x1)
+    x2, _ = oracle.ibw_chain(cfg, teacher, [11, 12, 99], variant="prior_free", batch_size=16)
+    assert torch.equal(x0[:2], x2[:2]) and not torch.equal(x0[2], x2[2])

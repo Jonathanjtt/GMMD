@@ -185,10 +185,10 @@ def _variant_settings(cfg, name, split):
     ci = cfg["ibw"]
     step_c = float(v.get("step_c", ci["step_c"]))
     iters = int(v.get("n_iterations", ci["max_iterations"]))
-    if name == "frozen" or split in ("train", "test", "refine"):
+    if name == "frozen" or name.startswith("frozen_r") or split in ("train", "test", "refine"):
         snaps = ()
     else:
-        snaps = tuple(int(s) for s in ci["snapshot_iterations"] if int(s) <= iters)
+        snaps = tuple(int(s) for s in v.get("snapshot_iterations", ci["snapshot_iterations"]) if int(s) <= iters)
     return vid, v, step_c, iters, snaps
 
 
@@ -199,7 +199,7 @@ def stage_fit(cfg, a):
     if a.iterations:
         iters = int(a.iterations)
         snaps = tuple(s for s in snaps if s <= iters)
-    want_bank = a.split in ("train", "test", "refine") or a.variant == "frozen"
+    want_bank = a.split in ("train", "test", "refine") or a.variant.startswith("frozen")
     tasks = _tasks(cfg, a, a.split,
                    lambda n, j: C.fit_path(cfg, a.split, a.variant, n, j).with_suffix(".json").exists())
     log(f"fit {a.split}/{a.variant} shard {a.shard}/{a.n_shards}: {len(tasks)} fits; K={K} B={Bg} "
