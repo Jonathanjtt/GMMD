@@ -1,0 +1,149 @@
+{
+  "tag": "n1024_refined",
+  "n_images": 1024,
+  "n_reference": 30000,
+  "reference_splits": [
+    "train",
+    "validation"
+  ],
+  "fid_extractor": "inception-v3-compat/2048",
+  "pr_extractor": "vgg16/fc2_relu",
+  "pr_k": 3,
+  "preprocessing": "sampler float output -> clip(x*255, 0, 255).astype(uint8), identical for every method",
+  "methods": {
+    "teacher": {
+      "fid": 22.552345775689588,
+      "precision": 0.7685546875,
+      "recall": 0.4638671875,
+      "f_score": 0.5785475064381933,
+      "image_stats": {
+        "contrast_mean": 0.25745324113218293,
+        "contrast_sd": 0.039377642220595054,
+        "intensity_mean": 0.417916521897503,
+        "intensity_sd": 0.11975746926056924
+      },
+      "bootstrap": {
+        "sd": 0.7060881757182838
+      }
+    },
+    "student:refined": {
+      "fid": 117.46276330636667,
+      "precision": 0.6787109375,
+      "recall": 0.0,
+      "f_score": 0.0,
+      "image_stats": {
+        "contrast_mean": 0.12416661925847274,
+        "contrast_sd": 0.034733356274077205,
+        "intensity_mean": 0.40395153807658774,
+        "intensity_sd": 0.13905327845215323
+      },
+      "bootstrap": {
+        "sd": 1.1649029584213695,
+        "diff_vs_teacher_ci95": [
+          89.13946946450908,
+          94.1784466336187
+        ]
+      }
+    },
+    "student:main": {
+      "fid": 111.73391799216279,
+      "precision": 0.6494140625,
+      "recall": 0.0,
+      "f_score": 0.0,
+      "image_stats": {
+        "contrast_mean": 0.12497500947080095,
+        "contrast_sd": 0.037233677130649186,
+        "intensity_mean": 0.397095553781472,
+        "intensity_sd": 0.11571068297641966
+      },
+      "bootstrap": {
+        "sd": 0.8056193203141894,
+        "diff_vs_teacher_ci95": [
+          83.41493408013356,
+          87.4649754202467
+        ]
+      }
+    },
+    "student:init_main": {
+      "fid": 77.6067483581439,
+      "precision": 0.5771484375,
+      "recall": 0.0009765625,
+      "f_score": 0.001949825802364865,
+      "image_stats": {
+        "contrast_mean": 0.17625562659488658,
+        "contrast_sd": 0.03195505695666063,
+        "intensity_mean": 0.42414528587285205,
+        "intensity_sd": 0.0956344918795103
+      },
+      "bootstrap": {
+        "sd": 0.817651040715118,
+        "diff_vs_teacher_ci95": [
+          49.21846874649303,
+          53.26423222078112
+        ]
+      }
+    },
+    "coarse:ancestral:10": {
+      "fid": 94.37983339376268,
+      "precision": 0.5224609375,
+      "recall": 0.0,
+      "f_score": 0.0,
+      "image_stats": {
+        "contrast_mean": 0.17403528330776674,
+        "contrast_sd": 0.030459871531158006,
+        "intensity_mean": 0.40653196411584713,
+        "intensity_sd": 0.0899456208059124
+      },
+      "bootstrap": {
+        "sd": 0.9874710535495416,
+        "diff_vs_teacher_ci95": [
+          65.59305004239484,
+          70.19815107252182
+        ]
+      }
+    }
+  },
+  "pairwise_diff_ci95": {
+    "teacher - student:refined": [
+      -94.1784466336187,
+      -89.13946946450908
+    ],
+    "teacher - student:main": [
+      -87.46497542024672,
+      -83.41493408013356
+    ],
+    "teacher - student:init_main": [
+      -53.26423222078112,
+      -49.21846874649303
+    ],
+    "teacher - coarse:ancestral:10": [
+      -70.19815107252182,
+      -65.59305004239485
+    ],
+    "student:refined - student:main": [
+      4.161179539881645,
+      8.213521349933886
+    ],
+    "student:refined - student:init_main": [
+      37.81067270187013,
+      42.86623592836891
+    ],
+    "student:refined - coarse:ancestral:10": [
+      20.80081369292593,
+      26.604190446598476
+    ],
+    "student:main - student:init_main": [
+      32.366053743825915,
+      36.2410304007546
+    ],
+    "student:main - coarse:ancestral:10": [
+      15.098112771024857,
+      20.04602344892559
+    ],
+    "student:init_main - coarse:ancestral:10": [
+      -19.08770379040174,
+      -14.282238799252452
+    ]
+  },
+  "real_subset_fid_same_n": 15.057124227929819
+}

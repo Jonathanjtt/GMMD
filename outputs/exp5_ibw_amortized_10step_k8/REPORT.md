@@ -148,8 +148,126 @@ biased upward — the teacher itself scores 56.6).
   and under a heavy-tailed image prior the mode shrinks fine-scale coefficients (MAP vs posterior
   mean). It is consistent with — not a proof of — that mechanism.
 
-_(sections 4–8 — main run on held-out test anchors, 1,024-image FID, shift/refinement, ablation,
-cost — are filled from the result files at the end of the run)_
+## 4. Main run: targets, training, held-out amortisation
+
+**Training targets.** 64 independent teacher trajectories × 10 intervals = 640 frozen IBW fits
+(prior-free init, c = 0.5, 25 iterations, K = 8, B = 4 gradient samples; 5.14 × 10⁵ teacher
+evaluations, 3.1 GPU-h with TF32), plus 8 held-out test trajectories (80 fits) and an independent
+replicate of each test fit (`frozen_r1`, fresh init and noise seeds). Every fit is finite with
+positive variances and none stopped early. None is converged by the pre-registered drift test —
+by design: the selected 25-iteration snapshot is an early-stopped transient, and the converged
+300-iteration fits scored worse on validation (§2). Nothing was discarded. Per interval (train;
+test agrees within a few %): v / v_anc = 1.00–1.03 at j0–j6, 1.10 at j7, 1.60 at j8, 2.08 at j9;
+the components start ≈ 313 σ apart and end 0.55 σ apart at j0–j1 (all 8 on top of each other,
+n_eff = 1.0), 1.4 σ at j2 (n_eff 5.0) and 1.9–37 σ at j3–j9 (n_eff 8.0); the mean-gradient norm
+has fallen to 0.1 % (j0) … 24 % (j9) of its initial value. Tables: `fitsummary_*`, records under
+`fits/<split>/frozen/`.
+
+**Student training** (`student/main`, `figures/fig_training_main`): 12,000 steps (1.8 GPU-h); batches
+draw an interval uniformly, then a pair, then fresh samples from the cached mixture (terminal
+interval: rows of its cached 32-sample pushforward bank, since `T` needs the teacher). Validation NLL 1.4273 → 1.4084 nats/dim, flat from
+≈ 4,500 steps (the best checkpoint is step 4,750); KL(q_IBW ‖ q_φ) per dimension at the end:
+≤ 0.0005 at j0–j5, 0.0013 (j6), 0.0033 (j7), 0.0079 (j8). The global mixture weights collapse onto
+one or two components (weight entropy 0.23–0.29 nats; §3 explains why this is nearly
+forward-KL-optimal for these targets). Every variance is positive by construction
+(`log v = log v_ref + 6 tanh(·/6)`); every generated image is finite (raw range −0.70 … 1.48,
+≤ 3.1 % of values clipped by the common uint8 quantisation).
+
+_(Held-out test evaluation — stage A/B/C with the replicate floor for main, refined, ablation and
+the untrained init — fills this section when the test references finish.)_
+
+## 5. End to end: 1,024 images per method
+
+Same 1,024 x_T as the teacher (seeds 1,000,000+), identical preprocessing, FID / precision /
+recall against all 30,000 CelebA-HQ 256 images, paired bootstrap over images; real-vs-real FID at
+n = 1,024 is 15.1, so every value carries a common small-n bias and only paired differences are
+interpreted.
+
+| method | network evals / image | teacher evals / image | FID ↓ | precision | recall | contrast |
+|---|---|---|---|---|---|---|
+| teacher (2,000-step SMLD) | 2,000 | 2,000 | 22.55 ± 0.71 | 0.769 | 0.464 | 0.257 |
+| untrained init (Tweedie Gaussian) | 10 | 0 | 77.61 ± 0.80 | 0.577 | 0.001 | 0.176 |
+| ancestral, 10 steps | 10 | 10 | 94.38 ± 0.99 | 0.522 | 0.000 | 0.174 |
+| **IBW–GMMD student (main)** | 10 | 0 | **111.73 ± 0.81** | 0.649 | 0.000 | 0.125 |
+| SMLD predictor, 10 steps | 10 | 10 | 442.16 ± 0.62 | 0.000 | 0.000 | 0.500 |
+
+Paired 95 % intervals: main − ancestral-10 [+15.0, +19.9]; main − untrained init [+32.5, +36.2];
+untrained init − ancestral-10 [−19.3, −14.2]. The amortised IBW–GMMD sampler is significantly
+worse than the cheapest supported 10-evaluation teacher sampler and than its own initialisation.
+(`fid_n1024_first.json`, `fid_n1024_init.json`; sample grids `figures/fig_samples_same_xT_prelim`;
+intermediate states `figures/fig_trajectory_student_main`.)
+
+Refined student (§6): FID 117.46 ± 1.16, P 0.679, R 0.000, contrast 0.124; refined − main
+[+4.2, +8.2] (`fid_n1024_refined.json`). _(Endpoint-NLL ablation, ancestral 20 / 50 steps:
+pending — one final FID file with every method.)_
+
+## 6. Rollout shift and refinement
+
+Boundary states of 32 student rollouts against the teacher's anchors at the same σ (DINOv2 on
+Tweedie-denoised states and 8× pooled pixels; teacher-vs-teacher floor): the main student's pixel
+dispersion falls to 0.98 (b1), 0.90 (b4), 0.59 (b6) and 0.51 (b7–b9) of the teacher's (floor
+0.99–1.08; pilot: 0.73 at b9), with pixel excess MMD² 0.038 at b7–b9 (pilot 0.017). The degradation
+is substantial, so the refinement stage runs as specified: 32 student-rollout trajectories
+(`refine` split, seeds 3,300,000+) → frozen IBW fits at their states, intervals 1–9 (288 fits, the
+same target construction) → fine-tuning from the main checkpoint on the original and the
+refinement targets together (2 : 1 per interval at j1–j9, j0 unchanged; 4,000 steps, half learning
+rate). Validation, test and the 1,024 evaluation seeds are untouched.
+
+**Refinement targets.** 288 / 288 fits finite with positive variances, none stopped early, none
+discarded. At the student's own states the fits are narrower and less spread than at the
+teacher's anchors: v / v_anc 0.99–1.00 at j1–j6 (training fits 1.00–1.03), median component
+separation 2.2 / 3.4 / 5.8 / 11.1 σ at j5–j8 (training fits 3.5 / 7.5 / 12.8 / 22.7 σ), and a few
+anchors with all eight components merged at j3–j5 (2, 1, 1 of 32; never in the training fits),
+consistent with the smoother student states having narrower Bayes conditionals. Fine-tuning moved the teacher-anchor
+validation NLL only from 1.4084 to 1.4080 nats/dim, all of it at the terminal interval
+(`figures/fig_training_refined`): the refinement targets teach the network about the states it
+visits without costing fidelity at the teacher's anchors.
+
+**Pre / post refinement** (`eval/shift_student_{main,refined}.json`; n = 32 rollouts vs 32 + 32
+teacher anchors; dispersion = mean pairwise distance within a set, relative to the teacher's;
+floor = the second teacher set):
+
+| boundary | σ | pixel dispersion main → refined (floor) | pixel excess MMD² main → refined | DINOv2 excess main → refined |
+|---|---|---|---|---|
+| b1 | 122 | 0.98 → 0.99 (0.99) | 0.0006 → 0.0007 | 0.64 → 0.16 |
+| b2 | 43 | 0.97 → 0.99 (1.00) | −0.0006 → −0.0007 | 0.58 → 0.46 |
+| b3 | 15 | 0.94 → 0.98 (1.00) | 0.0005 → 0.0007 | 0.17 → 0.20 |
+| b4 | 5.3 | 0.90 → 1.00 (1.01) | 0.0023 → 0.0013 | 0.07 → 0.06 |
+| b5 | 1.9 | 0.76 → 0.99 (1.03) | 0.0103 → 0.0034 | 0.10 → 0.05 |
+| b6 | 0.65 | 0.59 → 0.90 (1.07) | 0.0290 → 0.0136 | 0.11 → 0.08 |
+| b7 | 0.23 | 0.52 → 0.82 (1.08) | 0.0367 → 0.0193 | 0.13 → 0.12 |
+| b8 | 0.081 | 0.51 → 0.80 (1.08) | 0.0383 → 0.0205 | 0.21 → 0.16 |
+| b9 | 0.028 | 0.51 → 0.78 (1.08) | 0.0384 → 0.0210 | 0.22 → 0.24 |
+
+Refinement halves the low-noise pixel shift and restores the dispersion through b5, but the
+boundary states remain under-dispersed from b6 on and DINOv2-distinguishable from the teacher's
+at every boundary (p = 0.002, the permutation minimum, for both students; the pixel tests at b5–b9
+move from p ≤ 0.05 to p = 0.06–0.32 — not significant at n = 32, which is not equality).
+
+**End to end, refinement makes the images worse** (`fid_n1024_refined.json`, same 1,024 x_T,
+paired bootstrap): FID 117.46 ± 1.16 vs 111.73 ± 0.81 for main, refined − main [+4.2, +8.2];
+refined − ancestral-10 [+20.8, +26.6]; refined − untrained init [+37.8, +42.9]. Precision rises
+(0.649 → 0.679), recall stays 0, per-image contrast is unchanged (0.124 vs 0.125; teacher 0.257),
+and the spread of mean intensity over images grows past the teacher's (SD 0.116 → 0.139; teacher
+0.120). Refinement corrects the coarse statistics of where the rollouts go — the boundary
+dispersion above — but not what each IBW target does to fine detail (§3), and FID does not reward
+the trade (`figures/fig_trajectory_student_refined`: the refined rollouts are still smooth,
+low-contrast faces).
+
+## 7. Ablation: the same network trained on teacher endpoints
+
+_(Pending.)_ Same architecture, initialisation, optimiser and step budget, trained by NLL on
+E = 4 fp32 teacher endpoints per (anchor, interval) — 800 teacher evaluations per anchor, the
+same budget as an IBW target (25 iterations × 8 components × 4 gradient samples). It isolates
+the IBW targets' bias: an NLL fit to teacher endpoints targets the teacher's own kernel.
+
+## 8. Cost
+
+_(Pending timing.)_ Offline so far (`costs.md`): training data 5.5 GPU-h (teacher anchor
+trajectories 2.4, IBW fits 3.1), student training 1.8 GPU-h; one-off P0/P1 selection 14.0 GPU-h;
+evaluation-only work 3.6 GPU-h and counting. The standalone sampler's record for every generated
+chunk: 10 network evaluations and 10 mixture draws per image, 0 teacher score evaluations, 0
+teachers constructed, 0 IBW iterations, inference mode, no gradients, 0 optimizer steps.
 
 
 ---
@@ -179,6 +297,7 @@ variant)` so reruns reproduce the same fits and samples.
 | shift, refinement | `$M shift --method student:main`; `run/exp5_main_part2.sh` (refinement block) | |
 | ablation | `$M endpoints --split train --n-endpoints 4`; `$M train --tag ablation_endpoints --data endpoints` | |
 | timing | `bash run/exp5_timing.sh` | uncached, synchronised, fp32 and TF32 |
+| diagnostics | `$M generate --method ibwchain --n 64`; `$M generate --method hybrid:<a>:<b>:<mask> --n 192`; `python -m gmmd.exp5.diag_detail --split {val,test} --students ...`; `$M figtraj --method student:main`; `python -m gmmd.exp5.diag --split val --its 25 50 300` | online-IBW chain, hybrid samplers, per-interval detail, trajectories, IBW snapshots |
 | tables, costs, figures | `$M tables`, `$M costs --student main refined`, `python -m gmmd.exp5.figures` | |
 
 The full main run as executed: `run/exp5_main.sh` (both chains; GPU0's chain was handed over to

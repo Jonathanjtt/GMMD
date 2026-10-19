@@ -160,3 +160,24 @@
   (MAP vs MMSE), so each IBW transition removes detail and contrast that the teacher's interval —
   and the first-order Tweedie Gaussian — keep. The loss is concentrated at j1–j7 and compounds over
   the chain; j8–j9 cannot restore it.
+
+## 2026-10-19 refinement (student-rollout anchors, same frozen IBW target construction)
+
+* 32 rollouts of `student/main` (seeds 3,300,000+, split `refine`) → states at the starts of
+  intervals 1–9 → 288 frozen IBW fits (prior-free, c = 0.5, 25 it, K = 8; 35 s per group of 4 on
+  GPU0). All finite, none stopped early, none discarded. Compared with the training fits at the
+  teacher's anchors: v/v_anc 0.99–1.00 at j1–j6 (training 1.00–1.03), median component
+  separation at j5–j8 2.2 / 3.4 / 5.8 / 11.1 σ (training 3.5 / 7.5 / 12.8 / 22.7), occasional
+  full merges at j3–j5 (2, 1, 1 / 32; none in training) → narrower conditionals at the smoother
+  student states (interpretation).
+* Fine-tune from `student/main/ckpt_best.pt`, original + refinement pairs (2 : 1 per interval at
+  j1–j9), 4,000 steps, half learning rate, 2,205 s: val NLL (teacher anchors) 1.4084 → 1.4080, only
+  j9 moves (−0.004); KL/dim flat.
+* Rollout shift: pixel dispersion of boundary states vs teacher b5 0.76 → 0.99, b6 0.59 → 0.90,
+  b9 0.51 → 0.78 (floor 1.03–1.08); pixel excess b9 0.038 → 0.021; DINOv2 still p = 0.002 at
+  every boundary.
+* FID n = 1,024 (`fid_n1024_refined.json`): refined 117.46 vs main 111.73, paired CI
+  [+4.2, +8.2] — refinement HURTS end to end. Precision 0.649 → 0.679, recall 0, contrast
+  0.125 → 0.124 (teacher 0.257), intensity SD over images 0.116 → 0.139 (teacher 0.120).
+  → Rollout shift was a real but secondary problem; correcting it with more targets of the same
+  (detail-losing) construction does not recover the images.
