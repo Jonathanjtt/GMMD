@@ -527,7 +527,8 @@ def main(argv=None):
     if a.stage in stages:
         return stages[a.stage](cfg, a)
     from gmmd.exp5 import evaluation, report, train
-    more = dict(train=train.stage_train, fitsummary=report.stage_fitsummary, **evaluation.STAGES)
+    more = dict(train=train.stage_train, fitsummary=report.stage_fitsummary, costs=report.stage_costs,
+                **evaluation.STAGES)
     if a.stage not in more:
         raise SystemExit(f"unknown stage {a.stage!r}; known: {sorted(stages) + sorted(more)}")
     return more[a.stage](cfg, a, rest)

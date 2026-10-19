@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import numpy as np
 import torch
+from scipy.spatial.distance import pdist
 
 from gmmd import diagnostics as D
 from gmmd import features as Fe
@@ -58,6 +59,10 @@ def compare(ref_a, ref_b, model, cfg_e, seed):
         if rep == "dinov2":
             row["swd_model"] = D.sliced_wasserstein(G, A, int(cfg_e["n_projections"]), seed=seed)["mean"]
             row["swd_floor"] = D.sliced_wasserstein(B, A, int(cfg_e["n_projections"]), seed=seed)["mean"]
+        # within-set dispersion (mean pairwise distance): is the model as diverse as the reference?
+        row["dispersion_model"] = float(pdist(np.asarray(G, np.float64)).mean())
+        row["dispersion_ref"] = float(pdist(np.asarray(A, np.float64)).mean())
+        row["dispersion_floor"] = float(pdist(np.asarray(B, np.float64)).mean())
         out[rep] = row
     return out
 
@@ -78,4 +83,9 @@ def summarize_rows(rows, alpha=0.05):
         if rep == "dinov2":
             out[rep]["swd_model_mean"] = float(np.mean([r[rep]["swd_model"] for r in rows]))
             out[rep]["swd_floor_mean"] = float(np.mean([r[rep]["swd_floor"] for r in rows]))
+        if all("dispersion_model" in r[rep] for r in rows):
+            out[rep]["dispersion_ratio_mean"] = float(np.mean([r[rep]["dispersion_model"] / r[rep]["dispersion_ref"]
+                                                               for r in rows]))
+            out[rep]["dispersion_floor_ratio_mean"] = float(np.mean([r[rep]["dispersion_floor"] / r[rep]["dispersion_ref"]
+                                                                     for r in rows]))
     return out

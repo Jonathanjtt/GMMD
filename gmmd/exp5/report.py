@@ -98,3 +98,84 @@ def stage_fitsummary(cfg, a, rest):
     text = "\n".join(lines)
     print(text)
     (C.out_dir(cfg) / f"fitsummary_{a.split}_{'_'.join(o.variants)}.md").write_text(text + "\n")
+
+
+# ======================================================================================
+# cost accounting (every number read from the per-stage JSON records)
+# ======================================================================================
+def _sum_json(paths, keys):
+    tot = {k: 0.0 for k in keys}
+    n = 0
+    for p in paths:
+        r = json.loads(p.read_text())
+        for k in keys:
+            v = r
+            for part in k.split("."):
+                v = v.get(part, 0) if isinstance(v, dict) else 0
+            tot[k] += float(v or 0)
+        n += 1
+    return tot, n
+
+
+def stage_costs(cfg, a, rest):
+    """Offline and online cost table.  GPU-seconds are wall-clock seconds of one GPU (shared with
+    another user's light job); NFE = score-network examples evaluated."""
+    ap = argparse.ArgumentParser(prog="costs", allow_abbrev=False)
+    ap.add_argument("--student", default="main")
+    o = ap.parse_args(rest)
+    root = C.out_dir(cfg)
+    rows = {}
+    for split in ("train", "val", "test", "refine"):
+        t, n = _sum_json((root / "anchors" / split).glob("traj*.json"), ["nfe", "seconds"])
+        if n:
+            rows[f"teacher anchor trajectories ({split}, fp32)"] = dict(n=n, nfe=t["nfe"], gpu_s=t["seconds"])
+        t, n = _sum_json((root / "refs" / split).glob("traj*_j*.json"), ["nfe", "seconds", "feature_seconds"])
+        if n:
+            rows[f"teacher reference rollouts ({split}, fp32, evaluation only)"] = dict(
+                n=n, nfe=t["nfe"], gpu_s=t["seconds"] + t["feature_seconds"])
+        t, n = _sum_json((root / "endpoints" / split).glob("traj*_j*.json"), ["nfe", "seconds"])
+        if n:
+            rows[f"teacher endpoints ({split}, fp32, ablation data)"] = dict(n=n, nfe=t["nfe"], gpu_s=t["seconds"])
+        for vdir in sorted((root / "fits" / split).glob("*")):
+            t, n = _sum_json(vdir.glob("traj*_j*.json"), ["cost.fit_nfe", "cost.fit_seconds", "cost.init_nfe",
+                                                          "cost.init_seconds", "bank.nfe", "bank.seconds"])
+            if n:
+                rows[f"IBW fits {split}/{vdir.name} (TF32; init fp32)"] = dict(
+                    n=n, nfe=t["cost.fit_nfe"] + t["cost.init_nfe"] + t["bank.nfe"],
+                    gpu_s=t["cost.fit_seconds"] + t["cost.init_seconds"] + t["bank.seconds"])
+    for sd in sorted((root / "student").glob("*")):
+        s = sd / "train_summary.json"
+        if s.exists():
+            r = json.loads(s.read_text())
+            rows[f"student training: {sd.name} (TF32)"] = dict(n=r["steps"], nfe=0, gpu_s=r["seconds"])
+    timing = {p.stem: json.loads(p.read_text()) for p in sorted((root / "timing").glob("*.json"))}
+    out = dict(rows=rows, timing=timing)
+    # break-even: images after which the student's offline cost is repaid by its per-image saving
+    t_teacher = next((v for k, v in timing.items() if k.startswith("teacher_fp32")), None)
+    t_student = next((v for k, v in timing.items() if k.startswith(f"student_{o.student}_tf32")), None)
+    offline = sum(v["gpu_s"] for k, v in rows.items()
+                  if "evaluation only" not in k and "ablation" not in k and "val/" not in k and "p0_" not in k
+                  and (o.student in k or "training" not in k))
+    if t_teacher and t_student:
+        saving = t_teacher["s_per_image"] - t_student["s_per_image"]
+        out["break_even"] = dict(offline_gpu_s=offline, teacher_s_per_image=t_teacher["s_per_image"],
+                                 student_s_per_image=t_student["s_per_image"], saving_s_per_image=saving,
+                                 images_to_amortise=offline / saving if saving > 0 else None,
+                                 note="offline = train/test anchor trajectories + IBW fits used for training "
+                                      "(train, refine) + student training; evaluation-only references, "
+                                      "validation/pilot fits and the ablation are excluded")
+    C.dump(out, root / "costs.json")
+    lines = ["| item | units | NFE | GPU-hours |", "|---|---|---|---|"]
+    for k, v in rows.items():
+        lines.append(f"| {k} | {v['n']} | {v['nfe']:.3g} | {v['gpu_s'] / 3600:.2f} |")
+    if timing:
+        lines += ["", "| uncached generation | precision | s / image | images / GPU-hour | peak GB |", "|---|---|---|---|---|"]
+        for k, v in timing.items():
+            lines.append(f"| {v['method']} | {v['precision']} | {v['s_per_image']:.4f} | {v['images_per_gpu_hour']:.0f} | {v['peak_gb']:.1f} |")
+    if "break_even" in out:
+        b = out["break_even"]
+        lines += ["", f"Break-even: offline {b['offline_gpu_s'] / 3600:.1f} GPU-h / saving "
+                      f"{b['saving_s_per_image']:.2f} s per image = {b['images_to_amortise']:.0f} images"]
+    text = "\n".join(lines)
+    (root / "costs.md").write_text(text + "\n")
+    print(text)

@@ -424,5 +424,61 @@ def stage_refine_anchors(cfg, a, rest):
                         draw_seed=G.seed_of(71, s), record=rec), C.anchor_path(cfg, "refine", n).with_suffix(".json"))
 
 
+# ============================================================================== trajectory figure
+def stage_figtraj(cfg, a, rest):
+    """Boundary states b_0..b_9 and the output for a few student rollouts (first generation chunk)
+    next to teacher trajectories (train anchors + exp4 teacher images are different x_T), each
+    state shown Tweedie-denoised by the fp32 teacher at its own time (visualisation only)."""
+    ap = argparse.ArgumentParser(prog="figtraj", allow_abbrev=False)
+    ap.add_argument("--method", required=True)
+    ap.add_argument("--n-show", type=int, default=4)
+    o = ap.parse_args(rest)
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from gmmd.exp5.publication_style import FigureStyle, apply_publication_style, save_figure
+    teacher = C.build_teacher(cfg, a.device, tf32=False)
+    parts = C.partition(cfg, teacher)
+    z = np.load(_method_dir(cfg, o.method) / "chunk000.npz")
+    st = torch.as_tensor(z["states"][:o.n_show]).float()                  # (n, 11, C, H, W)
+    rows, labels = [], []
+    for k in range(o.n_show):
+        rows.append(_denoised_row(teacher, parts, [st[k, j] for j in range(len(parts))], st[k, -1]))
+        labels.append(f"student {k}")
+    for k in range(o.n_show):
+        states = [C.load_anchor(cfg, "train", k, j) for j in range(len(parts))]
+        rows.append(_denoised_row(teacher, parts, states, None))
+        labels.append(f"teacher {k}")
+    style = apply_publication_style(FigureStyle(width_in=6.9, height_in=0.62 * len(rows) + 0.3))
+    fig, axes = plt.subplots(len(rows), len(rows[0]), figsize=(style.width_in, style.height_in),
+                             gridspec_kw=dict(wspace=0.03, hspace=0.05))
+    titles = [f"b{j} σ={iv.sigma_start:.3g}" for j, iv in enumerate(parts)] + ["output"]
+    for r, (row, lab) in enumerate(zip(rows, labels)):
+        for c, im in enumerate(row):
+            ax = axes[r, c]
+            if im is not None:
+                ax.imshow(im, interpolation="lanczos")
+            ax.set_xticks([]); ax.set_yticks([])
+            for sp in ax.spines.values():
+                sp.set_visible(False)
+            if r == 0:
+                ax.set_title(titles[c], fontsize=5.5)
+            if c == 0:
+                ax.set_ylabel(lab, fontsize=6, rotation=0, ha="right", va="center")
+    save_figure(fig, C.out_dir(cfg) / "figures" / f"fig_trajectory_{o.method.replace(':', '_')}", dpi=600)
+    log("figtraj written")
+
+
+def _denoised_row(teacher, parts, states, output):
+    out = []
+    with IT.tf32(False), torch.no_grad():
+        for j, x in enumerate(states):                    # state j sits at the start of interval j
+            d = teacher.tweedie_denoise(x[None].to(teacher.device), parts[j].t_start)[0]
+            out.append(np.clip(d.permute(1, 2, 0).cpu().numpy(), 0, 1))
+    out.append(None if output is None else np.clip(output.permute(1, 2, 0).numpy(), 0, 1))
+    return out
+
+
 STAGES = {"evalstudent": stage_evalstudent, "endpoints": stage_endpoints, "generate": stage_generate,
-          "fid": stage_fid, "timing": stage_timing, "shift": stage_shift, "refine-anchors": stage_refine_anchors}
+          "fid": stage_fid, "timing": stage_timing, "shift": stage_shift, "refine-anchors": stage_refine_anchors,
+          "figtraj": stage_figtraj}
