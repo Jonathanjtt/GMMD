@@ -57,3 +57,32 @@ def ibw_chain(cfg, teacher, seeds, variant="frozen", batch_size=64):
                                                             for a in range(len(seeds))]))))
     return x, dict(variant=variant, source_variant=v.get("source_variant"), iterations=iters, step_c=step_c,
                    n_components=K, n_grad_samples=Bg, score_evals=nfe, per_interval=per_interval)
+
+
+def hybrid_sample(cfg, tag_a, tag_b, mask, seeds, device="cuda", ckpt="best"):
+    """Diagnostic: the standalone sampler's loop with student ``tag_a`` at the intervals where
+    ``mask[j] == "1"`` and student ``tag_b`` elsewhere (e.g. trained vs untrained init), with the
+    same prior and the same per-image draw generators as :class:`StudentSampler` -- so it localises
+    which transitions change the end-to-end result.  Returns images (n, C, H, W) on CPU."""
+    from gmmd.exp5.grid import SeededGenerators, prior_from_seeds
+    from gmmd.exp5.sampler import StudentSampler
+    root = C.out_dir(cfg) / "student"
+    A = StudentSampler(root / tag_a / f"ckpt_{ckpt}.pt", device=device)
+    B = StudentSampler(root / tag_b / f"ckpt_{ckpt}.pt", device=device)
+    if len(mask) != A.n_intervals or set(mask) - {"0", "1"}:
+        raise ValueError(f"mask must be {A.n_intervals} characters of 0/1, got {mask!r}")
+    A._set_precision()
+    seeds = [int(s) for s in seeds]
+    with torch.inference_mode():
+        x = prior_from_seeds(A.image_shape, A.sigma_max, seeds, A.device)
+        gens = SeededGenerators(A.draw_seeds(seeds), A.device)
+        n = len(seeds)
+        idx = torch.arange(n, device=x.device)
+        for j in range(A.n_intervals):
+            net = (A if mask[j] == "1" else B).net
+            logits, means, logv = net(x, j)
+            p = torch.softmax(logits.float(), -1)
+            k = torch.stack([torch.multinomial(p[b], 1, generator=gens.gens[b])[0] for b in range(n)])
+            eps = gens.randn(A.image_shape)
+            x = means[idx, k] + (0.5 * logv[idx, k]).exp().view(n, 1, 1, 1) * eps
+    return x.float().cpu()

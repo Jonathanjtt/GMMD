@@ -97,3 +97,36 @@
 * Interpretation: the useful IBW iterate lies between under-contraction (≤ 15 it: too much variance,
   pixel excess 0.1–0.4) and over-contraction (≥ 40 it: content dispersion removed by the reverse-KL
   flow). Consistent with P0: c = 0.2 was best at 50 it, c = 0.5 at 25 it (c × iterations ≈ 10–12).
+
+## 2026-10-19 P2 pilot (8 train trajectories, 3,000 steps) — training on IBW targets HURTS end to end
+
+* Training: val NLL 1.4294 → 1.4111 (plateau from ~2,500 steps); forward KL/dim falls to ≈ 0 at j0–j6,
+  0.004 (j7), 0.009 (j8); mixture weights collapse (batch entropy 2.05 → 0.27 nats; val perplexity
+  1.5–2.3, 5.6 at j8) — in d = 196,608 the 8 IBW components (2–3 σ apart) differ by ~1e-4 nats/dim,
+  so one slightly wider isotropic component is nearly forward-KL optimal.
+* Stage B (val, 40 pairs) is at the IBW replicate floor at j0–j8: KL(q_IBW‖q_φ)/dim ≈ KL between two
+  independent IBW fits of the same anchor (j8: 0.0086 vs 0.0105); DINOv2 B 0.02–0.12 vs replicate
+  0.006–0.046. Terminal step weaker (B 0.25 vs 0.02; student pixel dispersion 0.76 of IBW's).
+* End to end (n = 192, x_T 1,000,000+, preliminary FID): teacher 56.6; **untrained student
+  (Tweedie mean + v_ref noise = the network's initialisation) 98.3**; ANC10 114.6; **trained pilot
+  126.2**; RD10 451.7 (the 10-step SMLD predictor diverges, range ±1,000). Contrast (per-image pixel
+  std): teacher 0.258, init 0.175, ANC10 0.174, trained 0.119 — training washes images out.
+* Hybrids (trained student at the marked intervals, init elsewhere, identical draws; verified
+  bit-exact at both ends): none 98.3, j9 only 101.4, j5–9 110.2, j0–4 111.3, j0–8 121.0, all 126.2
+  → the degradation is distributed over the chain (≈ +13 high-noise half, +12 low-noise half).
+* Per-interval comparison against the teacher (val 40 pairs, same metric): the Tweedie-mean kernel
+  (untrained init) is CLOSER to the teacher's 200-step kernel than the IBW-25 targets — DINOv2 excess
+  mean 0.219 vs 0.395 (trained student 0.356); pixel excess 0.0085 vs 0.0413 (j7: 0.015 vs 0.092;
+  j8: 0.014 vs 0.136). Pixel dispersion vs teacher is the SAME for all three (0.99 at j0 → 0.69 at
+  j7/j8): the diversity deficit belongs to every isotropic kernel; IBW's extra error is a BIAS of its
+  means. Plausible mechanism: the IBW fixed point solves m = x + gap · E_q[s_θ(y, s)] (score at the
+  END time, averaged over the fitted q), while the Tweedie mean is x + gap · s_θ(x, t) = E[y | x]
+  under the model at the START time; the two agree only if q were the true conditional (tower
+  property), and q lacks the content variance. The stiff (noise-like) directions, where this bias
+  lives, converge within ~10 iterations, so neither the iteration count nor the initialisation
+  removes it (P1: every init converges to the same fixed point).
+* Rollout shift (student boundary states vs teacher anchors, n = 32): pixel dispersion ratio falls
+  0.98 → 0.92 → 0.78 → 0.73 at boundaries 1 / 4 / 6 / 9 (teacher floor 0.98–1.08).
+* Consequence: the main run (64 trajectories) and the endpoint-NLL ablation are run as planned; the
+  ablation now isolates the IBW target bias (an NLL fit to teacher endpoints targets the teacher's
+  conditional mean). The untrained initialisation is reported as a zero-training control.

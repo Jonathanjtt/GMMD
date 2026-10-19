@@ -275,6 +275,8 @@ def stage_generate(cfg, a, rest):
     dev = torch.device(a.device)
     if kind == "student":
         S = _student(cfg, args[0], args[1] if len(args) > 1 else "best", a.device)
+    elif kind == "hybrid":                         # loads its two students per chunk
+        teacher = None
     elif kind == "ibwchain":                       # same precision as the offline IBW fits
         teacher = C.build_teacher(cfg, a.device, tf32=cfg["precision"]["ibw_tf32"])
     else:
@@ -305,6 +307,10 @@ def _generate_chunk(cfg, o, kind, args, root, c, dev, S, teacher):
         if c == 0:
             extra["states"] = out["states"].half().numpy()          # (B, 11, C, H, W)
         nfe, teacher_nfe = rec["network_evals_per_image"] * len(seeds), 0
+    elif kind == "hybrid":                             # hybrid:<tag_a>:<tag_b>:<mask> (diagnostic)
+        from gmmd.exp5 import oracle
+        x0 = oracle.hybrid_sample(cfg, args[0], args[1], args[2], seeds, device=str(dev))
+        rec, nfe, teacher_nfe = dict(tag_a=args[0], tag_b=args[1], mask=args[2]), 10 * len(seeds), 0
     elif kind == "ibwchain":
         from gmmd.exp5 import oracle
         x0, rec = oracle.ibw_chain(cfg, teacher, seeds, variant=args[0] if args else "frozen",
