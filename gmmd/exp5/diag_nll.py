@@ -2,20 +2,22 @@
 
     python -m gmmd.exp5.diag_nll --split test --students main refined ablation_endpoints init_main
 
-For every (anchor, interval) pair of ``split`` with a cached reference set ``A`` (64 fp32 teacher
-rollouts of the interval from the anchor), the per-dimension negative log-likelihood of ``A`` under
+For every (anchor, interval) pair of ``split`` with cached teacher references (the two independent
+sets ``A`` and ``B`` of 32 fp32 200-step rollouts of the interval from the anchor, pooled: M = 64),
+the per-dimension negative log-likelihood of those rollouts under
 
   student:<tag> : the student's mixture at the anchor (``ckpt_best``, EMA weights, TF32 forward as
                   in sampling; the log density in float64)
   ibw           : the cached IBW fit itself (``frozen``; uniform weights; non-terminal intervals --
                   the terminal target is the pushforward ``T # q_IBW``, whose density is unknown)
-  oracle_iso    : ONE isotropic Gaussian fitted to half of ``A`` (sample mean, mean per-coordinate
-                  variance) and scored on the other half, both ways -- a held-out yardstick for
-                  what a single isotropic Gaussian can reach
+  oracle_iso    : ONE isotropic Gaussian fitted to one reference set (sample mean, mean per-coordinate
+                  variance) and scored on the other, both ways -- a held-out yardstick for what a
+                  single isotropic Gaussian can reach; estimating its mean from h = 32 rollouts costs
+                  it ~ 0.5 / h = 0.016 nats per dimension (``oracle_mean_penalty``)
 
 in coordinates standardised by the interval's anchor variance ``v_anc,j`` (``u = (z - x) /
 sqrt(v_anc,j)``, a per-interval constant shift), so methods compare directly within an interval.
-Also per kernel, per coordinate and relative to the teacher's variance ``tau`` (unbiased, from ``A``):
+Also per kernel, per coordinate and relative to the teacher's variance ``tau`` (unbiased, from the M rollouts):
 ``var:<name>`` = total variance (within-component variance plus the weighted spread of the component
 means) / tau; ``bias2:<name>`` = squared distance between the kernel's mean and the teacher's sample
 mean, minus the sample mean's own noise tau / M, over tau; ``sep:<name>`` = the weight-weighted mean
@@ -85,7 +87,8 @@ def main(argv=None):
             if not rp.exists():
                 continue
             with np.load(rp) as z:
-                A = torch.as_tensor(z["A"]).reshape(len(z["A"]), -1).to(a.device).double()
+                A = torch.as_tensor(np.concatenate([z["A"], z["B"]])).reshape(len(z["A"]) + len(z["B"]), -1)
+                A = A.to(a.device).double()
             x = C.load_anchor(cfg, a.split, n, iv.j)
             xd = x.reshape(1, -1).to(a.device).double()
             ls = 0.5 * math.log(iv.v_anc)
@@ -123,7 +126,8 @@ def main(argv=None):
                                  n_pairs=int(sum(k in r for r in rs)))
                          for k in keys if any(k in r for r in rs)}
     out = dict(split=a.split, variant=a.variant, units="nats per dimension, u = (z - x) / sqrt(v_anc,j)",
-               reference="cached reference set A (64 fp32 teacher rollouts per pair)", n_pairs=len(rows),
+               reference="cached reference sets A and B pooled (2 x 32 fp32 teacher rollouts per pair)",
+               oracle_mean_penalty=0.5 / (rows[0]["M"] // 2), n_pairs=len(rows),
                per_interval=per_j, rows=rows)
     C.dump(out, C.out_dir(cfg) / "figures" / "diag" / f"nll_teacher_endpoints_{a.split}.json")
     for pre in ("", "var:", "bias2:", "sep:"):

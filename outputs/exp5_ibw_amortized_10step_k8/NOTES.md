@@ -251,3 +251,22 @@
 * Consistent with diag_detail (IBW detail loss j1–j7) and the held-out likelihood (ablation <
   main at j3–j7): the mid-noise detail loss, not the terminal mean bias (bias² 0.31 τ at j9, but
   only ~4 FID), is what costs main most of its gap to the ablation.
+
+## 2026-10-20 held-out likelihood, final (all 80 test pairs)
+
+* FIX before the final run: the cached reference file holds two sets, `A` and `B`, of 32 rollouts
+  each; the first `diag_nll` read only `A` (M = 32, not 64 as its docstring said), so the
+  preliminary 61-pair `oracle_iso` paid ½/16 = 0.031 nats/dim for its 16-sample mean (the
+  "ablation beats the oracle by 0.031" was exactly that). Now A ∪ B (M = 64), oracle penalty ½/32
+  = 0.0156, recorded in the JSON as `oracle_mean_penalty`.
+* Isotropic floor = oracle_iso − penalty. Excess over it (10⁻³ nats/dim), ablation / main / IBW /
+  init: j0 0.0/0.1/0.1/0.1 … j3 0.0/0.7/1.2/2.3 … j7 0.6/7.5/12.0/12.7; j8 1.1/37.0/50.8/9.7; j9
+  3.9/192.0/—/54.7 → the ablation sits on the single-isotropic-Gaussian floor; nothing beats it.
+* τ (teacher 200-step kernel variance per coordinate) / v_anc = 1.02 1.04 1.05 1.07 1.09 1.11 1.15
+  1.24 1.51 (j0–j8), 1.02 (j9, final images); IBW v / v_anc = 1.00 … 1.03 (j0–j6), 1.10, 1.60, 2.08
+  → IBW v / τ = 0.98 → 0.89 (j0–j7), 1.07 (j8). init_main's variance = v_ref,j = median IBW
+  variance, hence init ≈ IBW in variance (not a property of the Tweedie Gaussian as such).
+* Paired (8/8 anchors): main > ablation everywhere; main < IBW at j2–j8 (the network fits the
+  teacher slightly better than its own targets: bias² 0.0120 vs 0.0138 at j7, 0.089 vs 0.102 at
+  j8); IBW < init at j0–j6, = at j7, ≫ at j8; refined − main +0.1…+0.75 at j1–j5 (worse), n.s.
+  j6–j7, −1.0 ± 0.5 at j8, −4.2 ± 3.5 at j9.

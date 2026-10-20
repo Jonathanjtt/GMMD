@@ -180,8 +180,59 @@ wider isotropic components are nearly forward-KL optimal (§3). Every variance i
 (`log v = log v_ref + 6 tanh(·/6)`); every generated image is finite (raw range −0.70 … 1.48,
 ≤ 3.1 % of values clipped by the common uint8 quantisation).
 
-_(Held-out test evaluation — stage A/B/C with the replicate floor for main, refined, ablation and
-the untrained init — fills this section when the test references finish.)_
+**Held-out likelihood of the teacher's transitions** (post-hoc; `gmmd/exp5/diag_nll.py`,
+`figures/diag/nll_teacher_endpoints_test.json`). For each of the 80 test pairs, the 64 fp32 teacher
+rollouts of the interval (both reference sets) are scored under each one-step kernel at the same
+anchor — a forward-KL view of stage A (IBW targets) and stage C (students), with the ablation of
+§7 (trained for exactly this quantity, selected on validation) as the reference. Floor = the
+held-out NLL of the best *single* isotropic Gaussian, estimated by fitting one to one reference set
+and scoring it on the other (both ways) minus its analytic mean-estimation penalty ½ / 32 nats per
+dimension. Variance and bias are per coordinate, relative to the teacher's variance τ at that
+anchor (the bias with the teacher sample mean's own noise τ / 64 removed); mean over the 8 test
+anchors per interval:
+
+| j | NLL above the isotropic floor (10⁻³ nats/dim): ablation / main / IBW targets / untrained init | total variance / τ: ablation / main / IBW / init | squared mean bias / τ: ablation / main / IBW / init |
+|---|---|---|---|
+| 0 | 0.0 / 0.1 / 0.1 / 0.1 | 1.00 / 0.98 / 0.98 / 0.98 | 0.0006 / 0.0000 / 0.0000 / 0.0000 |
+| 1 | 0.0 / 0.3 / 0.3 / 0.4 | 1.00 / 0.97 / 0.97 / 0.97 | 0.0002 / 0.0003 / 0.0001 / 0.0002 |
+| 2 | 0.0 / 0.5 / 0.6 / 1.1 | 1.00 / 0.96 / 0.96 / 0.96 | 0.0000 / 0.0005 / 0.0004 / 0.0012 |
+| 3 | 0.0 / 0.7 / 1.2 / 2.3 | 1.00 / 0.95 / 0.94 / 0.94 | 0.0001 / 0.0010 / 0.0008 / 0.0028 |
+| 4 | 0.1 / 1.2 / 2.1 / 4.1 | 1.00 / 0.93 / 0.93 / 0.93 | 0.0004 / 0.0018 / 0.0016 / 0.0053 |
+| 5 | 0.2 / 2.3 / 3.7 / 6.4 | 1.01 / 0.92 / 0.92 / 0.92 | 0.0008 / 0.0045 / 0.0033 / 0.0083 |
+| 6 | 0.3 / 4.1 / 6.9 / 9.6 | 1.01 / 0.90 / 0.90 / 0.90 | 0.0011 / 0.0081 / 0.0068 / 0.0122 |
+| 7 | 0.6 / 7.5 / 12.0 / 12.7 | 1.01 / 0.90 / 0.89 / 0.89 | 0.0015 / 0.0120 / 0.0138 / 0.0162 |
+| 8 | 1.1 / 37.0 / 50.8 / 9.7 | 1.03 / 1.09 / 1.07 / 1.06 | 0.0017 / 0.0893 / 0.1020 / 0.0167 |
+| 9 | 3.9 / 192.0 / — / 54.7 | 1.14 / 0.88 / — / 0.85 | 0.0063 / 0.3348 / — / 0.0526 |
+
+(IBW at j9: the terminal target is the pushforward `T # q_IBW`, whose density is unknown.)
+Paired over anchors, main is above the ablation at every interval for 8 / 8 anchors (+0.1 … +6.8 ×
+10⁻³ at j0–j7, +36 at j8, +188 at j9; per image × d = 196,608, e.g. ≈ 1,300 nats at j7).
+
+* **The ablation reaches the isotropic ceiling.** Within 0.0–0.6 × 10⁻³ nats/dim at j0–j7 (1.1 at
+  j8, 3.9 at j9) of the best single isotropic Gaussian, with the teacher kernel's total variance
+  (1.00–1.01 of τ at j0–j7) and a mean bias ≤ 0.0015 τ; its eight components add nothing
+  measurable beyond one isotropic Gaussian (no kernel here beats that floor). So a network *can*
+  learn the teacher's ten transitions as well as an isotropic Gaussian allows — and that still gives
+  FID 74 (§7): the rest of the gap to the teacher belongs to ten isotropic transitions, not to the
+  training.
+* **The IBW targets miss both moments.** At j0–j7 the IBW kernels (and main, which copies them)
+  have 0.89–0.98 of the teacher's variance: the IBW variances stay at 1.00–1.10 × v_anc while the
+  teacher's 200-step kernel is 1.02–1.24 × v_anc wide per coordinate (j0 → j7). The untrained init
+  has the same deficit only because its variance is set to the median IBW variance (`v_ref,j`).
+  The IBW mean bias is 5–10× the ablation's at j3–j7 (0.0008–0.0138 τ).
+  In pixel L2 the IBW means are as close to the teacher's mean as the Tweedie mean or closer at
+  j1–j7 (0.0001–0.0138 vs 0.0002–0.0162); what differs is where the error lies — the IBW means lack
+  the fine detail (§3), the Tweedie mean does not. At j8 the IBW mean bias is 6× the Tweedie
+  mean's (0.102 vs 0.017 τ), and main's terminal kernel (trained on the IBW pushforward) has 0.33 τ
+  vs the init's 0.05.
+* **The network fits the teacher slightly better than its own targets** (main − IBW < 0 at j2–j8
+  for 8 / 8 anchors; −0.2 … −4.6 × 10⁻³ at j2–j7, −13.8 at j8): forward-KL training on IBW draws,
+  shared across anchors, lowers the mean bias at j7–j8 (0.0120 vs 0.0138; 0.089 vs 0.102) — but
+  cannot add what the targets lack. Refinement (§6) changes this by at most ±1 × 10⁻³ at j1–j8
+  (worse at j1–j5 for 8 / 8 anchors, n.s. at j6–j7) and −4 ± 3.5 at j9.
+
+_(Stage A / B / C on the 80 test pairs with the replicate floor for main, refined, ablation and the
+untrained init: pending — the evaluation is running.)_
 
 ## 5. End to end: 1,024 images per method
 
@@ -292,9 +343,9 @@ standardised units.) Unlike main, the ablation uses its components: weight entro
 nats (uniform 2.08), drawn-component perplexity 5.6–6.8 at every interval (main 1.4–3.1), and a
 weight-weighted separation of 13–20 component SDs between component means (test anchors,
 `figures/diag/nll_teacher_endpoints_test.json`). Its kernels' total per-coordinate variance
-matches the teacher's 200-step kernel (1.00–1.02 of it at j0–j7), where the IBW targets, main and
-the untrained init all have 0.89–0.98 — maximum likelihood matches second moments, the
-mode-seeking IBW fit does not.
+matches the teacher's 200-step kernel (1.00–1.01 of it at j0–j7), where the IBW targets and main
+have 0.89–0.98 (and the untrained init, whose variance is the median IBW variance) — maximum
+likelihood matches second moments, the mode-seeking IBW fit does not (§4).
 
 **End to end** (`fid_n1024_students.json`, the same 1,024 x_T, paired bootstrap):
 
