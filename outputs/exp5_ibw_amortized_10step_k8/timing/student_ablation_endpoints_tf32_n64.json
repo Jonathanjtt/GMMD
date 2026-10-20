@@ -1,0 +1,13 @@
+{
+  "method": "student:ablation_endpoints",
+  "precision": "tf32",
+  "n_images": 64,
+  "batch": 64,
+  "seconds": 7.4378971783444285,
+  "s_per_image": 0.1162171434116317,
+  "images_per_gpu_hour": 30976.497049571182,
+  "peak_gb": 22.989916801452637,
+  "finite": true,
+  "gpu": "NVIDIA H200 NVL",
+  "note": "uncached x_T -> x_0, one batch, after a warm-up batch, device synchronised; GPU shared with another user's light job"
+}

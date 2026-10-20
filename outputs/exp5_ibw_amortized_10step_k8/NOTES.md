@@ -301,3 +301,18 @@
 * Figures: final registry (`python -m gmmd.exp5.figures --only training stage_abc_test kernels_test
   hybrid_blocks samples_final grids_final quality_vs_nfe_final detail_test detail_val`); fixed a
   colour collision (7th series wrapped to the ancestral blue) and clipped labels/legends.
+
+## 2026-10-20 timing and cost (final)
+
+* `run/exp5_timing.sh` (09:45–10:19 UTC, GPU0 with yesom's light job resident) + extras (ablation,
+  ANC20/50; 10:20–10:24). s/img at batch 16 / 64: student TF32 0.1095 / 0.1147, fp32 0.4776 /
+  0.4187; ablation TF32 0.1342 / 0.1162 (same network → ~20 % run-to-run noise); ANC10 TF32 0.1364 /
+  0.1076, fp32 0.4807 / 0.3751; ANC20 TF32 0.2575 / 0.2258; ANC50 TF32 0.6106 / 0.5578; teacher
+  (batch 16) TF32 24.09, fp32 95.63. Every fp32 run peaks at ~30 GB (batch 16) / ~48 GB (64)
+  regardless of method (fp32 conv path).
+* `$M costs --student main`: offline 7.3 GPU-h (anchors 2.36, IBW 3.14, training 1.81); break-even
+  vs teacher 276 (fp32) / 1,097 (TF32) images, 807 / 3,203 with the one-off selection (14.0 GPU-h).
+  No break-even vs ANC10. A student of the ablation's quality vs ANC20 (better FID, ~0.11–0.12 s
+  slower per image): ~2–3 × 10⁵ images, and still worse.
+* Standalone sampler from ckpt_best (n = 8, batch 8) vs the evaluated batch-64 images, same seeds:
+  max |diff| 1/255 on 1.7 % of values (TF32, batch-dependent kernels).

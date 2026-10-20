@@ -1,0 +1,13 @@
+{
+  "method": "student:main",
+  "precision": "fp32",
+  "n_images": 64,
+  "batch": 64,
+  "seconds": 26.79611367173493,
+  "s_per_image": 0.41868927612085827,
+  "images_per_gpu_hour": 8598.261778648539,
+  "peak_gb": 48.63054180145264,
+  "finite": true,
+  "gpu": "NVIDIA H200 NVL",
+  "note": "uncached x_T -> x_0, one batch, after a warm-up batch, device synchronised; GPU shared with another user's light job"
+}

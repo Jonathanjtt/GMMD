@@ -1,0 +1,475 @@
+{
+  "rows": {
+    "anchor trajectories (train; teacher fp32)": {
+      "category": "training data",
+      "n": 64,
+      "nfe": 115200.0,
+      "gpu_s": 8488.25859606918
+    },
+    "teacher endpoints (train, fp32, ablation data)": {
+      "category": "ablation",
+      "n": 640,
+      "nfe": 512000.0,
+      "gpu_s": 20942.03342889715
+    },
+    "IBW fits train/frozen (TF32; prior_free init)": {
+      "category": "training data",
+      "n": 640,
+      "nfe": 514048.0,
+      "gpu_s": 11306.390098423697
+    },
+    "anchor trajectories (val; teacher fp32)": {
+      "category": "selection (one-off: P0/P1 on val)",
+      "n": 4,
+      "nfe": 7200.0,
+      "gpu_s": 902.6394817195833
+    },
+    "teacher reference rollouts (val, fp32)": {
+      "category": "selection (one-off: P0/P1 on val)",
+      "n": 40,
+      "nfe": 512000.0,
+      "gpu_s": 19200.891100566834
+    },
+    "IBW fits val/frozen_r1 (TF32; prior_free init)": {
+      "category": "evaluation only",
+      "n": 40,
+      "nfe": 32128.0,
+      "gpu_s": 931.8089591795579
+    },
+    "IBW fits val/p0_c0p2 (TF32; prior_free init)": {
+      "category": "selection (one-off: P0/P1 on val)",
+      "n": 6,
+      "nfe": 76800.0,
+      "gpu_s": 867.4265101384372
+    },
+    "IBW fits val/p0_c0p5 (TF32; prior_free init)": {
+      "category": "selection (one-off: P0/P1 on val)",
+      "n": 6,
+      "nfe": 76800.0,
+      "gpu_s": 864.6201701331884
+    },
+    "IBW fits val/p0_c1p0 (TF32; prior_free init)": {
+      "category": "selection (one-off: P0/P1 on val)",
+      "n": 6,
+      "nfe": 76800.0,
+      "gpu_s": 927.1515790978447
+    },
+    "IBW fits val/principal_r1 (TF32; principal-direction init fp32)": {
+      "category": "selection (one-off: P0/P1 on val)",
+      "n": 40,
+      "nfe": 388360.0,
+      "gpu_s": 4503.225559741259
+    },
+    "IBW fits val/principal_r3 (TF32; principal-direction init fp32)": {
+      "category": "selection (one-off: P0/P1 on val)",
+      "n": 40,
+      "nfe": 388360.0,
+      "gpu_s": 4703.638032303192
+    },
+    "IBW fits val/principal_r3_vgap (TF32; principal-direction init fp32)": {
+      "category": "selection (one-off: P0/P1 on val)",
+      "n": 40,
+      "nfe": 388360.0,
+      "gpu_s": 4400.188632325269
+    },
+    "IBW fits val/prior_free (TF32; prior_free init)": {
+      "category": "selection (one-off: P0/P1 on val)",
+      "n": 40,
+      "nfe": 384000.0,
+      "gpu_s": 8236.91030364111
+    },
+    "IBW fits val/prior_free_fine (TF32; prior_free init)": {
+      "category": "selection (one-off: P0/P1 on val)",
+      "n": 40,
+      "nfe": 64000.0,
+      "gpu_s": 1552.3278590943664
+    },
+    "IBW fits val/random_far (TF32; random_far init)": {
+      "category": "selection (one-off: P0/P1 on val)",
+      "n": 40,
+      "nfe": 384040.0,
+      "gpu_s": 4351.27365177311
+    },
+    "anchor trajectories (test; teacher fp32)": {
+      "category": "evaluation only",
+      "n": 8,
+      "nfe": 14400.0,
+      "gpu_s": 1107.3935974771157
+    },
+    "teacher reference rollouts (test, fp32)": {
+      "category": "evaluation only",
+      "n": 80,
+      "nfe": 1024000.0,
+      "gpu_s": 54738.60052591562
+    },
+    "IBW fits test/frozen (TF32; prior_free init)": {
+      "category": "evaluation only",
+      "n": 80,
+      "nfe": 64256.0,
+      "gpu_s": 1853.0437724860385
+    },
+    "IBW fits test/frozen_fp32 (TF32; prior_free init)": {
+      "category": "evaluation only",
+      "n": 20,
+      "nfe": 16064.0,
+      "gpu_s": 1078.3305566934869
+    },
+    "IBW fits test/frozen_r1 (TF32; prior_free init)": {
+      "category": "evaluation only",
+      "n": 80,
+      "nfe": 64256.0,
+      "gpu_s": 1583.5866533275694
+    },
+    "anchor states (refine; student rollouts, TF32)": {
+      "category": "refinement data (student-rollout anchors + fits)",
+      "n": 32,
+      "nfe": 0.0,
+      "gpu_s": 0.0
+    },
+    "IBW fits refine/frozen (TF32; prior_free init)": {
+      "category": "refinement data (student-rollout anchors + fits)",
+      "n": 288,
+      "nfe": 231424.0,
+      "gpu_s": 2547.3235317328945
+    },
+    "student training: ablation_endpoints (TF32, 12000 steps)": {
+      "category": "ablation",
+      "n": 12000,
+      "nfe": 0,
+      "gpu_s": 6272.023717218079
+    },
+    "student training: main (TF32, 12000 steps)": {
+      "category": "student training",
+      "n": 12000,
+      "nfe": 0,
+      "gpu_s": 6498.738720441237
+    },
+    "student training: pilot (TF32, 3000 steps)": {
+      "category": "other student",
+      "n": 3000,
+      "nfe": 0,
+      "gpu_s": 2775.866751602851
+    },
+    "student training: refined (TF32, 4000 steps)": {
+      "category": "other student",
+      "n": 4000,
+      "nfe": 0,
+      "gpu_s": 2204.9185094283894
+    }
+  },
+  "by_category_gpu_s": {
+    "training data": 19794.648694492877,
+    "ablation": 27214.05714611523,
+    "selection (one-off: P0/P1 on val)": 50510.292880534194,
+    "evaluation only": 61292.76406507939,
+    "refinement data (student-rollout anchors + fits)": 2547.3235317328945,
+    "student training": 6498.738720441237,
+    "other student": 4980.78526103124
+  },
+  "timing": {
+    "coarse_ancestral_10_fp32_n16": {
+      "method": "coarse:ancestral:10",
+      "precision": "fp32",
+      "n_images": 16,
+      "batch": 16,
+      "seconds": 7.690860529430211,
+      "s_per_image": 0.48067878308938816,
+      "images_per_gpu_hour": 7489.408991306645,
+      "peak_gb": 30.42898988723755,
+      "finite": true,
+      "gpu": "NVIDIA H200 NVL",
+      "note": "uncached x_T -> x_0, one batch, after a warm-up batch, device synchronised; GPU shared with another user's light job"
+    },
+    "coarse_ancestral_10_fp32_n64": {
+      "method": "coarse:ancestral:10",
+      "precision": "fp32",
+      "n_images": 64,
+      "batch": 64,
+      "seconds": 24.00399873405695,
+      "s_per_image": 0.37506248021963984,
+      "images_per_gpu_hour": 9598.400772830726,
+      "peak_gb": 48.304595947265625,
+      "finite": true,
+      "gpu": "NVIDIA H200 NVL",
+      "note": "uncached x_T -> x_0, one batch, after a warm-up batch, device synchronised; GPU shared with another user's light job"
+    },
+    "coarse_ancestral_10_tf32_n16": {
+      "method": "coarse:ancestral:10",
+      "precision": "tf32",
+      "n_images": 16,
+      "batch": 16,
+      "seconds": 2.182235464453697,
+      "s_per_image": 0.13638971652835608,
+      "images_per_gpu_hour": 26394.95184559272,
+      "peak_gb": 5.847446918487549,
+      "finite": true,
+      "gpu": "NVIDIA H200 NVL",
+      "note": "uncached x_T -> x_0, one batch, after a warm-up batch, device synchronised; GPU shared with another user's light job"
+    },
+    "coarse_ancestral_10_tf32_n64": {
+      "method": "coarse:ancestral:10",
+      "precision": "tf32",
+      "n_images": 64,
+      "batch": 64,
+      "seconds": 6.883548134937882,
+      "s_per_image": 0.10755543960840441,
+      "images_per_gpu_hour": 33471.11046272638,
+      "peak_gb": 22.540924072265625,
+      "finite": true,
+      "gpu": "NVIDIA H200 NVL",
+      "note": "uncached x_T -> x_0, one batch, after a warm-up batch, device synchronised; GPU shared with another user's light job"
+    },
+    "coarse_ancestral_20_fp32_n16": {
+      "method": "coarse:ancestral:20",
+      "precision": "fp32",
+      "n_images": 16,
+      "batch": 16,
+      "seconds": 15.403058610856533,
+      "s_per_image": 0.9626911631785333,
+      "images_per_gpu_hour": 3739.517030689074,
+      "peak_gb": 30.42898988723755,
+      "finite": true,
+      "gpu": "NVIDIA H200 NVL",
+      "note": "uncached x_T -> x_0, one batch, after a warm-up batch, device synchronised; GPU shared with another user's light job"
+    },
+    "coarse_ancestral_20_tf32_n16": {
+      "method": "coarse:ancestral:20",
+      "precision": "tf32",
+      "n_images": 16,
+      "batch": 16,
+      "seconds": 4.119574996642768,
+      "s_per_image": 0.257473437290173,
+      "images_per_gpu_hour": 13982.02485619048,
+      "peak_gb": 5.847446918487549,
+      "finite": true,
+      "gpu": "NVIDIA H200 NVL",
+      "note": "uncached x_T -> x_0, one batch, after a warm-up batch, device synchronised; GPU shared with another user's light job"
+    },
+    "coarse_ancestral_20_tf32_n64": {
+      "method": "coarse:ancestral:20",
+      "precision": "tf32",
+      "n_images": 64,
+      "batch": 64,
+      "seconds": 14.449069269932806,
+      "s_per_image": 0.2257667073427001,
+      "images_per_gpu_hour": 15945.663744545911,
+      "peak_gb": 22.540924072265625,
+      "finite": true,
+      "gpu": "NVIDIA H200 NVL",
+      "note": "uncached x_T -> x_0, one batch, after a warm-up batch, device synchronised; GPU shared with another user's light job"
+    },
+    "coarse_ancestral_50_fp32_n16": {
+      "method": "coarse:ancestral:50",
+      "precision": "fp32",
+      "n_images": 16,
+      "batch": 16,
+      "seconds": 38.409522344358265,
+      "s_per_image": 2.4005951465223916,
+      "images_per_gpu_hour": 1499.6281256400603,
+      "peak_gb": 30.42898988723755,
+      "finite": true,
+      "gpu": "NVIDIA H200 NVL",
+      "note": "uncached x_T -> x_0, one batch, after a warm-up batch, device synchronised; GPU shared with another user's light job"
+    },
+    "coarse_ancestral_50_tf32_n16": {
+      "method": "coarse:ancestral:50",
+      "precision": "tf32",
+      "n_images": 16,
+      "batch": 16,
+      "seconds": 9.770084808580577,
+      "s_per_image": 0.6106303005362861,
+      "images_per_gpu_hour": 5895.547595391679,
+      "peak_gb": 5.847446918487549,
+      "finite": true,
+      "gpu": "NVIDIA H200 NVL",
+      "note": "uncached x_T -> x_0, one batch, after a warm-up batch, device synchronised; GPU shared with another user's light job"
+    },
+    "coarse_ancestral_50_tf32_n64": {
+      "method": "coarse:ancestral:50",
+      "precision": "tf32",
+      "n_images": 64,
+      "batch": 64,
+      "seconds": 35.70186649542302,
+      "s_per_image": 0.5578416639909847,
+      "images_per_gpu_hour": 6453.444108574472,
+      "peak_gb": 22.540924072265625,
+      "finite": true,
+      "gpu": "NVIDIA H200 NVL",
+      "note": "uncached x_T -> x_0, one batch, after a warm-up batch, device synchronised; GPU shared with another user's light job"
+    },
+    "student_ablation_endpoints_fp32_n16": {
+      "method": "student:ablation_endpoints",
+      "precision": "fp32",
+      "n_images": 16,
+      "batch": 16,
+      "seconds": 8.063794228248298,
+      "s_per_image": 0.5039871392655186,
+      "images_per_gpu_hour": 7143.039414153363,
+      "peak_gb": 30.512498378753662,
+      "finite": true,
+      "gpu": "NVIDIA H200 NVL",
+      "note": "uncached x_T -> x_0, one batch, after a warm-up batch, device synchronised; GPU shared with another user's light job"
+    },
+    "student_ablation_endpoints_tf32_n16": {
+      "method": "student:ablation_endpoints",
+      "precision": "tf32",
+      "n_images": 16,
+      "batch": 16,
+      "seconds": 2.1474952762946486,
+      "s_per_image": 0.13421845476841554,
+      "images_per_gpu_hour": 26821.944912207084,
+      "peak_gb": 5.961717128753662,
+      "finite": true,
+      "gpu": "NVIDIA H200 NVL",
+      "note": "uncached x_T -> x_0, one batch, after a warm-up batch, device synchronised; GPU shared with another user's light job"
+    },
+    "student_ablation_endpoints_tf32_n64": {
+      "method": "student:ablation_endpoints",
+      "precision": "tf32",
+      "n_images": 64,
+      "batch": 64,
+      "seconds": 7.4378971783444285,
+      "s_per_image": 0.1162171434116317,
+      "images_per_gpu_hour": 30976.497049571182,
+      "peak_gb": 22.989916801452637,
+      "finite": true,
+      "gpu": "NVIDIA H200 NVL",
+      "note": "uncached x_T -> x_0, one batch, after a warm-up batch, device synchronised; GPU shared with another user's light job"
+    },
+    "student_main_fp32_n16": {
+      "method": "student:main",
+      "precision": "fp32",
+      "n_images": 16,
+      "batch": 16,
+      "seconds": 7.642293181270361,
+      "s_per_image": 0.47764332382939756,
+      "images_per_gpu_hour": 7537.004748936533,
+      "peak_gb": 30.512498378753662,
+      "finite": true,
+      "gpu": "NVIDIA H200 NVL",
+      "note": "uncached x_T -> x_0, one batch, after a warm-up batch, device synchronised; GPU shared with another user's light job"
+    },
+    "student_main_fp32_n64": {
+      "method": "student:main",
+      "precision": "fp32",
+      "n_images": 64,
+      "batch": 64,
+      "seconds": 26.79611367173493,
+      "s_per_image": 0.41868927612085827,
+      "images_per_gpu_hour": 8598.261778648539,
+      "peak_gb": 48.63054180145264,
+      "finite": true,
+      "gpu": "NVIDIA H200 NVL",
+      "note": "uncached x_T -> x_0, one batch, after a warm-up batch, device synchronised; GPU shared with another user's light job"
+    },
+    "student_main_tf32_n16": {
+      "method": "student:main",
+      "precision": "tf32",
+      "n_images": 16,
+      "batch": 16,
+      "seconds": 1.7514171479269862,
+      "s_per_image": 0.10946357174543664,
+      "images_per_gpu_hour": 32887.653331575835,
+      "peak_gb": 5.961717128753662,
+      "finite": true,
+      "gpu": "NVIDIA H200 NVL",
+      "note": "uncached x_T -> x_0, one batch, after a warm-up batch, device synchronised; GPU shared with another user's light job"
+    },
+    "student_main_tf32_n64": {
+      "method": "student:main",
+      "precision": "tf32",
+      "n_images": 64,
+      "batch": 64,
+      "seconds": 7.341650910675526,
+      "s_per_image": 0.11471329547930509,
+      "images_per_gpu_hour": 31382.587214133866,
+      "peak_gb": 22.989916801452637,
+      "finite": true,
+      "gpu": "NVIDIA H200 NVL",
+      "note": "uncached x_T -> x_0, one batch, after a warm-up batch, device synchronised; GPU shared with another user's light job"
+    },
+    "teacher_fp32_n16": {
+      "method": "teacher",
+      "precision": "fp32",
+      "n_images": 16,
+      "batch": 16,
+      "seconds": 1530.1081815594807,
+      "s_per_image": 95.63176134746755,
+      "images_per_gpu_hour": 37.644397104846725,
+      "peak_gb": 30.446568965911865,
+      "finite": true,
+      "gpu": "NVIDIA H200 NVL",
+      "note": "uncached x_T -> x_0, one batch, after a warm-up batch, device synchronised; GPU shared with another user's light job"
+    },
+    "teacher_tf32_n16": {
+      "method": "teacher",
+      "precision": "tf32",
+      "n_images": 16,
+      "batch": 16,
+      "seconds": 385.3873497052118,
+      "s_per_image": 24.08670935657574,
+      "images_per_gpu_hour": 149.4600174189917,
+      "peak_gb": 5.865025997161865,
+      "finite": true,
+      "gpu": "NVIDIA H200 NVL",
+      "note": "uncached x_T -> x_0, one batch, after a warm-up batch, device synchronised; GPU shared with another user's light job"
+    }
+  },
+  "students_charged": [
+    "main"
+  ],
+  "offline_charged": [
+    "training data",
+    "student training"
+  ],
+  "break_even": {
+    "fp32_batch16": {
+      "offline_gpu_s": 26293.387414934114,
+      "with_selection_gpu_s": 76803.68029546831,
+      "teacher_s_per_image": 95.63176134746755,
+      "teacher_batch": 16,
+      "student_s_per_image": 0.47764332382939756,
+      "student_batch": 16,
+      "saving_s_per_image": 95.15411802363815,
+      "speedup": 200.21584428473003,
+      "images_to_amortise": 276.3242197085188,
+      "images_to_amortise_with_selection": 807.1503566076748
+    },
+    "fp32_batch64": {
+      "offline_gpu_s": 26293.387414934114,
+      "with_selection_gpu_s": 76803.68029546831,
+      "teacher_s_per_image": 95.63176134746755,
+      "teacher_batch": 16,
+      "student_s_per_image": 0.41868927612085827,
+      "student_batch": 64,
+      "saving_s_per_image": 95.21307207134669,
+      "speedup": 228.40747733854693,
+      "images_to_amortise": 276.15312522666534,
+      "images_to_amortise_with_selection": 806.6505850994542
+    },
+    "tf32_batch16": {
+      "offline_gpu_s": 26293.387414934114,
+      "with_selection_gpu_s": 76803.68029546831,
+      "teacher_s_per_image": 24.08670935657574,
+      "teacher_batch": 16,
+      "student_s_per_image": 0.10946357174543664,
+      "student_batch": 16,
+      "saving_s_per_image": 23.977245784830302,
+      "speedup": 220.0431520048575,
+      "images_to_amortise": 1096.5974845855385,
+      "images_to_amortise_with_selection": 3203.190265666782
+    },
+    "tf32_batch64": {
+      "offline_gpu_s": 26293.387414934114,
+      "with_selection_gpu_s": 76803.68029546831,
+      "teacher_s_per_image": 24.08670935657574,
+      "teacher_batch": 16,
+      "student_s_per_image": 0.11471329547930509,
+      "student_batch": 64,
+      "saving_s_per_image": 23.971996061096434,
+      "speedup": 209.97312696784232,
+      "images_to_amortise": 1096.8376328746779,
+      "images_to_amortise_with_selection": 3203.891745173074
+    }
+  }
+}

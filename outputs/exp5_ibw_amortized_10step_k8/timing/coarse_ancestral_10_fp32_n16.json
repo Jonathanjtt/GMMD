@@ -1,0 +1,13 @@
+{
+  "method": "coarse:ancestral:10",
+  "precision": "fp32",
+  "n_images": 16,
+  "batch": 16,
+  "seconds": 7.690860529430211,
+  "s_per_image": 0.48067878308938816,
+  "images_per_gpu_hour": 7489.408991306645,
+  "peak_gb": 30.42898988723755,
+  "finite": true,
+  "gpu": "NVIDIA H200 NVL",
+  "note": "uncached x_T -> x_0, one batch, after a warm-up batch, device synchronised; GPU shared with another user's light job"
+}

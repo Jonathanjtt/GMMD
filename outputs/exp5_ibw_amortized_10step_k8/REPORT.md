@@ -4,7 +4,36 @@
 so that ten 8-component Gaussian-mixture draws replace the complete diffusion sampling trajectory
 with useful fidelity and lower inference cost?
 
-**Short answer.** _(filled in at the end of the run from the numbers below)_
+**Short answer.** Lower inference cost, yes; useful fidelity, no. The amortisation itself works, but
+the IBW targets it amortises are poor, and even trained on the teacher's own transitions the same
+ten isotropic K = 8 draws stay far from the teacher.
+
+* **Amortisation works.** On 80 held-out test pairs the network reproduces the offline IBW
+  mixtures about as closely as an independent IBW refit of the same anchor (forward KL 0.0030 vs
+  0.0034 nats/dim at j7, 0.0069 vs 0.0108 at j8; pixel MMD within 1.5× of the replicate floor),
+  and the standalone sampler makes exactly 10 network evaluations and 10 mixture draws per image,
+  with no teacher call, IBW iteration or gradient.
+* **The images are not useful.** FID 111.7 at n = 1,024 (teacher 22.6): significantly worse than
+  ancestral sampling with the same 10 network evaluations (94.4; paired [+15.1, +20.0]) and than
+  the network's own untrained initialisation (77.6). Refinement on student-rollout anchors corrects
+  the rollout shift but makes FID worse (117.5). The images are smooth and washed out (contrast
+  0.125 vs 0.257).
+* **The targets are the bottleneck.** The reverse-KL isotropic IBW fits keep 0.24–0.35 of the
+  teacher's fine detail at j1–j5, miss 2–11 % of its per-coordinate variance and carry a mean bias
+  5–10× what the same network learns from teacher endpoints. Trained on 4 teacher endpoints per
+  anchor instead (the ablation: same network, sampler and budget), the 10-draw sampler reaches FID
+  74.3, 37 points better than main. Swapping in only its mid-noise transitions j3–j5 recovers 24
+  of those 37 points.
+* **The family is the next bottleneck.** The ablation sits on the single-isotropic-Gaussian
+  likelihood floor of the teacher's transitions, yet it is only 3 FID better than the untrained
+  Tweedie initialisation and behind 20-step ancestral sampling (69.1). An isotropic kernel cannot
+  put the teacher's variance in its content directions, and 5 % of the ablation's images collapse
+  to near-black.
+* **Cost.** 0.11 s per image vs 24.1 s for the teacher at TF32 (0.42–0.48 vs 95.6 s at fp32; 200–230×
+  faster). The 7.3 GPU-h offline stage (teacher anchors 2.4, IBW fits 3.1, training 1.8) is repaid in
+  compute after 1,097 images at TF32 (276 at fp32). But the student is no faster than 10-step
+  ancestral sampling, which needs no offline stage and gives better images, so there is no
+  operating point here at which the amortised IBW–GMMD sampler is the better choice.
 
 ---
 
@@ -493,11 +522,58 @@ the 37-point total — so a single number per block is only approximate (mean of
 
 ## 8. Cost
 
-_(Pending timing.)_ Offline so far (`costs.md`): training data 5.5 GPU-h (teacher anchor
-trajectories 2.4, IBW fits 3.1), student training 1.8 GPU-h; one-off P0/P1 selection 14.0 GPU-h;
-evaluation-only work 3.6 GPU-h and counting. The standalone sampler's record for every generated
-chunk: 10 network evaluations and 10 mixture draws per image, 0 teacher score evaluations, 0
-teachers constructed, 0 IBW iterations, inference mode, no gradients, 0 optimizer steps.
+Wall-clock seconds of one H200 (GPU 0 or 1, both shared with other users' light jobs throughout),
+from the records each stage writes (`costs.md`, `costs.json`, `timing/`).
+
+**Offline, charged to the deployed main student** (once per teacher and partition):
+
+| item | teacher evaluations | GPU-h |
+|---|---|---|
+| teacher anchor trajectories (64 training trajectories, fp32) | 1.15 × 10⁵ | 2.36 |
+| IBW fits (640 frozen fits + terminal pushforward banks, TF32) | 5.14 × 10⁵ | 3.14 |
+| student training (12,000 steps, TF32) | 0 | 1.81 |
+| **total** | 6.3 × 10⁵ | **7.3** |
+
+Not charged to it: the one-off P0/P1 selection on validation (14.0 GPU-h), the pilot (0.8),
+refinement (data 0.7 + training 0.6, charged only to the refined student), evaluation-only work
+(17.0: references, replicate fits, held-out evaluation, FID) and the ablation (7.6: 5.8 for the
+640 × 4 fp32 teacher endpoints — the same 5.1 × 10⁵ teacher evaluations as the IBW fits, at fp32
+instead of TF32 — and 1.7 for training).
+
+**Online: uncached end-to-end generation** (x_T → image, one batch after a warm-up batch, device
+synchronised; seconds per image at batch 16 / 64; `bash run/exp5_timing.sh` plus the ablation and
+ancestral-20/50 entries run the same way):
+
+| method | network evals / image | TF32 | fp32 | peak GB (TF32) |
+|---|---|---|---|---|
+| teacher (2,000-step SMLD) | 2,000 | 24.09 / — | 95.63 / — | 5.9 / — |
+| ancestral, 50 steps | 50 | 0.611 / 0.558 | 2.401 / — | 5.8 / 22.5 |
+| ancestral, 20 steps | 20 | 0.258 / 0.226 | 0.963 / — | 5.8 / 22.5 |
+| ancestral, 10 steps | 10 | 0.136 / 0.108 | 0.481 / 0.375 | 5.8 / 22.5 |
+| **IBW–GMMD student (main)** | 10 | **0.110 / 0.115** | **0.478 / 0.419** | 6.0 / 23.0 |
+| ablation (same network) | 10 | 0.134 / 0.116 | 0.504 / — | 6.0 / 23.0 |
+
+Throughput at TF32: student ≈ 31,000–33,000 images per GPU-hour, teacher 149 (38 at fp32). The
+student's time per image is that of ten evaluations of a teacher-sized network — the same as
+10-step ancestral sampling within the run-to-run variation of the shared GPU (the same network
+measured 0.110 and 0.134 s at TF32, batch 16). Every fp32 run allocates ~30 GB at batch 16 and
+~48 GB at 64, for every method (the fp32 convolution path, not the sampler). The standalone
+sampler's own record for every generated chunk: 10 network evaluations and 10 mixture draws per
+image, 0 teacher score evaluations, 0 teachers constructed, 0 IBW iterations, inference mode, no
+gradients, 0 optimizer steps. Run from the checkpoint alone (`python -m gmmd.exp5.sampler --ckpt
+outputs/exp5_ibw_amortized_10step_k8/student/main/ckpt_best.pt --n 8 --out samples.npz`) it
+reproduces the evaluated images of the same seeds up to ±1/255 in 1.7 % of values (TF32 kernels
+differ with batch size).
+
+**Break-even.** Against the teacher at matched precision the student saves 95.2 s per image at fp32
+(200–230× faster) and 24.0 s at TF32 (210–220×), so its 7.3 GPU-h offline cost is repaid after 276
+images at fp32 or 1,097 at TF32 (807 / 3,203 if the one-off selection is charged too). That is a
+break-even in compute only: at FID 112 vs 22.6 the student does not replace the teacher's images.
+Against 10-step ancestral sampling — the same time per image, no offline stage, FID 94 vs 112 —
+there is no break-even at any image count. Matching even the ablation's FID 74 with the ancestral
+sampler takes about 20 steps (69.1 at 0.23–0.26 s per image, TF32), so a student of the ablation's
+quality would save ≈ 0.11–0.12 s per image and need ≈ 2–3 × 10⁵ images to repay a 7–10 GPU-h
+offline stage, while still being 5 FID worse.
 
 ## 9. Limitations
 
@@ -508,7 +584,10 @@ teachers constructed, 0 IBW iterations, inference mode, no gradients, 0 optimize
   combination (mode-seeking reverse KL, one variance per component in d = 196,608), which the knobs
   the implementation exposes — step size, initialisation, initial covariance, iteration count —
   did not remove (P0, P1, fine grid). Whether a diagonal or low-rank-plus-isotropic IBW would
-  remove it is untested.
+  remove it is untested. The isotropic family limits the student too: trained on the teacher's
+  endpoints it reaches the single-isotropic-Gaussian likelihood floor and the right total
+  variance, but cannot put that variance in the teacher's content directions (§4), and stops at
+  FID 74.
 * **The selected targets are early-stopped transients** (25 iterations), chosen on 40 validation
   pairs from 4 trajectories; converged fits scored worse. Their quality depends on the init seed,
   which is why stage B is compared with an independent replicate fit, not with a second sample set
@@ -523,7 +602,14 @@ teachers constructed, 0 IBW iterations, inference mode, no gradients, 0 optimize
   the point estimate (resampling with replacement inflates FID by a method-dependent amount, §5).
 * **Scope.** One teacher (CelebA-HQ 256, VE, predictor-only SMLD), one partition (10 × 200 steps),
   K = 8, one refinement round (32 trajectories), one endpoint budget for the ablation (E = 4).
-  GPUs 0 and 1 were shared with other users' jobs, so wall-clock costs include contention.
+  GPUs 0 and 1 were shared with other users' jobs, so wall-clock costs include contention
+  (repeated timings of the same network differ by up to ~20 %).
+* **Post-hoc analyses are labelled as such.** The IBW configuration was frozen by a
+  pre-registered rule on validation before the main run, and the test anchors were used only
+  for evaluation. The ablation was planned from the start, and its checkpoint was selected on
+  validation. The hybrid samplers, the held-out likelihood, the detail, terminal-spread and
+  noise-free-last-step checks, the TF32 check and the IBW chain were added after seeing results,
+  to explain them. None of them changed the method or its selection.
 * **Precision.** IBW fits and the student ran with TF32 (user decision); every teacher reference,
   endpoint and evaluation feature is fp32. TF32 does not matter for the targets: refitting 20 test
   pairs (2 trajectories × 10 intervals) in fp32 with identical init, noise and evaluation seeds
@@ -562,7 +648,9 @@ variant)` so reruns reproduce the same fits and samples.
 | timing | `bash run/exp5_timing.sh` | uncached, synchronised, fp32 and TF32 |
 | diagnostics | `$M generate --method ibwchain --n 64`; `$M generate --method hybrid:<a>:<b>:<mask> --n 192`; `python -m gmmd.exp5.diag_detail --split {val,test} --students ...`; `$M figtraj --method student:main`; `python -m gmmd.exp5.diag --split val --its 25 50 300` | online-IBW chain, hybrid samplers, per-interval detail, trajectories, IBW snapshots |
 | post-hoc diagnostics (labelled) | `bash run/exp5_hybrid_ablation.sh`; `python -m gmmd.exp5.diag_nll --split test`; `python -m gmmd.exp5.diag_terminal`; `python -m gmmd.exp5.diag_precision`; `$M generate --method student:<tag>:best:meanlast --n 1024` | ablation/main hybrids by interval block, held-out likelihood of the teacher's transitions, terminal spread, TF32 check, noise-free last step |
-| tables, costs, figures | `$M tables`, `$M costs --student main` (or `main refined` to charge the refinement), `python -m gmmd.exp5.figures` | |
+| final FID (every method, one bootstrap) | `$M fid --tag n1024 --n 1024 --methods student:main student:refined student:ablation_endpoints student:init_main coarse:reverse_diffusion:10 coarse:ancestral:10 coarse:ancestral:20 coarse:ancestral:50` | `fid_n1024.json`; the teacher is always included |
+| tables, costs | `$M tables --abc main refined ablation_endpoints init_main --fid n1024`; `$M costs --student main` (or `main refined` to charge the refinement) | `tables.md`, `costs.md`, `costs.json` |
+| figures | `python -m gmmd.exp5.figures --only training stage_abc_test kernels_test hybrid_blocks samples_final grids_final quality_vs_nfe_final detail_val detail_test` (no argument: every registered figure) | CPU only, from saved results |
 
 The full main run as executed: `run/exp5_main.sh` (both chains; GPU0's chain was handed over to
 `run/exp5_main_part2.sh` after the main student's shift — see RUNLOG).

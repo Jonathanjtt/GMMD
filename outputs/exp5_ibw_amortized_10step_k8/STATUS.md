@@ -83,13 +83,20 @@ fp32 37 ms/img/NFE, TF32 11 ms, bf16 10 ms (batch 64–128); training fwd+bwd 10
       test; REPORT §4/§5 written; j0–j2 "artifact" reading corrected (noise-level sensitivity).
       Final figures rendered (registry in `gmmd/exp5/figures.py`). Commit 8279bfc.
 
-## Running (tmux; check `tail outputs/exp5_ibw_amortized_10step_k8/RUNLOG`)
-- `exp5-main0b` (GPU0): `run/exp5_main_part2.sh` -- (evalstudent on test: done 09:35; detail on test:
-  done 09:45) -> timing (TAG=main; teacher fp32 batch 16 last, ETA ~10:15 UTC) -> "main part 2 finished".
-- GPU1: free of exp5 work (chain finished 09:14; final FID n1024 done 09:42).
+## Running
+- Nothing. Both chains finished (GPU1 09:14, GPU0 10:19 UTC); timing extras 10:24 UTC.
 
-## Next
-- [ ] After timing: extra TF32 timings for ANC20/50 and the ablation network (same script entry
-      point: `$M timing --method coarse:ancestral:20 --precision tf32 --n 16`, ...), then
-      `$M costs --student main`; REPORT short answer + §8 (offline/online cost, break-even vs the
-      teacher, no break-even vs ANC10), reproduction rows; final local commit.
+## Done (2026-10-20, final)
+- [x] Timing (`timing/`, `costs.md`): student 0.110–0.115 s/img TF32 (0.42–0.48 fp32), ANC10
+      0.108–0.136 (0.38–0.48), ANC20 0.23–0.26, ANC50 0.56–0.61, teacher 24.1 (TF32) / 95.6 (fp32)
+      at batch 16. Offline for main 7.3 GPU-h -> break-even vs the teacher 1,097 images (TF32) /
+      276 (fp32); none vs ANC10 (same time per image, better FID, no offline stage).
+- [x] REPORT complete: short answer, §4 held-out (likelihood + stage A/B/C), §5 final FID, §7
+      ablation + hybrids, §8 cost, §9 limitations (post-hoc analyses labelled), reproduction.
+- [x] Standalone sampler re-checked from `student/main/ckpt_best.pt` (10 evals, 0 teacher calls;
+      matches the evaluated images up to ±1/255).
+
+## If continuing (not started; would need a new decision)
+- A richer covariance family (diagonal / low-rank + isotropic) in IBW and the student — the
+  isotropic family is the limit even for endpoint-trained kernels (REPORT §4, §9).
+- More endpoints per anchor for the ablation (E = 4 overfits after ~2,000 steps).
