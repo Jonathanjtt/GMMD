@@ -439,6 +439,56 @@ def fig_quality_vs_nfe(cfg, fid_tags, basename=None, order=None):
     return save_figure(fig, _fig_dir(cfg) / (basename or f"fig_quality_vs_nfe_{'_'.join(fid_tags)}"))
 
 
+HYBRID_BLOCKS = (("j0–j2\nhigh noise", "1110000000"), ("j3–j5\nmid", "0001110000"),
+                 ("j6–j8\nlow", "0000001110"), ("j9\nterminal", "0000000001"))
+
+
+def fig_hybrid_blocks(cfg, fid_tag="n1024_hybrid_ablation", a="ablation_endpoints", b="main", blocks=HYBRID_BLOCKS):
+    """Where along the chain does network ``a`` beat network ``b``?  Hybrid samplers (same x_T and
+    draws) run ``a`` at one block of intervals and ``b`` elsewhere (swap-in: FID gain over the pure
+    ``b`` chain) or ``b`` at that block and ``a`` elsewhere (swap-out: FID loss against the pure
+    ``a`` chain).  Point = FID difference, bar = paired-bootstrap 95 % interval."""
+    f = json.loads((C.out_dir(cfg) / f"fid_{fid_tag}.json").read_text())
+    M, P = f["methods"], f["pairwise_diff_ci95"]
+    A, B = f"student:{a}", f"student:{b}"
+
+    def diff(x, y):                                       # FID(x) - FID(y), paired 95 % interval
+        ci = P[f"{x} - {y}"] if f"{x} - {y}" in P else [-P[f"{y} - {x}"][1], -P[f"{y} - {x}"][0]]
+        return M[x]["fid"] - M[y]["fid"], ci
+
+    rows = []
+    for lab, mask in blocks:
+        inv = "".join("0" if c == "1" else "1" for c in mask)
+        rows.append((lab, diff(B, f"hybrid:{a}:{b}:{mask}"), diff(f"hybrid:{a}:{b}:{inv}", A)))
+    style = apply_publication_style(FigureStyle(width_in=HALF, height_in=2.5))
+    fig, ax = plt.subplots(figsize=(style.width_in, style.height_in), layout="constrained")
+    xs = np.arange(len(rows))
+    for i, (lab, k, off) in enumerate((("swap-in: main + ablation at the block (gain vs main)", 1, -0.1),
+                                       ("swap-out: ablation + main at the block (loss vs ablation)", 2, 0.1))):
+        color, _, mk = style_for_series(i)
+        v = np.array([r[k][0] for r in rows])
+        ci = np.array([r[k][1] for r in rows])
+        ax.errorbar(xs + off, v, yerr=[v - ci[:, 0], ci[:, 1] - v], color=color, ls="none", marker=mk, ms=4,
+                    capsize=2, lw=1.0, label=lab)
+    total = M[B]["fid"] - M[A]["fid"]
+    ax.axhline(0, color=PALETTE["gray"], lw=0.7, ls=":")
+    ax.set_xticks(xs)
+    ax.set_xticklabels([r[0] for r in rows], fontsize=6.5)
+    ax.set_ylabel("FID points")
+    ax.set_title(f"FID({b}) − FID({a.split('_')[0]}) = {total:.1f}  (n = {f['n_images']:,} each)", fontsize=7)
+    fig.legend(fontsize=6, loc="outside lower center", ncol=1, frameon=False)
+    return save_figure(fig, _fig_dir(cfg) / f"fig_hybrid_blocks_{a}_{b}")
+
+
+FINAL_STUDENTS = ("main", "refined", "ablation_endpoints", "init_main")
+FINAL_METHODS = ("teacher", "student:main", "student:refined", "student:ablation_endpoints", "student:init_main",
+                 "coarse:ancestral:10", "coarse:ancestral:20", "coarse:ancestral:50", "coarse:reverse_diffusion:10")
+
+
+def _many(results):
+    return results[-1]
+
+
 FIGURES = {"ibw_p0": lambda cfg: fig_ibw_step_size(cfg),
            "stage_a_p0": lambda cfg: fig_stage_a_vs_iterations(cfg, ["p0_c0p2", "p0_c0p5", "p0_c1p0"],
                                                                 basename="fig_p0_stage_a_vs_iterations"),
@@ -446,7 +496,17 @@ FIGURES = {"ibw_p0": lambda cfg: fig_ibw_step_size(cfg),
            "posthoc_fine": lambda cfg: fig_posthoc_fine_grid(cfg),
            "detail_val": lambda cfg: fig_detail_per_interval(cfg, "val"),
            "detail_test": lambda cfg: fig_detail_per_interval(
-               cfg, "test", kinds=("ibw", "init_main", "main", "refined", "ablation_endpoints"))}
+               cfg, "test", kinds=("ibw", "init_main", "main", "refined", "ablation_endpoints")),
+           "training": lambda cfg: _many([fig_training_curves(cfg, t) for t in ("main", "refined", "ablation_endpoints")]),
+           "stage_abc_test": lambda cfg: _many([fig_stage_abc(cfg, t, "test") for t in FINAL_STUDENTS]),
+           "kernels_test": lambda cfg: fig_kernels_vs_teacher(
+               cfg, list(FINAL_STUDENTS), [method_label(f"student:{t}") for t in FINAL_STUDENTS], "test"),
+           "hybrid_blocks": lambda cfg: fig_hybrid_blocks(cfg),
+           "samples_final": lambda cfg: fig_samples(cfg, list(FINAL_METHODS[:-1]),
+                                                    [method_label(m) for m in FINAL_METHODS[:-1]], "fig_samples_same_xT"),
+           "grids_final": lambda cfg: _many([save_grid(cfg, m) for m in FINAL_METHODS]),
+           "quality_vs_nfe_final": lambda cfg: fig_quality_vs_nfe(cfg, ["n1024"], basename="fig_quality_vs_nfe_n1024",
+                                                                  order=list(FINAL_METHODS))}
 
 
 def main(argv=None):

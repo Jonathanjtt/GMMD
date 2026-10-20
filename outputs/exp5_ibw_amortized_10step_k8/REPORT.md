@@ -322,7 +322,7 @@ Not tried, for budget: more endpoints per anchor (E = 4 overfits), more anchors,
 ablation ran with main's hyperparameters.
 
 **Where along the chain the IBW targets cost FID** (post-hoc diagnostic; `run/exp5_hybrid_ablation.sh`,
-`fid_n1024_hybrid_ablation.json`). Hybrid samplers run the ablation's network at one block of
+`fid_n1024_hybrid_ablation.json`, `figures/fig_hybrid_blocks_ablation_endpoints_main`). Hybrid samplers run the ablation's network at one block of
 intervals and main's elsewhere (swap-in), or main's at one block and the ablation's elsewhere
 (swap-out), with the same prior, x_T and per-image draw generators as the standalone sampler, so
 the two pure chains reproduce main and the ablation exactly and every difference comes from
