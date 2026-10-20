@@ -232,3 +232,22 @@
   (§3 of REPORT) is invisible to L2 at these noise levels (small coefficients), while the IBW mean
   bias proper sits at j8 and in the terminal pushforward. Earlier pooled statement "IBW's extra
   error is a bias of its means" (pilot, pixel excess averaged over intervals) is dominated by j8–j9.
+
+## 2026-10-20 hybrids ablation/main by interval block (where do the IBW targets cost FID?)
+
+* `run/exp5_hybrid_ablation.sh` (GPU0, 07:00–07:48 UTC; 8 hybrids × 1,024 images, ~18 s per 64
+  under contention), `fid_n1024_hybrid_ablation.json` (one file, one bootstrap; pure chains
+  reproduce main 111.73 / ablation 74.34 exactly). a = ablation where mask = 1, b = main.
+* Swap-in (main + one ablation block), gain vs main: j0–j2 +3.2 [+1.3, +4.9]; **j3–j5 +24.1
+  [+22.6, +25.1]**; j6–j8 +12.6 [+11.9, +13.7]; j9 +4.3 [+4.0, +4.6]. Sum 44.2.
+* Swap-out (ablation + one main block), loss vs ablation: j0–j2 +5.9 [+3.8, +7.0]; **j3–j5 +17.4
+  [+15.4, +18.5]**; j6–j8 +6.5 [+5.8, +7.6]; j9 +3.4 [+3.1, +3.6]. Sum 33.2 (total gap 37.4) →
+  not additive; mean of the two per block 4.5 / 20.8 / 9.6 / 3.9.
+* Contrast is decided at j3–j5: swap-in j3–j5 0.168 (others 0.119–0.131), swap-out j3–j5 0.126
+  (others 0.167–0.177). Mean intensity is decided at j0–j2: ablation's j0–j2 → 0.351 (dark), main's
+  j0–j2 in the ablation → 0.412 (teacher 0.418) → the ablation's dark/posterised rollouts start
+  at high noise; main's high-noise block is better for brightness but still costs 5.9 FID there
+  (precision 0.515).
+* Consistent with diag_detail (IBW detail loss j1–j7) and the held-out likelihood (ablation <
+  main at j3–j7): the mid-noise detail loss, not the terminal mean bias (bias² 0.31 τ at j9, but
+  only ~4 FID), is what costs main most of its gap to the ablation.

@@ -1,0 +1,465 @@
+{
+  "tag": "n1024_hybrid_ablation",
+  "n_images": 1024,
+  "n_reference": 30000,
+  "reference_splits": [
+    "train",
+    "validation"
+  ],
+  "fid_extractor": "inception-v3-compat/2048",
+  "pr_extractor": "vgg16/fc2_relu",
+  "pr_k": 3,
+  "preprocessing": "sampler float output -> clip(x*255, 0, 255).astype(uint8), identical for every method",
+  "methods": {
+    "teacher": {
+      "fid": 22.552345775689588,
+      "precision": 0.7685546875,
+      "recall": 0.4638671875,
+      "f_score": 0.5785475064381933,
+      "image_stats": {
+        "contrast_mean": 0.25745324113218293,
+        "contrast_sd": 0.039377642220595054,
+        "intensity_mean": 0.417916521897503,
+        "intensity_sd": 0.11975746926056924,
+        "laplacian_rms_mean": 0.089452939088935,
+        "laplacian_rms_sd": 0.023367696603190945
+      },
+      "bootstrap": {
+        "sd": 0.7060881757182838
+      }
+    },
+    "student:main": {
+      "fid": 111.73391799216279,
+      "precision": 0.6494140625,
+      "recall": 0.0,
+      "f_score": 0.0,
+      "image_stats": {
+        "contrast_mean": 0.12497500947080095,
+        "contrast_sd": 0.037233677130649186,
+        "intensity_mean": 0.397095553781472,
+        "intensity_sd": 0.11571068297641966,
+        "laplacian_rms_mean": 0.06044650841500905,
+        "laplacian_rms_sd": 0.005216698543167692
+      },
+      "bootstrap": {
+        "sd": 0.8056193203141894,
+        "diff_vs_teacher_ci95": [
+          83.41493408013356,
+          87.4649754202467
+        ]
+      }
+    },
+    "student:ablation_endpoints": {
+      "fid": 74.33967087016026,
+      "precision": 0.66015625,
+      "recall": 0.0166015625,
+      "f_score": 0.03238861832611833,
+      "image_stats": {
+        "contrast_mean": 0.17630308086794544,
+        "contrast_sd": 0.04156448692914646,
+        "intensity_mean": 0.3619116098273034,
+        "intensity_sd": 0.12628216388091573,
+        "laplacian_rms_mean": 0.07612571498423315,
+        "laplacian_rms_sd": 0.016080699264169582
+      },
+      "bootstrap": {
+        "sd": 0.8536862012736876,
+        "diff_vs_teacher_ci95": [
+          46.61675908016446,
+          50.54534584142783
+        ]
+      }
+    },
+    "hybrid:ablation_endpoints:main:1110000000": {
+      "fid": 108.50248412922309,
+      "precision": 0.7041015625,
+      "recall": 0.0,
+      "f_score": 0.0,
+      "image_stats": {
+        "contrast_mean": 0.11930882254215804,
+        "contrast_sd": 0.030373536932879183,
+        "intensity_mean": 0.35075924121866037,
+        "intensity_sd": 0.11465474351769787,
+        "laplacian_rms_mean": 0.05881197211673347,
+        "laplacian_rms_sd": 0.006939117043431212
+      },
+      "bootstrap": {
+        "sd": 1.034310715487968,
+        "diff_vs_teacher_ci95": [
+          80.13322230491607,
+          84.7121465445735
+        ]
+      }
+    },
+    "hybrid:ablation_endpoints:main:0001110000": {
+      "fid": 87.64442861836454,
+      "precision": 0.611328125,
+      "recall": 0.0048828125,
+      "f_score": 0.009688242868462758,
+      "image_stats": {
+        "contrast_mean": 0.1677257774616644,
+        "contrast_sd": 0.039176684748699786,
+        "intensity_mean": 0.4122950257039537,
+        "intensity_sd": 0.12365298744587638,
+        "laplacian_rms_mean": 0.061558690979361744,
+        "laplacian_rms_sd": 0.006529674699627085
+      },
+      "bootstrap": {
+        "sd": 0.754507235811434,
+        "diff_vs_teacher_ci95": [
+          59.76490177332484,
+          63.49991949371083
+        ]
+      }
+    },
+    "hybrid:ablation_endpoints:main:0000001110": {
+      "fid": 99.1666835226753,
+      "precision": 0.5029296875,
+      "recall": 0.0,
+      "f_score": 0.0,
+      "image_stats": {
+        "contrast_mean": 0.13136680716768565,
+        "contrast_sd": 0.037437515187574676,
+        "intensity_mean": 0.3968735312714296,
+        "intensity_sd": 0.1184809239290817,
+        "laplacian_rms_mean": 0.056828817108256796,
+        "laplacian_rms_sd": 0.0052840654649863586
+      },
+      "bootstrap": {
+        "sd": 0.8020811509970955,
+        "diff_vs_teacher_ci95": [
+          70.6526063871236,
+          74.6516170599984
+        ]
+      }
+    },
+    "hybrid:ablation_endpoints:main:0000000001": {
+      "fid": 107.45620776884451,
+      "precision": 0.697265625,
+      "recall": 0.0,
+      "f_score": 0.0,
+      "image_stats": {
+        "contrast_mean": 0.12461220817646695,
+        "contrast_sd": 0.03726621403872092,
+        "intensity_mean": 0.39723816108859444,
+        "intensity_sd": 0.1157428167250477,
+        "laplacian_rms_mean": 0.058033122451274136,
+        "laplacian_rms_sd": 0.005264416646336394
+      },
+      "bootstrap": {
+        "sd": 0.7900335071678335,
+        "diff_vs_teacher_ci95": [
+          79.1918236394998,
+          83.21461668603466
+        ]
+      }
+    },
+    "hybrid:ablation_endpoints:main:0001111111": {
+      "fid": 80.23228152757406,
+      "precision": 0.5146484375,
+      "recall": 0.01171875,
+      "f_score": 0.022915700371057515,
+      "image_stats": {
+        "contrast_mean": 0.17604111101054523,
+        "contrast_sd": 0.040674193520929394,
+        "intensity_mean": 0.41233211878468007,
+        "intensity_sd": 0.1264854848792827,
+        "laplacian_rms_mean": 0.06371811543887108,
+        "laplacian_rms_sd": 0.007823948265965068
+      },
+      "bootstrap": {
+        "sd": 0.8325979510964343,
+        "diff_vs_teacher_ci95": [
+          51.94084023557334,
+          55.9320368126234
+        ]
+      }
+    },
+    "hybrid:ablation_endpoints:main:1110001111": {
+      "fid": 91.70232228567943,
+      "precision": 0.513671875,
+      "recall": 0.0,
+      "f_score": 0.0,
+      "image_stats": {
+        "contrast_mean": 0.12576535742259234,
+        "contrast_sd": 0.03228362629322729,
+        "intensity_mean": 0.3492475353619631,
+        "intensity_sd": 0.11791196429662731,
+        "laplacian_rms_mean": 0.05268000967211242,
+        "laplacian_rms_sd": 0.006598010166975496
+      },
+      "bootstrap": {
+        "sd": 0.9903995407801018,
+        "diff_vs_teacher_ci95": [
+          63.19843264148731,
+          67.72010885424302
+        ]
+      }
+    },
+    "hybrid:ablation_endpoints:main:1111110001": {
+      "fid": 80.86747691701214,
+      "precision": 0.73046875,
+      "recall": 0.0126953125,
+      "f_score": 0.024956882391590014,
+      "image_stats": {
+        "contrast_mean": 0.16665836804379916,
+        "contrast_sd": 0.039474156600226316,
+        "intensity_mean": 0.36337129888581293,
+        "intensity_sd": 0.12347778714801212,
+        "laplacian_rms_mean": 0.06371350053408663,
+        "laplacian_rms_sd": 0.011009526558528854
+      },
+      "bootstrap": {
+        "sd": 0.8634949214188331,
+        "diff_vs_teacher_ci95": [
+          53.26220969932565,
+          57.22793658287972
+        ]
+      }
+    },
+    "hybrid:ablation_endpoints:main:1111111110": {
+      "fid": 77.77989092912836,
+      "precision": 0.654296875,
+      "recall": 0.0146484375,
+      "f_score": 0.028655337591240875,
+      "image_stats": {
+        "contrast_mean": 0.17655135661948854,
+        "contrast_sd": 0.04157117249205512,
+        "intensity_mean": 0.36185599744709485,
+        "intensity_sd": 0.12617047843020468,
+        "laplacian_rms_mean": 0.07814888713601009,
+        "laplacian_rms_sd": 0.015598703278475907
+      },
+      "bootstrap": {
+        "sd": 0.8569206854263756,
+        "diff_vs_teacher_ci95": [
+          49.99353392609079,
+          54.0105371310601
+        ]
+      }
+    }
+  },
+  "pairwise_diff_ci95": {
+    "teacher - student:main": [
+      -87.46497542024672,
+      -83.41493408013356
+    ],
+    "teacher - student:ablation_endpoints": [
+      -50.54534584142783,
+      -46.61675908016446
+    ],
+    "teacher - hybrid:ablation_endpoints:main:1110000000": [
+      -84.7121465445735,
+      -80.13322230491607
+    ],
+    "teacher - hybrid:ablation_endpoints:main:0001110000": [
+      -63.499919493710834,
+      -59.764901773324844
+    ],
+    "teacher - hybrid:ablation_endpoints:main:0000001110": [
+      -74.6516170599984,
+      -70.65260638712361
+    ],
+    "teacher - hybrid:ablation_endpoints:main:0000000001": [
+      -83.21461668603466,
+      -79.1918236394998
+    ],
+    "teacher - hybrid:ablation_endpoints:main:0001111111": [
+      -55.93203681262341,
+      -51.94084023557335
+    ],
+    "teacher - hybrid:ablation_endpoints:main:1110001111": [
+      -67.72010885424302,
+      -63.19843264148731
+    ],
+    "teacher - hybrid:ablation_endpoints:main:1111110001": [
+      -57.22793658287972,
+      -53.26220969932565
+    ],
+    "teacher - hybrid:ablation_endpoints:main:1111111110": [
+      -54.0105371310601,
+      -49.99353392609079
+    ],
+    "student:main - student:ablation_endpoints": [
+      34.98369939588219,
+      38.944750791169014
+    ],
+    "student:main - hybrid:ablation_endpoints:main:1110000000": [
+      1.3126881766046963,
+      4.911554861842793
+    ],
+    "student:main - hybrid:ablation_endpoints:main:0001110000": [
+      22.56312556664114,
+      25.129114190088245
+    ],
+    "student:main - hybrid:ablation_endpoints:main:0000001110": [
+      11.924644221330563,
+      13.657207642049027
+    ],
+    "student:main - hybrid:ablation_endpoints:main:0000000001": [
+      3.9537699327590685,
+      4.556416671709366
+    ],
+    "student:main - hybrid:ablation_endpoints:main:0001111111": [
+      29.769202630442702,
+      33.2100761126439
+    ],
+    "student:main - hybrid:ablation_endpoints:main:1110001111": [
+      18.148574628638272,
+      21.980058305072912
+    ],
+    "student:main - hybrid:ablation_endpoints:main:1111110001": [
+      28.428344859401538,
+      32.160242199856995
+    ],
+    "student:main - hybrid:ablation_endpoints:main:1111111110": [
+      31.635676141829617,
+      35.514855393802975
+    ],
+    "student:ablation_endpoints - hybrid:ablation_endpoints:main:1110000000": [
+      -35.691606814190074,
+      -32.07830080192201
+    ],
+    "student:ablation_endpoints - hybrid:ablation_endpoints:main:0001110000": [
+      -14.665711987121396,
+      -11.473273614762032
+    ],
+    "student:ablation_endpoints - hybrid:ablation_endpoints:main:0000001110": [
+      -25.97409927795937,
+      -22.176122671326898
+    ],
+    "student:ablation_endpoints - hybrid:ablation_endpoints:main:0000000001": [
+      -34.6472341925132,
+      -30.786321851756753
+    ],
+    "student:ablation_endpoints - hybrid:ablation_endpoints:main:0001111111": [
+      -6.952950854141847,
+      -3.798461580111073
+    ],
+    "student:ablation_endpoints - hybrid:ablation_endpoints:main:1110001111": [
+      -18.476099189231146,
+      -15.361018349574579
+    ],
+    "student:ablation_endpoints - hybrid:ablation_endpoints:main:1111110001": [
+      -7.601282921394252,
+      -5.781423919447377
+    ],
+    "student:ablation_endpoints - hybrid:ablation_endpoints:main:1111111110": [
+      -3.64396725136748,
+      -3.1422244790696157
+    ],
+    "hybrid:ablation_endpoints:main:1110000000 - hybrid:ablation_endpoints:main:0001110000": [
+      18.7487060258045,
+      22.72572485945984
+    ],
+    "hybrid:ablation_endpoints:main:1110000000 - hybrid:ablation_endpoints:main:0000001110": [
+      7.806783298941637,
+      11.546474741915766
+    ],
+    "hybrid:ablation_endpoints:main:1110000000 - hybrid:ablation_endpoints:main:0000000001": [
+      -0.6166338043202423,
+      2.960363521392328
+    ],
+    "hybrid:ablation_endpoints:main:1110000000 - hybrid:ablation_endpoints:main:0001111111": [
+      26.218032876640006,
+      30.6844976919765
+    ],
+    "hybrid:ablation_endpoints:main:1110000000 - hybrid:ablation_endpoints:main:1110001111": [
+      15.913267517605153,
+      17.941538130594417
+    ],
+    "hybrid:ablation_endpoints:main:1110000000 - hybrid:ablation_endpoints:main:1111110001": [
+      25.71873381859811,
+      28.638398190152788
+    ],
+    "hybrid:ablation_endpoints:main:1110000000 - hybrid:ablation_endpoints:main:1111111110": [
+      28.74200330782404,
+      32.19114772450815
+    ],
+    "hybrid:ablation_endpoints:main:0001110000 - hybrid:ablation_endpoints:main:0000001110": [
+      -12.26182997150861,
+      -9.863295026910382
+    ],
+    "hybrid:ablation_endpoints:main:0001110000 - hybrid:ablation_endpoints:main:0000000001": [
+      -20.854342044049165,
+      -18.331105540938832
+    ],
+    "hybrid:ablation_endpoints:main:0001110000 - hybrid:ablation_endpoints:main:0001111111": [
+      6.758086440583812,
+      8.60202516550595
+    ],
+    "hybrid:ablation_endpoints:main:0001110000 - hybrid:ablation_endpoints:main:1110001111": [
+      -5.689844291537766,
+      -1.901657583265587
+    ],
+    "hybrid:ablation_endpoints:main:0001110000 - hybrid:ablation_endpoints:main:1111110001": [
+      4.847119014575537,
+      7.911833080951819
+    ],
+    "hybrid:ablation_endpoints:main:0001110000 - hybrid:ablation_endpoints:main:1111111110": [
+      8.089504720128073,
+      11.304519860130888
+    ],
+    "hybrid:ablation_endpoints:main:0000001110 - hybrid:ablation_endpoints:main:0000000001": [
+      -9.334437219324792,
+      -7.747798395249863
+    ],
+    "hybrid:ablation_endpoints:main:0000001110 - hybrid:ablation_endpoints:main:0001111111": [
+      17.234610904559275,
+      20.238468723320455
+    ],
+    "hybrid:ablation_endpoints:main:0000001110 - hybrid:ablation_endpoints:main:1110001111": [
+      5.441672116959108,
+      9.0331935647478
+    ],
+    "hybrid:ablation_endpoints:main:0000001110 - hybrid:ablation_endpoints:main:1111110001": [
+      15.685026954272686,
+      19.24046843507673
+    ],
+    "hybrid:ablation_endpoints:main:0000001110 - hybrid:ablation_endpoints:main:1111111110": [
+      18.858979063297447,
+      22.550192665289742
+    ],
+    "hybrid:ablation_endpoints:main:0000000001 - hybrid:ablation_endpoints:main:0001111111": [
+      25.590970106484093,
+      28.895971550600514
+    ],
+    "hybrid:ablation_endpoints:main:0000000001 - hybrid:ablation_endpoints:main:1110001111": [
+      13.93618586366951,
+      17.607840144954295
+    ],
+    "hybrid:ablation_endpoints:main:0000000001 - hybrid:ablation_endpoints:main:1111110001": [
+      24.208031464440044,
+      27.837493938223954
+    ],
+    "hybrid:ablation_endpoints:main:0000000001 - hybrid:ablation_endpoints:main:1111111110": [
+      27.43209156650865,
+      31.206837578495332
+    ],
+    "hybrid:ablation_endpoints:main:0001111111 - hybrid:ablation_endpoints:main:1110001111": [
+      -13.519062838690688,
+      -9.494188657286555
+    ],
+    "hybrid:ablation_endpoints:main:0001111111 - hybrid:ablation_endpoints:main:1111110001": [
+      -3.012345290417295,
+      0.48995900453561714
+    ],
+    "hybrid:ablation_endpoints:main:0001111111 - hybrid:ablation_endpoints:main:1111111110": [
+      0.3567937778628597,
+      3.593536538612459
+    ],
+    "hybrid:ablation_endpoints:main:1110001111 - hybrid:ablation_endpoints:main:1111110001": [
+      8.872805320398816,
+      11.58818914885858
+    ],
+    "hybrid:ablation_endpoints:main:1110001111 - hybrid:ablation_endpoints:main:1111111110": [
+      11.946850993753253,
+      15.057116784029807
+    ],
+    "hybrid:ablation_endpoints:main:1111110001 - hybrid:ablation_endpoints:main:1111111110": [
+      2.4285578100309424,
+      4.118216782181894
+    ]
+  },
+  "real_subset_fid_same_n": 15.057124227929819
+}

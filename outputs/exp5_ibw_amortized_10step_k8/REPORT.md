@@ -127,7 +127,10 @@ biased upward — the teacher itself scores 56.6).
   while the Tweedie mean x + gap · s_θ(x, t) is E[y | x] under the model; they coincide only if q
   were the true conditional, and the isotropic q lacks its content variance. The bias lives in the
   stiff directions that converge within ~10 iterations, so neither initialisation nor iteration
-  count (P1, fine grid) removes it.
+  count (P1, fine grid) removes it. (The held-out decomposition in §4 localises it: in pixel space
+  the IBW mean bias exceeds the Tweedie mean's only at j8 and in the terminal pushforward; at j1–j7
+  the IBW means are as close to the teacher's mean as the Tweedie mean or closer, and what they
+  lose there is fine detail — next bullets.)
 * **A perfect amortisation of these targets would not help (IBW chain).** Running the frozen IBW
   configuration online at every one of the ten transitions — at the chain's own current state, so
   there is neither network error nor rollout shift; uniform weights, one draw, the teacher's noise
@@ -318,6 +321,36 @@ drift into dark, posterised images (`figures/fig_trajectory_student_ablation_end
 Not tried, for budget: more endpoints per anchor (E = 4 overfits), more anchors, or tuning — the
 ablation ran with main's hyperparameters.
 
+**Where along the chain the IBW targets cost FID** (post-hoc diagnostic; `run/exp5_hybrid_ablation.sh`,
+`fid_n1024_hybrid_ablation.json`). Hybrid samplers run the ablation's network at one block of
+intervals and main's elsewhere (swap-in), or main's at one block and the ablation's elsewhere
+(swap-out), with the same prior, x_T and per-image draw generators as the standalone sampler, so
+the two pure chains reproduce main and the ablation exactly and every difference comes from
+which network makes which transition. 1,024 images each, paired bootstrap:
+
+| block | σ | swap-in: main + ablation block — FID (gain vs main) | contrast | swap-out: ablation + main block — FID (loss vs ablation) | contrast |
+|---|---|---|---|---|---|
+| high noise j0–j2 | 348 → 15 | 108.50 (+3.2 [+1.3, +4.9]) | 0.119 | 80.23 (+5.9 [+3.8, +7.0]) | 0.176 |
+| mid j3–j5 | 15 → 0.65 | **87.64 (+24.1 [+22.6, +25.1])** | 0.168 | **91.70 (+17.4 [+15.4, +18.5])** | 0.126 |
+| low j6–j8 | 0.65 → 0.028 | 99.17 (+12.6 [+11.9, +13.7]) | 0.131 | 80.87 (+6.5 [+5.8, +7.6]) | 0.167 |
+| terminal j9 | 0.028 → image | 107.46 (+4.3 [+4.0, +4.6]) | 0.125 | 77.78 (+3.4 [+3.1, +3.6]) | 0.177 |
+| (pure chains) | | main 111.73 | 0.125 | ablation 74.34 | 0.176 |
+
+Every block matters (all eight intervals exclude 0), but the mid-noise block j3–j5 carries the
+largest share in both directions: the ablation's j3–j5 alone recovers 24 of main's 37 missing FID
+points and nearly all of the contrast (0.125 → 0.168), and main's j3–j5 alone costs the ablation
+17 points and all of its contrast (0.126) — the washed-out look is made between σ = 15 and 0.65,
+where §3 found the IBW targets keeping 0.24–0.65 of the teacher's fine detail. Next is the
+low-noise block (13 / 6.5), then the terminal step (4.3 / 3.4: main's last kernel has the largest
+mean bias of any kernel, §4, but it costs only a few FID points, as the noise-free-last-step check
+in §5 also found) and the high-noise block (3.2 / 5.9). The high-noise block sets global
+brightness: with the ablation's j0–j2 the images are dark (mean intensity 0.351 in main + ablation
+j0–j2, 0.362 for the pure ablation) and with main's they are not (0.412 in ablation + main j0–j2;
+main 0.397, teacher 0.418), so the ablation's dark, posterised rollouts start at high noise. The
+blocks are not additive — the four swap-in gains sum to 44, the four swap-out losses to 33, around
+the 37-point total — so a single number per block is only approximate (mean of the two: 4.5 /
+20.8 / 9.6 / 3.9).
+
 ## 8. Cost
 
 _(Pending timing.)_ Offline so far (`costs.md`): training data 5.5 GPU-h (teacher anchor
@@ -385,6 +418,7 @@ variant)` so reruns reproduce the same fits and samples.
 | ablation | `$M endpoints --split train --n-endpoints 4`; `$M train --tag ablation_endpoints --data endpoints` | |
 | timing | `bash run/exp5_timing.sh` | uncached, synchronised, fp32 and TF32 |
 | diagnostics | `$M generate --method ibwchain --n 64`; `$M generate --method hybrid:<a>:<b>:<mask> --n 192`; `python -m gmmd.exp5.diag_detail --split {val,test} --students ...`; `$M figtraj --method student:main`; `python -m gmmd.exp5.diag --split val --its 25 50 300` | online-IBW chain, hybrid samplers, per-interval detail, trajectories, IBW snapshots |
+| post-hoc diagnostics (labelled) | `bash run/exp5_hybrid_ablation.sh`; `python -m gmmd.exp5.diag_nll --split test`; `python -m gmmd.exp5.diag_terminal`; `python -m gmmd.exp5.diag_precision`; `$M generate --method student:<tag>:best:meanlast --n 1024` | ablation/main hybrids by interval block, held-out likelihood of the teacher's transitions, terminal spread, TF32 check, noise-free last step |
 | tables, costs, figures | `$M tables`, `$M costs --student main` (or `main refined` to charge the refinement), `python -m gmmd.exp5.figures` | |
 
 The full main run as executed: `run/exp5_main.sh` (both chains; GPU0's chain was handed over to
