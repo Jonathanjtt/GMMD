@@ -46,7 +46,8 @@ count from the P1 validation selection (pre-registered rule, `DESIGN.md` §6).
 convolutions widened to 8 × 3 channels (one score-like field per component) and a global head
 (8 mixture logits + 8 log-variance offsets). `μ_k = x + g_j h_k`, isotropic `v_k`, weights global
 over the image. At initialisation every component is the teacher's first-order Tweedie mean of the
-interval's end state.
+interval's end state with variance `v_ref,j` (the median target variance of the interval; for the
+IBW targets ≈ v_anc at j0–j6).
 
 ## 2. Offline IBW targets (stage A on validation anchors)
 
@@ -124,8 +125,9 @@ biased upward — the teacher itself scores 56.6).
 * **Why: the IBW targets are worse conditional approximations than the trivial Tweedie Gaussian.**
   Scoring the untrained init with the same stage-A metric: mean DINOv2 excess 0.219 (Tweedie
   Gaussian) vs 0.395 (IBW-25 targets) vs 0.356 (trained student); pixel excess 0.0085 vs 0.0413
-  (j8: 0.014 vs 0.136). Their pixel dispersions relative to the teacher are identical, so IBW's
-  extra error is a **bias of its means**. Plausible mechanism: the IBW fixed point satisfies
+  (j8: 0.014 vs 0.136). Their pixel dispersions relative to the teacher are identical (the init's
+  variance is the median IBW variance by construction), so IBW's extra error is a **bias of its
+  means**. Plausible mechanism: the IBW fixed point satisfies
   m = x + gap · E_q[s_θ(y, s)] (the score at the interval's END time averaged over the fitted q),
   while the Tweedie mean x + gap · s_θ(x, t) is E[y | x] under the model; they coincide only if q
   were the true conditional, and the isotropic q lacks its content variance. The bias lives in the
@@ -262,19 +264,21 @@ teacher's 200 steps at every test anchor (DINOv2 permutation p < 0.05; the teach
 floor detects 0–1 of 8 anchors per interval), except the ablation at j1 and j2 (4 and 3 of 8
 anchors) — non-detection at n = 32 vs 32 + 32 is not equality.
 
-* **Amortisation (stage B) works.** In pixels the student is at the replicate floor at j3–j9 (e.g.
-  j7 0.0280 vs 0.0269, j8 0.0203 vs 0.0229), and in forward KL it is as close to each IBW fit as an
+* **Amortisation (stage B) works.** In pixels the student is within 1.5× of the replicate floor at
+  j3–j9 and at it at j6–j8 (e.g. j7 0.0280 vs 0.0269, j8 0.0203 vs 0.0229), and in forward KL it is as close to each IBW fit as an
   independent IBW fit of the same anchor (≤ 0.0004 nats/dim at j0–j5, 0.0030 vs 0.0034 at j7,
   0.0069 vs 0.0108 at j8). In DINOv2 stage B is 2–5× the floor at j1–j7 (0.04–0.10 vs
   0.01–0.06) and 0.13 vs 0.01 at the terminal step, so the network is not a perfect copy, but its
   error is a small fraction of stage A at every interval.
-* **Stage C ≈ stage A**: teacher → main equals teacher → IBW targets at every interval (overall
-  0.412 vs 0.443 DINOv2, 0.036 vs 0.042 pixels). The held-out conclusion of the pilot holds on 80
+* **Stage C ≈ stage A**: teacher → main tracks teacher → IBW targets at every interval (within
+  0.05 DINOv2 at j0 and j3–j9, lower at j1–j2: 0.62 / 0.56 vs 0.80 / 0.68; overall 0.412 vs 0.443
+  DINOv2, 0.036 vs 0.042 pixels). The held-out conclusion of the pilot holds on 80
   test pairs: the network reproduces its targets, and the targets are far from the teacher.
 * **Other kernels at the same anchors.** The ablation (stage C 0.118 / 0.0066 overall, 3.5× / 5.5×
   below main) and the untrained init (0.248 / 0.0085) are closer to the teacher than the IBW
-  targets at every interval and in both representations, except DINOv2 at j0 where the init equals
-  IBW (0.653) and j9 where the init, the ablation and main are within their SDs. Refinement lowers
+  targets at j3–j9 in both representations (at j9 within the SDs in DINOv2) and in DINOv2 at j1–j2;
+  at j0 the init equals IBW in DINOv2 (0.653), and at j0–j2 pixel MMD has no power (every kernel
+  ≈ 0). Refinement lowers
   stage C in DINOv2 at j0–j6 (overall 0.319 vs 0.412) but not in pixels (0.038 vs 0.036).
 * **High noise (j0–j2): a real difference, not a metric artifact.** At j0 the IBW fit (all eight
   components merged, mean bias ≈ 0) and the untrained init are nearly the same kernel and score the

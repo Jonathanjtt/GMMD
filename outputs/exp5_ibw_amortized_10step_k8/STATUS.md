@@ -78,18 +78,18 @@ fp32 37 ms/img/NFE, TF32 11 ms, bf16 10 ms (batch 64–128); training fwd+bwd 10
       ablation sits on the single-isotropic-Gaussian floor; IBW/main miss variance (0.89–0.98 of the
       teacher's) and carry 5–10× the ablation's mean bias at j3–j7; REPORT §4. Commit a11b6cf.
 
+- [x] Final FID n = 1,024 (`fid_n1024.json`, every method, one bootstrap): ANC20 69.13, ANC50 44.25;
+      held-out stage A/B/C on 80 test pairs (main, refined, ablation, init; `tables.md`); detail on
+      test; REPORT §4/§5 written; j0–j2 "artifact" reading corrected (noise-level sensitivity).
+      Final figures rendered (registry in `gmmd/exp5/figures.py`). Commit 8279bfc.
+
 ## Running (tmux; check `tail outputs/exp5_ibw_amortized_10step_k8/RUNLOG`)
-- `exp5-main0b` (GPU0): `run/exp5_main_part2.sh` -- (test refs: done 07:58 UTC) -> evalstudent on test
-  (main, refined, ablation_endpoints, init_main; ~20 s per pair, ETA ~09:30) -> detail on test ->
-  timing (TAG=main; ETA ~11-12 UTC).
-- `exp5-main1` (GPU1, shared with another user): `ONLY=gpu1 bash run/exp5_main.sh` -- ANC20 / ANC50
-  1,024 images (ETA ~09:20) -> (IBW chain: done) -> "main chain(s) gpu1 finished".
-- If a session dies: rerun the same script; every stage skips finished units and reclaims stale claims.
+- `exp5-main0b` (GPU0): `run/exp5_main_part2.sh` -- (evalstudent on test: done 09:35; detail on test:
+  done 09:45) -> timing (TAG=main; teacher fp32 batch 16 last, ETA ~10:15 UTC) -> "main part 2 finished".
+- GPU1: free of exp5 work (chain finished 09:14; final FID n1024 done 09:42).
 
 ## Next
-- [ ] After both chains: `$M fid --tag n1024 --n 1024 --methods student:main student:refined
-      student:ablation_endpoints student:init_main coarse:reverse_diffusion:10 coarse:ancestral:10
-      coarse:ancestral:20 coarse:ancestral:50` (one file, one bootstrap), figures
-      (`python -m gmmd.exp5.figures`; stage ABC + kernels vs teacher on test; quality vs NFE),
-      `$M tables --abc main refined ablation_endpoints init_main --fid n1024`, `$M costs --student main` (break-even of the deployed main student; refinement data is its own category),
-      REPORT.md short answer + sections 4-8, commit locally.
+- [ ] After timing: extra TF32 timings for ANC20/50 and the ablation network (same script entry
+      point: `$M timing --method coarse:ancestral:20 --precision tf32 --n 16`, ...), then
+      `$M costs --student main`; REPORT short answer + §8 (offline/online cost, break-even vs the
+      teacher, no break-even vs ANC10), reproduction rows; final local commit.

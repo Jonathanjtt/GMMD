@@ -270,3 +270,34 @@
   teacher slightly better than its own targets: bias² 0.0120 vs 0.0138 at j7, 0.089 vs 0.102 at
   j8); IBW < init at j0–j6, = at j7, ≫ at j8; refined − main +0.1…+0.75 at j1–j5 (worse), n.s.
   j6–j7, −1.0 ± 0.5 at j8, −4.2 ± 3.5 at j9.
+
+## 2026-10-20 final FID, held-out stage A/B/C, detail on test
+
+* `fid_n1024.json` (09:42 UTC; every method, one bootstrap): teacher 22.55, ANC50 44.25 (P .850 R
+  .162), ANC20 69.13 (P .743 R .018), ablation 74.34, init 77.61, ANC10 94.38, main 111.73, refined
+  117.46, RD10 442.16. Paired: main − ANC20 [+39.5, +44.2], main − ANC50 [+63.4, +67.8], ablation
+  − ANC20 [+2.5, +7.3], init − ANC20 [+5.2, +9.9]. NOTE the percentile intervals can sit off the
+  point estimate (bootstrap with replacement inflates FID method-dependently): teacher − ablation
+  −51.8 vs [−50.5, −46.6]; teacher − main −89.2 vs [−87.5, −83.4]. Signs unaffected.
+* Stage A/B/C on 80 test pairs (all four tags; `tables.md`): A 0.443 / 0.0415 (DINOv2 / pixel), B
+  (main) 0.069 / 0.0106 vs replicate floor 0.023 / 0.0099, C main 0.412 / 0.0363, refined 0.319 /
+  0.0383, ablation 0.118 / 0.0066, init 0.248 / 0.0085. Ablation C detected at 4/8 and 3/8
+  anchors at j1/j2, everything else at 8/8.
+* CORRECTION of my P1-era reading: DINOv2 excess ≈ 0.7 at j0–j2 is NOT an artifact. The ablation
+  scores 0.076 / 0.032 / 0.018 there; at j0 IBW (8 merged components, bias ≈ 0) and init (same
+  variance by construction) both score 0.653. They differ from the ablation mainly in variance
+  (0.98 vs 1.00 τ) → Tweedie denoising at σ = 122 makes a ~2 % noise-variance deficit visible.
+  Pixel MMD has no power there. REPORT §2/§4/§9 updated.
+* Pooled-pixel dispersion is low for EVERY isotropic kernel at j6–j9, incl. the ablation (0.74 at
+  j7, 0.52 at j9) although its per-coordinate variance matches (1.01): isotropic total-variance
+  matching puts too little variance in low-frequency content, too much at high frequency →
+  ablation's denoised end states carry 1.11–1.22 × the teacher's Laplacian energy at j3–j6 (detail
+  test). The family's limit; explains the ablation's FID floor.
+* Detail on test (80 pairs, 32 per kernel): IBW 0.24–0.35 at j1–j5 (0.39 / 0.65 at j6 / j7), main
+  0.24–0.40, init 0.83–1.07, ablation 0.90–1.22, refined 0.42–0.73 (Laplacian ratio vs teacher).
+* Ablation's near-black images: 49 / 1,024 with mean intensity < 0.10 (teacher 1, main 11, refined
+  13, init 0, ANC 0–1). Hybrids: ablation at j0–j2 → 39–48; main at j0–j2 → 11–12 → the collapse
+  starts at high noise.
+* Figures: final registry (`python -m gmmd.exp5.figures --only training stage_abc_test kernels_test
+  hybrid_blocks samples_final grids_final quality_vs_nfe_final detail_test detail_val`); fixed a
+  colour collision (7th series wrapped to the ancestral blue) and clipped labels/legends.
