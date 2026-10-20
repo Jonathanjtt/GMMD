@@ -271,10 +271,52 @@ images are as washed out as main's and carry visible high-frequency colour grain
 
 ## 7. Ablation: the same network trained on teacher endpoints
 
-_(Pending.)_ Same architecture, initialisation, optimiser and step budget, trained by NLL on
-E = 4 fp32 teacher endpoints per (anchor, interval) — 800 teacher evaluations per anchor, the
-same budget as an IBW target (25 iterations × 8 components × 4 gradient samples). It isolates
-the IBW targets' bias: an NLL fit to teacher endpoints targets the teacher's own kernel.
+**Setup.** Same architecture, initialisation (teacher EMA), optimiser, schedule and 12,000-step
+budget as main; the targets are E = 4 fp32 teacher rollouts of each interval from each of the 640
+training anchors (`endpoints/train/`), i.e. 800 teacher evaluations per (anchor, interval) — the
+budget of one IBW fit (25 iterations × 8 components × 4 gradient samples). Loss: the same
+standardised NLL, now of the cached endpoints (rows drawn with replacement); `v_ref,j` is the median
+spread of the endpoints. Model selection uses the validation anchors' teacher reference sets, so
+no IBW information reaches the ablation. It is an ablation that bounds what the target
+construction costs, not the method.
+
+**Training** (`student/ablation_endpoints`, `figures/fig_training_ablation_endpoints`): validation
+NLL of held-out teacher endpoints 1.4110 → 1.4057 nats/dim at step 1,750, then back up to 1.4104
+by 12,000 while the training loss keeps falling (1.419 → 1.411): four endpoints per pair (2,560
+target images for 66 M parameters) overfit after ~2,000 steps, and `ckpt_best` is step 1,750.
+(These NLLs are not comparable with main's 1.4084, which scores IBW draws in different
+standardised units.) Unlike main, the ablation uses its components: weight entropy 1.69–1.91
+nats (uniform 2.08), drawn-component perplexity 5.6–6.8 at every interval (main 1.4–3.1), and a
+weight-weighted separation of 13–20 component SDs between component means (test anchors,
+`figures/diag/nll_teacher_endpoints_test.json`). Its kernels' total per-coordinate variance
+matches the teacher's 200-step kernel (1.00–1.02 of it at j0–j7), where the IBW targets, main and
+the untrained init all have 0.89–0.98 — maximum likelihood matches second moments, the
+mode-seeking IBW fit does not.
+
+**End to end** (`fid_n1024_students.json`, the same 1,024 x_T, paired bootstrap):
+
+| method | FID ↓ | precision | recall | contrast | Laplacian RMS | mean intensity | clipped |
+|---|---|---|---|---|---|---|---|
+| teacher | 22.55 ± 0.71 | 0.769 | 0.464 | 0.257 | 0.089 | 0.418 | — |
+| **ablation (endpoint NLL)** | **74.34 ± 0.85** | 0.660 | 0.017 | 0.176 | 0.076 | 0.362 | 3.1 % |
+| untrained init | 77.61 ± 0.82 | 0.577 | 0.001 | 0.176 | 0.062 | 0.424 | 0.01 % |
+| ancestral, 10 steps | 94.38 ± 0.99 | 0.522 | 0.000 | 0.174 | 0.016 | 0.407 | 0 % |
+| IBW–GMMD main | 111.73 ± 0.81 | 0.649 | 0.000 | 0.125 | 0.060 | 0.397 | 1.0 % |
+
+Paired 95 % intervals: ablation − main [−38.9, −35.0]; ablation − untrained init [−4.2, −1.0];
+ablation − ancestral-10 [−21.9, −16.9]; teacher − ablation [−50.5, −46.6].
+
+**Reading.** With the teacher's own transitions as targets, the same network and the same
+ten-draw sampler are 37 FID better than with the IBW targets — the targets, not the network or
+the sampler, limit the main method (as stage B at the replicate floor and the online IBW chain
+already indicated, §3). But the ablation is only 3.3 FID better than its untrained initialisation
+and 52 behind the teacher: ten isotropic K = 8 transitions fitted by likelihood to four endpoints
+per anchor reproduce the teacher kernels' second moments, not their structure. Its images keep
+more contrast and fine detail than main's but are darker than the teacher's (mean intensity 0.362
+vs 0.418), clip more (3.1 % of raw values outside [0, 1], range −0.56 … 1.05), and some rollouts
+drift into dark, posterised images (`figures/fig_trajectory_student_ablation_endpoints`, row 1).
+Not tried, for budget: more endpoints per anchor (E = 4 overfits), more anchors, or tuning — the
+ablation ran with main's hyperparameters.
 
 ## 8. Cost
 

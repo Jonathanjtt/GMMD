@@ -66,15 +66,21 @@ fp32 37 ms/img/NFE, TF32 11 ms, bf16 10 ms (batch 64–128); training fwd+bwd 10
       step gains only ~2 FID (`fid_n1024_meanlast.json`, `figures/diag/terminal_spread.json`).
       Early test eval (main/refined/init_main, 16-17 pairs) done; the part-2 script fills the rest.
 
+- [x] Ablation (05:53 UTC 10-20): E = 4 endpoints, `ablation_endpoints` best at step 1,750 (overfits
+      after), **FID 74.34** vs main 111.73 (paired [−38.9, −35.0]), init 77.61 ([−4.2, −1.0]),
+      ANC10 94.38 (`fid_n1024_students.json`); REPORT §7 written. Held-out likelihood diagnostic
+      `gmmd/exp5/diag_nll.py` (preliminary on 61 test pairs; NOTES 2026-10-20).
+
 ## Running (tmux; check `tail outputs/exp5_ibw_amortized_10step_k8/RUNLOG`)
-- `exp5-main0b` (GPU0): `run/exp5_main_part2.sh` -- (refinement: done) -> ablation (train endpoints E = 4,
-  ETA ~05:15 UTC 10-20, student `ablation_endpoints` ~1.8 h, 1,024 images) -> FID n1024_students -> test refs (shared) ->
-  evalstudent on test (main, refined, ablation_endpoints, init_main) -> detail on test -> timing.
+- `exp5-main0b` (GPU0): `run/exp5_main_part2.sh` -- (refinement, ablation, FID n1024_students: done) ->
+  test refs (shared; 62/80 at 06:18 UTC, ETA ~07:50) -> evalstudent on test (main, refined,
+  ablation_endpoints, init_main) -> detail on test -> timing (ETA ~11-12 UTC).
 - `exp5-main1` (GPU1, shared with another user): `ONLY=gpu1 bash run/exp5_main.sh` -- test refs
   (80 pairs, fp32) -> endpoints (shared claims) -> ANC20/50 1,024 images -> (IBW chain: done).
 - If a session dies: rerun the same script; every stage skips finished units and reclaims stale claims.
 
 ## Next
+- [ ] After the test refs: `python -m gmmd.exp5.diag_nll --split test` on all 80 pairs (REPORT §4/§7 numbers).
 - [ ] After both chains: `$M fid --tag n1024 --n 1024 --methods student:main student:refined
       student:ablation_endpoints student:init_main coarse:reverse_diffusion:10 coarse:ancestral:10
       coarse:ancestral:20 coarse:ancestral:50` (one file, one bootstrap), figures

@@ -300,17 +300,24 @@ def fig_training_curves(cfg, tag):
         k = [r["val"][str(j)].get("kl", np.nan) for r in vals]
         if np.isfinite(k).any():
             axes[1].plot(st, k, color=c, lw=1.0)
+    endpoints = not any("kl" in r["val"][str(j)] for r in vals for j in js)
+    if endpoints:                                   # the ablation: no IBW density, no KL to report
+        axes[1].text(0.5, 0.5, "not applicable:\ntrained and validated on\nteacher endpoints (no IBW)",
+                     transform=axes[1].transAxes, ha="center", va="center", fontsize=7, color=PALETTE["black"])
+        axes[1].set_xticks([]); axes[1].set_yticks([])
     axes[2].plot([r["step"] for r in trains], [r["loss"] for r in trains], color=PALETTE["black"], lw=1.0,
-                 label="train (running mean)")
+                 label="train")
     axes[2].plot(st, [r["val"]["mean_nll"] for r in vals], color=PALETTE["vermillion"], ls="--", lw=1.0,
-                 label="val (EMA)")
+                 label="val, EMA (endpoints)" if endpoints else "val, EMA (IBW draws)")
     axes[0].set_ylabel("val NLL change (nats/dim)")
     axes[1].set_ylabel(r"val KL$(q_{\rm IBW}\|q_\phi)$ (nats/dim)")
     axes[2].set_ylabel("NLL (standardised, nats/dim)")
     for ax in axes:
         ax.set_xlabel("training step")
     axes[0].legend(ncol=2, fontsize=5.5, loc="lower left")
-    axes[2].legend(fontsize=6.5)
+    lo, hi = axes[2].get_ylim()
+    axes[2].set_ylim(lo, hi + 0.35 * (hi - lo))           # headroom: the legend sits above the curves
+    axes[2].legend(fontsize=6.5, loc="upper right")
     add_panel_labels(axes, x=-0.3)
     return save_figure(fig, _fig_dir(cfg) / f"fig_training_{tag}")
 

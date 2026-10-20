@@ -206,3 +206,29 @@
   Refined images: Laplacian 0.086 ± 0.045 (teacher 0.090 ± 0.023) at contrast 0.124, 0.073 with
   the noise-free last step → their extra high-frequency energy is mostly not the last draw; grain
   is visible in `figures/diag/fig_samples_same_xT_refined`.
+
+## 2026-10-20 ablation (same network, NLL on E = 4 fp32 teacher endpoints per training pair)
+
+* Endpoints: 640 pairs × 4 rollouts, fp32 (done 04:05 UTC). Training: val NLL of held-out teacher
+  endpoints (val reference sets) 1.4110 → **1.4057 at step 1,750**, back to 1.4104 at 12,000 while
+  the training loss falls 1.419 → 1.411 → overfits after ~2,000 steps (2,560 target images for
+  66 M parameters); `ckpt_best` = step 1,750. Its v_ref,j / v_anc,j = 1.02 … 1.26 (j0–j7), 1.53
+  (j8), 1.13 (j9) vs main's (IBW variances) 1.00 … 1.11, 1.60, 0.83.
+* FID n = 1,024 (`fid_n1024_students.json`): **ablation 74.34 ± 0.85** (P 0.660, R 0.017, contrast
+  0.176, Laplacian 0.076, mean intensity 0.362 — darker than the teacher's 0.418; 3.1 % of raw
+  values clipped). Paired: ablation − main [−38.9, −35.0]; − init [−4.2, −1.0]; − ANC10
+  [−21.9, −16.9]; teacher − ablation [−50.5, −46.6].
+* Component usage (sampler draws): H(π) 1.69–1.91 nats, draw perplexity 5.6–6.8 at every interval
+  (main 1.4–3.1; init 8.0 = uniform).
+* Held-out likelihood of the teacher's transitions (`gmmd/exp5/diag_nll.py`, test, PRELIMINARY on
+  the 61 pairs with references at 06:15 UTC; rerun on all 80): per-dim NLL in v_anc units —
+  j0–j2 all equal (±0.001); j3–j7 ablation < main ≈ refined < IBW ≈ init (e.g. j7 1.5255 / 1.5317 /
+  1.5363 / 1.5367); j8 ablation 1.621 < init 1.629 < main 1.655 < IBW 1.670; j9 ablation 1.419 <
+  init 1.468 < main 1.586. Decomposition per coordinate, relative to the teacher's variance τ:
+  total variance IBW / init / main 0.98 → 0.89 (j0 → j7), ablation 1.00–1.02; squared mean bias
+  IBW 0.000–0.013 at j0–j7 (SMALLER than init's 0.000–0.015 at j2–j7), but **0.10 at j8** (init
+  0.016, ablation 0.0015) and main's terminal kernel **0.31 at j9** (init 0.05, ablation 0.005).
+  → In pixel space the IBW means are close to the teacher's mean at j1–j7; the detail loss there
+  (§3 of REPORT) is invisible to L2 at these noise levels (small coefficients), while the IBW mean
+  bias proper sits at j8 and in the terminal pushforward. Earlier pooled statement "IBW's extra
+  error is a bias of its means" (pilot, pixel excess averaged over intervals) is dominated by j8–j9.
