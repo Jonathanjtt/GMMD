@@ -71,16 +71,22 @@ fp32 37 ms/img/NFE, TF32 11 ms, bf16 10 ms (batch 64–128); training fwd+bwd 10
       ANC10 94.38 (`fid_n1024_students.json`); REPORT §7 written. Held-out likelihood diagnostic
       `gmmd/exp5/diag_nll.py` (preliminary on 61 test pairs; NOTES 2026-10-20).
 
+- [x] Hybrids ablation/main by interval block (07:48 UTC; `fid_n1024_hybrid_ablation.json`,
+      `figures/fig_hybrid_blocks_ablation_endpoints_main`): mid-noise j3–j5 carries most of the 37-FID
+      gap (swap-in +24.1, swap-out +17.4) and decides contrast; REPORT §7. Commits fa3a391, 689a028.
+- [x] Held-out likelihood on all 80 test pairs (A ∪ B, M = 64; fixed the A-only first run): the
+      ablation sits on the single-isotropic-Gaussian floor; IBW/main miss variance (0.89–0.98 of the
+      teacher's) and carry 5–10× the ablation's mean bias at j3–j7; REPORT §4. Commit a11b6cf.
+
 ## Running (tmux; check `tail outputs/exp5_ibw_amortized_10step_k8/RUNLOG`)
-- `exp5-main0b` (GPU0): `run/exp5_main_part2.sh` -- (refinement, ablation, FID n1024_students: done) ->
-  test refs (shared; 62/80 at 06:18 UTC, ETA ~07:50) -> evalstudent on test (main, refined,
-  ablation_endpoints, init_main) -> detail on test -> timing (ETA ~11-12 UTC).
-- `exp5-main1` (GPU1, shared with another user): `ONLY=gpu1 bash run/exp5_main.sh` -- test refs
-  (80 pairs, fp32) -> endpoints (shared claims) -> ANC20/50 1,024 images -> (IBW chain: done).
+- `exp5-main0b` (GPU0): `run/exp5_main_part2.sh` -- (test refs: done 07:58 UTC) -> evalstudent on test
+  (main, refined, ablation_endpoints, init_main; ~20 s per pair, ETA ~09:30) -> detail on test ->
+  timing (TAG=main; ETA ~11-12 UTC).
+- `exp5-main1` (GPU1, shared with another user): `ONLY=gpu1 bash run/exp5_main.sh` -- ANC20 / ANC50
+  1,024 images (ETA ~09:20) -> (IBW chain: done) -> "main chain(s) gpu1 finished".
 - If a session dies: rerun the same script; every stage skips finished units and reclaims stale claims.
 
 ## Next
-- [ ] After the test refs: `python -m gmmd.exp5.diag_nll --split test` on all 80 pairs (REPORT §4/§7 numbers).
 - [ ] After both chains: `$M fid --tag n1024 --n 1024 --methods student:main student:refined
       student:ablation_endpoints student:init_main coarse:reverse_diffusion:10 coarse:ancestral:10
       coarse:ancestral:20 coarse:ancestral:50` (one file, one bootstrap), figures
