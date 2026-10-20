@@ -1,0 +1,294 @@
+{
+  "tag": "n1024_meanlast",
+  "n_images": 1024,
+  "n_reference": 30000,
+  "reference_splits": [
+    "train",
+    "validation"
+  ],
+  "fid_extractor": "inception-v3-compat/2048",
+  "pr_extractor": "vgg16/fc2_relu",
+  "pr_k": 3,
+  "preprocessing": "sampler float output -> clip(x*255, 0, 255).astype(uint8), identical for every method",
+  "methods": {
+    "teacher": {
+      "fid": 22.552345775689588,
+      "precision": 0.7685546875,
+      "recall": 0.4638671875,
+      "f_score": 0.5785475064381933,
+      "image_stats": {
+        "contrast_mean": 0.25745324113218293,
+        "contrast_sd": 0.039377642220595054,
+        "intensity_mean": 0.417916521897503,
+        "intensity_sd": 0.11975746926056924,
+        "laplacian_rms_mean": 0.089452939088935,
+        "laplacian_rms_sd": 0.023367696603190945
+      },
+      "bootstrap": {
+        "sd": 0.7060881757182838
+      }
+    },
+    "student:main": {
+      "fid": 111.73391799216279,
+      "precision": 0.6494140625,
+      "recall": 0.0,
+      "f_score": 0.0,
+      "image_stats": {
+        "contrast_mean": 0.12497500947080095,
+        "contrast_sd": 0.037233677130649186,
+        "intensity_mean": 0.397095553781472,
+        "intensity_sd": 0.11571068297641966,
+        "laplacian_rms_mean": 0.06044650841500905,
+        "laplacian_rms_sd": 0.005216698543167692
+      },
+      "bootstrap": {
+        "sd": 0.8056193203141894,
+        "diff_vs_teacher_ci95": [
+          83.41493408013356,
+          87.4649754202467
+        ]
+      }
+    },
+    "student:main:best:meanlast": {
+      "fid": 110.15581604696368,
+      "precision": 0.6279296875,
+      "recall": 0.0,
+      "f_score": 0.0,
+      "image_stats": {
+        "contrast_mean": 0.1246441376838681,
+        "contrast_sd": 0.03731461272831746,
+        "intensity_mean": 0.39709306567712543,
+        "intensity_sd": 0.11572289927859883,
+        "laplacian_rms_mean": 0.04588190272888393,
+        "laplacian_rms_sd": 0.004725334396433937
+      },
+      "bootstrap": {
+        "sd": 0.7980882826126313,
+        "diff_vs_teacher_ci95": [
+          81.93970462521237,
+          85.88205942046115
+        ]
+      }
+    },
+    "student:refined": {
+      "fid": 117.46276330636667,
+      "precision": 0.6787109375,
+      "recall": 0.0,
+      "f_score": 0.0,
+      "image_stats": {
+        "contrast_mean": 0.12416661925847274,
+        "contrast_sd": 0.034733356274077205,
+        "intensity_mean": 0.40395153807658774,
+        "intensity_sd": 0.13905327845215323,
+        "laplacian_rms_mean": 0.08632430984443043,
+        "laplacian_rms_sd": 0.04518392861765045
+      },
+      "bootstrap": {
+        "sd": 1.1649029584213695,
+        "diff_vs_teacher_ci95": [
+          89.13946946450908,
+          94.1784466336187
+        ]
+      }
+    },
+    "student:refined:best:meanlast": {
+      "fid": 115.79503060448764,
+      "precision": 0.65234375,
+      "recall": 0.0,
+      "f_score": 0.0,
+      "image_stats": {
+        "contrast_mean": 0.12376219660426752,
+        "contrast_sd": 0.03479158181485926,
+        "intensity_mean": 0.40395245400129576,
+        "intensity_sd": 0.13905967895658317,
+        "laplacian_rms_mean": 0.07282708276842895,
+        "laplacian_rms_sd": 0.0474155718530921
+      },
+      "bootstrap": {
+        "sd": 1.1626616917838717,
+        "diff_vs_teacher_ci95": [
+          87.41346341047736,
+          92.49637123564104
+        ]
+      }
+    },
+    "student:init_main": {
+      "fid": 77.6067483581439,
+      "precision": 0.5771484375,
+      "recall": 0.0009765625,
+      "f_score": 0.001949825802364865,
+      "image_stats": {
+        "contrast_mean": 0.17625562659488658,
+        "contrast_sd": 0.03195505695666063,
+        "intensity_mean": 0.42414528587285205,
+        "intensity_sd": 0.0956344918795103,
+        "laplacian_rms_mean": 0.061959789392245695,
+        "laplacian_rms_sd": 0.0016116355907588237
+      },
+      "bootstrap": {
+        "sd": 0.817651040715118,
+        "diff_vs_teacher_ci95": [
+          49.21846874649303,
+          53.26423222078112
+        ]
+      }
+    },
+    "student:init_main:best:meanlast": {
+      "fid": 75.1546045182209,
+      "precision": 0.5966796875,
+      "recall": 0.001953125,
+      "f_score": 0.0038935053017944534,
+      "image_stats": {
+        "contrast_mean": 0.17604305624990357,
+        "contrast_sd": 0.03199653861880213,
+        "intensity_mean": 0.4241441411714928,
+        "intensity_sd": 0.09563461040874194,
+        "laplacian_rms_mean": 0.048876179347001364,
+        "laplacian_rms_sd": 0.0020341957228031823
+      },
+      "bootstrap": {
+        "sd": 0.8227442153810348,
+        "diff_vs_teacher_ci95": [
+          46.85260206721414,
+          50.89985770971749
+        ]
+      }
+    },
+    "coarse:ancestral:10": {
+      "fid": 94.37983339376268,
+      "precision": 0.5224609375,
+      "recall": 0.0,
+      "f_score": 0.0,
+      "image_stats": {
+        "contrast_mean": 0.17403528330776674,
+        "contrast_sd": 0.030459871531158006,
+        "intensity_mean": 0.40653196411584713,
+        "intensity_sd": 0.0899456208059124,
+        "laplacian_rms_mean": 0.015599199543018184,
+        "laplacian_rms_sd": 0.0031063376075333455
+      },
+      "bootstrap": {
+        "sd": 0.9874710535495416,
+        "diff_vs_teacher_ci95": [
+          65.59305004239484,
+          70.19815107252182
+        ]
+      }
+    }
+  },
+  "pairwise_diff_ci95": {
+    "teacher - student:main": [
+      -87.46497542024672,
+      -83.41493408013356
+    ],
+    "teacher - student:main:best:meanlast": [
+      -85.88205942046115,
+      -81.93970462521239
+    ],
+    "teacher - student:refined": [
+      -94.1784466336187,
+      -89.13946946450908
+    ],
+    "teacher - student:refined:best:meanlast": [
+      -92.49637123564104,
+      -87.41346341047736
+    ],
+    "teacher - student:init_main": [
+      -53.26423222078112,
+      -49.21846874649303
+    ],
+    "teacher - student:init_main:best:meanlast": [
+      -50.89985770971749,
+      -46.85260206721414
+    ],
+    "teacher - coarse:ancestral:10": [
+      -70.19815107252182,
+      -65.59305004239485
+    ],
+    "student:main - student:main:best:meanlast": [
+      1.2584750946282632,
+      1.9374856307669168
+    ],
+    "student:main - student:refined": [
+      -8.213521349933892,
+      -4.161179539881647
+    ],
+    "student:main - student:refined:best:meanlast": [
+      -6.556107170167622,
+      -2.4983027647243916
+    ],
+    "student:main - student:init_main": [
+      32.366053743825915,
+      36.2410304007546
+    ],
+    "student:main - student:init_main:best:meanlast": [
+      34.74430480074282,
+      38.60401074090188
+    ],
+    "student:main - coarse:ancestral:10": [
+      15.098112771024857,
+      20.04602344892559
+    ],
+    "student:main:best:meanlast - student:refined": [
+      -9.826237748457539,
+      -5.730031015171123
+    ],
+    "student:main:best:meanlast - student:refined:best:meanlast": [
+      -8.113487924646968,
+      -4.0916236258378476
+    ],
+    "student:main:best:meanlast - student:init_main": [
+      30.730472592900874,
+      34.57290031513896
+    ],
+    "student:main:best:meanlast - student:init_main:best:meanlast": [
+      33.053914907698186,
+      36.98456685384791
+    ],
+    "student:main:best:meanlast - coarse:ancestral:10": [
+      13.502523082936625,
+      18.44486026192138
+    ],
+    "student:refined - student:refined:best:meanlast": [
+      1.3093289035057474,
+      2.0048482480168315
+    ],
+    "student:refined - student:init_main": [
+      37.81067270187013,
+      42.86623592836891
+    ],
+    "student:refined - student:init_main:best:meanlast": [
+      40.19568837117054,
+      45.2595870196012
+    ],
+    "student:refined - coarse:ancestral:10": [
+      20.80081369292593,
+      26.604190446598476
+    ],
+    "student:refined:best:meanlast - student:init_main": [
+      36.16874864941808,
+      41.21607772871797
+    ],
+    "student:refined:best:meanlast - student:init_main:best:meanlast": [
+      38.592091212446846,
+      43.566670744334864
+    ],
+    "student:refined:best:meanlast - coarse:ancestral:10": [
+      19.125561368430194,
+      24.949099171377025
+    ],
+    "student:init_main - student:init_main:best:meanlast": [
+      2.129094486688282,
+      2.6221501042659354
+    ],
+    "student:init_main - coarse:ancestral:10": [
+      -19.08770379040174,
+      -14.282238799252452
+    ],
+    "student:init_main:best:meanlast - coarse:ancestral:10": [
+      -21.416085313441684,
+      -16.623718393955812
+    ]
+  },
+  "real_subset_fid_same_n": 15.057124227929819
+}

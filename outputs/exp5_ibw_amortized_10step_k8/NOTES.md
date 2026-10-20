@@ -193,8 +193,16 @@
   the test references): same pattern as the pilot on val — stage B small, stage C ≈ stage A for
   main, the untrained init closer to the teacher than the IBW targets at j2–j8.
 * Final images: the Laplacian energy of every student's output is nearly constant over images
-  (init 0.062 ± 0.002, main 0.060 ± 0.005) → dominated by the final draw's noise, not detail.
-  The IBW terminal fits have SD 0.0135 per pixel (> σ_min = 0.01), and their T(z) bank keeps a
-  spread of 0.0083 (train) / 0.0101 (refine) around its mean — the residual noise the student
-  learns to add. Refined images: Laplacian 0.086 ± 0.045 (teacher 0.090 ± 0.023) at contrast 0.124
-  → grain (visible in `figures/diag/fig_samples_same_xT_refined`), not detail.
+  (init 0.062 ± 0.002, main 0.060 ± 0.005), so I suspected residual noise from the terminal
+  targets (IBW j9 fit SD 0.0135 per pixel > σ_min; T(z) bank spread 0.0083 train / 0.0101 refine).
+  REFUTED as a major factor (`gmmd/exp5/diag_terminal.py`, 4 train anchors × 8 rollouts,
+  `figures/diag/terminal_spread.json`): from the same j9 anchor the TEACHER's 200-step terminal
+  kernel leaves a per-pixel spread of 0.0107 around its own mean (Laplacian 0.039) — more than the
+  IBW bank 0.0088, init 0.0085, main 0.0091, refined 0.0090; kernel means differ from the teacher's
+  by 0.0054–0.0071 RMS. Noise-free last step (diagnostic `student:<tag>:best:meanlast`, same x_T,
+  components and states; `fid_n1024_meanlast.json`): main 111.73 → 110.16 (paired [+1.3, +1.9]),
+  refined 117.46 → 115.80 ([+1.3, +2.0]), init 77.61 → 75.15 ([+2.1, +2.6]). The final draw costs
+  ≈ 2 FID points; the 85-point gap to the teacher is elsewhere (mid-noise detail loss, §3).
+  Refined images: Laplacian 0.086 ± 0.045 (teacher 0.090 ± 0.023) at contrast 0.124, 0.073 with
+  the noise-free last step → their extra high-frequency energy is mostly not the last draw; grain
+  is visible in `figures/diag/fig_samples_same_xT_refined`.

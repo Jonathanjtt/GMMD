@@ -201,6 +201,15 @@ worse than the cheapest supported 10-evaluation teacher sampler and than its own
 (`fid_n1024_first.json`, `fid_n1024_init.json`; sample grids `figures/fig_samples_same_xT_prelim`;
 intermediate states `figures/fig_trajectory_student_main`.)
 
+**The last draw is not the problem** (post-hoc diagnostic). From the same terminal-interval
+anchor, the teacher's own 200-step terminal kernel leaves a per-pixel spread of 0.0107 around its
+mean — more than the IBW terminal targets (0.0088) and the students' last kernels (0.0085–0.0091)
+(`gmmd/exp5/diag_terminal.py`, 4 anchors × 8 rollouts, `figures/diag/terminal_spread.json`).
+Returning the drawn component's mean at the last step instead of a draw (same x_T, components and
+states; a diagnostic, not the method) lowers FID by 1.6 for main (110.16, paired [+1.3, +1.9]), 1.7
+for refined and 2.5 for the untrained init (`fid_n1024_meanlast.json`): the final noise accounts
+for about 2 of the 89 FID points between the student and the teacher.
+
 Refined student (§6): FID 117.46 ± 1.16, P 0.679, R 0.000, contrast 0.124; refined − main
 [+4.2, +8.2] (`fid_n1024_refined.json`). _(Endpoint-NLL ablation, ancestral 20 / 50 steps:
 pending — one final FID file with every method.)_
