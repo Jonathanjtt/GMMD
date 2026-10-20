@@ -1,0 +1,2876 @@
+{
+ "split": "test",
+ "variant": "frozen",
+ "students": [
+  "init_main",
+  "main",
+  "refined",
+  "ablation_endpoints"
+ ],
+ "n_per_set": 32,
+ "definition": "Tweedie-denoised end states (fp32 teacher; terminal: images): contrast = per-image pixel SD, detail = per-image RMS of the 3x3 Laplacian; ratio = mean over anchors of kernel / teacher on the same anchor",
+ "per_interval": {
+  "0": {
+   "teacher": {
+    "contrast": {
+     "mean": 0.4402497783303261,
+     "ratio_to_teacher": 1.0
+    },
+    "detail": {
+     "mean": 1.9498909264802933,
+     "ratio_to_teacher": 1.0
+    }
+   },
+   "ibw": {
+    "contrast": {
+     "mean": 0.23337200097739697,
+     "ratio_to_teacher": 0.5303682420291393
+    },
+    "detail": {
+     "mean": 0.8160857856273651,
+     "ratio_to_teacher": 0.4186972600182562
+    }
+   },
+   "init_main": {
+    "contrast": {
+     "mean": 0.25084300711750984,
+     "ratio_to_teacher": 0.5697549265670405
+    },
+    "detail": {
+     "mean": 0.9206508174538612,
+     "ratio_to_teacher": 0.47209019606459435
+    }
+   },
+   "main": {
+    "contrast": {
+     "mean": 0.2507408671081066,
+     "ratio_to_teacher": 0.5697375551143544
+    },
+    "detail": {
+     "mean": 0.9238227754831314,
+     "ratio_to_teacher": 0.47410621662507413
+    }
+   },
+   "refined": {
+    "contrast": {
+     "mean": 0.3402227535843849,
+     "ratio_to_teacher": 0.7701566692371697
+    },
+    "detail": {
+     "mean": 1.4221006333827972,
+     "ratio_to_teacher": 0.7252462402707407
+    }
+   },
+   "ablation_endpoints": {
+    "contrast": {
+     "mean": 0.38933616876602173,
+     "ratio_to_teacher": 0.883771106099243
+    },
+    "detail": {
+     "mean": 1.6789807826280594,
+     "ratio_to_teacher": 0.8600374436008635
+    }
+   }
+  },
+  "1": {
+   "teacher": {
+    "contrast": {
+     "mean": 0.4179829768836498,
+     "ratio_to_teacher": 1.0
+    },
+    "detail": {
+     "mean": 1.836768239736557,
+     "ratio_to_teacher": 1.0
+    }
+   },
+   "ibw": {
+    "contrast": {
+     "mean": 0.21908481791615486,
+     "ratio_to_teacher": 0.524044992825205
+    },
+    "detail": {
+     "mean": 0.6351649761199951,
+     "ratio_to_teacher": 0.3453546396729824
+    }
+   },
+   "init_main": {
+    "contrast": {
+     "mean": 0.35767586529254913,
+     "ratio_to_teacher": 0.855232559031775
+    },
+    "detail": {
+     "mean": 1.5194584876298904,
+     "ratio_to_teacher": 0.8264746944976208
+    }
+   },
+   "main": {
+    "contrast": {
+     "mean": 0.23515151627361774,
+     "ratio_to_teacher": 0.5621306931066188
+    },
+    "detail": {
+     "mean": 0.7303251549601555,
+     "ratio_to_teacher": 0.396686319508268
+    }
+   },
+   "refined": {
+    "contrast": {
+     "mean": 0.32886853069067,
+     "ratio_to_teacher": 0.7870964612244535
+    },
+    "detail": {
+     "mean": 1.3370419293642044,
+     "ratio_to_teacher": 0.7285097427960892
+    }
+   },
+   "ablation_endpoints": {
+    "contrast": {
+     "mean": 0.38814259320497513,
+     "ratio_to_teacher": 0.9283523458534262
+    },
+    "detail": {
+     "mean": 1.6595170497894287,
+     "ratio_to_teacher": 0.9030973182665556
+    }
+   }
+  },
+  "2": {
+   "teacher": {
+    "contrast": {
+     "mean": 0.3629114255309105,
+     "ratio_to_teacher": 1.0
+    },
+    "detail": {
+     "mean": 1.4840631932020187,
+     "ratio_to_teacher": 1.0
+    }
+   },
+   "ibw": {
+    "contrast": {
+     "mean": 0.22796304523944855,
+     "ratio_to_teacher": 0.6271710070286646
+    },
+    "detail": {
+     "mean": 0.4035332314670086,
+     "ratio_to_teacher": 0.27204253148602575
+    }
+   },
+   "init_main": {
+    "contrast": {
+     "mean": 0.33100399747490883,
+     "ratio_to_teacher": 0.9115185543306424
+    },
+    "detail": {
+     "mean": 1.3166887313127518,
+     "ratio_to_teacher": 0.8866356303394488
+    }
+   },
+   "main": {
+    "contrast": {
+     "mean": 0.22737367637455463,
+     "ratio_to_teacher": 0.6251259564314915
+    },
+    "detail": {
+     "mean": 0.4782589115202427,
+     "ratio_to_teacher": 0.3208938334228414
+    }
+   },
+   "refined": {
+    "contrast": {
+     "mean": 0.2597523722797632,
+     "ratio_to_teacher": 0.715203425631946
+    },
+    "detail": {
+     "mean": 0.7699364274740219,
+     "ratio_to_teacher": 0.5183468860399916
+    }
+   },
+   "ablation_endpoints": {
+    "contrast": {
+     "mean": 0.3563750870525837,
+     "ratio_to_teacher": 0.9820162848125058
+    },
+    "detail": {
+     "mean": 1.4683743119239807,
+     "ratio_to_teacher": 0.989692136585347
+    }
+   }
+  },
+  "3": {
+   "teacher": {
+    "contrast": {
+     "mean": 0.28862259164452553,
+     "ratio_to_teacher": 1.0
+    },
+    "detail": {
+     "mean": 0.8819671124219894,
+     "ratio_to_teacher": 1.0
+    }
+   },
+   "ibw": {
+    "contrast": {
+     "mean": 0.2008710652589798,
+     "ratio_to_teacher": 0.6928021411809677
+    },
+    "detail": {
+     "mean": 0.213995311409235,
+     "ratio_to_teacher": 0.24214811796825023
+    }
+   },
+   "init_main": {
+    "contrast": {
+     "mean": 0.26993029937148094,
+     "ratio_to_teacher": 0.9339566510149605
+    },
+    "detail": {
+     "mean": 0.8252896964550018,
+     "ratio_to_teacher": 0.9340122741975603
+    }
+   },
+   "main": {
+    "contrast": {
+     "mean": 0.19785038009285927,
+     "ratio_to_teacher": 0.6819399273238302
+    },
+    "detail": {
+     "mean": 0.22005051095038652,
+     "ratio_to_teacher": 0.24455729921208588
+    }
+   },
+   "refined": {
+    "contrast": {
+     "mean": 0.21366743557155132,
+     "ratio_to_teacher": 0.7372204528741988
+    },
+    "detail": {
+     "mean": 0.37230041436851025,
+     "ratio_to_teacher": 0.41546039384830624
+    }
+   },
+   "ablation_endpoints": {
+    "contrast": {
+     "mean": 0.28946178406476974,
+     "ratio_to_teacher": 1.003694938614431
+    },
+    "detail": {
+     "mean": 0.9795203059911728,
+     "ratio_to_teacher": 1.1109620645545544
+    }
+   }
+  },
+  "4": {
+   "teacher": {
+    "contrast": {
+     "mean": 0.26423116214573383,
+     "ratio_to_teacher": 1.0
+    },
+    "detail": {
+     "mean": 0.4323589392006397,
+     "ratio_to_teacher": 1.0
+    }
+   },
+   "ibw": {
+    "contrast": {
+     "mean": 0.21599622257053852,
+     "ratio_to_teacher": 0.8072253502501907
+    },
+    "detail": {
+     "mean": 0.10589215066283941,
+     "ratio_to_teacher": 0.24446219454627427
+    }
+   },
+   "init_main": {
+    "contrast": {
+     "mean": 0.25455635972321033,
+     "ratio_to_teacher": 0.9594074955584342
+    },
+    "detail": {
+     "mean": 0.4292072616517544,
+     "ratio_to_teacher": 0.9905506770554504
+    }
+   },
+   "main": {
+    "contrast": {
+     "mean": 0.2151150405406952,
+     "ratio_to_teacher": 0.8034265655683229
+    },
+    "detail": {
+     "mean": 0.11072958447039127,
+     "ratio_to_teacher": 0.2478731802532905
+    }
+   },
+   "refined": {
+    "contrast": {
+     "mean": 0.22930637001991272,
+     "ratio_to_teacher": 0.8693493956354573
+    },
+    "detail": {
+     "mean": 0.25621756445616484,
+     "ratio_to_teacher": 0.590639342090698
+    }
+   },
+   "ablation_endpoints": {
+    "contrast": {
+     "mean": 0.25887000001966953,
+     "ratio_to_teacher": 0.9772693158824861
+    },
+    "detail": {
+     "mean": 0.4969463013112545,
+     "ratio_to_teacher": 1.1516669177517835
+    }
+   }
+  },
+  "5": {
+   "teacher": {
+    "contrast": {
+     "mean": 0.26082645542919636,
+     "ratio_to_teacher": 1.0
+    },
+    "detail": {
+     "mean": 0.19596878811717033,
+     "ratio_to_teacher": 1.0
+    }
+   },
+   "ibw": {
+    "contrast": {
+     "mean": 0.2362634465098381,
+     "ratio_to_teacher": 0.9030456241033502
+    },
+    "detail": {
+     "mean": 0.05398090183734894,
+     "ratio_to_teacher": 0.2751989142753961
+    }
+   },
+   "init_main": {
+    "contrast": {
+     "mean": 0.25706014409661293,
+     "ratio_to_teacher": 0.9842567253069678
+    },
+    "detail": {
+     "mean": 0.20630145072937012,
+     "ratio_to_teacher": 1.0507626688713136
+    }
+   },
+   "main": {
+    "contrast": {
+     "mean": 0.23542792163789272,
+     "ratio_to_teacher": 0.8994633022208329
+    },
+    "detail": {
+     "mean": 0.049311222741380334,
+     "ratio_to_teacher": 0.24521143957193553
+    }
+   },
+   "refined": {
+    "contrast": {
+     "mean": 0.23735935240983963,
+     "ratio_to_teacher": 0.9083746333794878
+    },
+    "detail": {
+     "mean": 0.08911222172901034,
+     "ratio_to_teacher": 0.4692137018662657
+    }
+   },
+   "ablation_endpoints": {
+    "contrast": {
+     "mean": 0.25763040594756603,
+     "ratio_to_teacher": 0.9866169849096975
+    },
+    "detail": {
+     "mean": 0.23912907391786575,
+     "ratio_to_teacher": 1.2233972197190233
+    }
+   }
+  },
+  "6": {
+   "teacher": {
+    "contrast": {
+     "mean": 0.2600595373660326,
+     "ratio_to_teacher": 1.0
+    },
+    "detail": {
+     "mean": 0.09641068335622549,
+     "ratio_to_teacher": 1.0
+    }
+   },
+   "ibw": {
+    "contrast": {
+     "mean": 0.24834384582936764,
+     "ratio_to_teacher": 0.9538417627661757
+    },
+    "detail": {
+     "mean": 0.0375873981975019,
+     "ratio_to_teacher": 0.39026041068948547
+    }
+   },
+   "init_main": {
+    "contrast": {
+     "mean": 0.25882451236248016,
+     "ratio_to_teacher": 0.9948078379437221
+    },
+    "detail": {
+     "mean": 0.1033411668613553,
+     "ratio_to_teacher": 1.0721118434394823
+    }
+   },
+   "main": {
+    "contrast": {
+     "mean": 0.24812299944460392,
+     "ratio_to_teacher": 0.9530869307310932
+    },
+    "detail": {
+     "mean": 0.03523315512575209,
+     "ratio_to_teacher": 0.3626731483977279
+    }
+   },
+   "refined": {
+    "contrast": {
+     "mean": 0.24816309101879597,
+     "ratio_to_teacher": 0.95342697268516
+    },
+    "detail": {
+     "mean": 0.0425084934104234,
+     "ratio_to_teacher": 0.44537387550935476
+    }
+   },
+   "ablation_endpoints": {
+    "contrast": {
+     "mean": 0.2589031998068094,
+     "ratio_to_teacher": 0.9952115517144764
+    },
+    "detail": {
+     "mean": 0.11495383083820343,
+     "ratio_to_teacher": 1.1967267853931447
+    }
+   }
+  },
+  "7": {
+   "teacher": {
+    "contrast": {
+     "mean": 0.26071739569306374,
+     "ratio_to_teacher": 1.0
+    },
+    "detail": {
+     "mean": 0.07217983668670058,
+     "ratio_to_teacher": 1.0
+    }
+   },
+   "ibw": {
+    "contrast": {
+     "mean": 0.25531650334596634,
+     "ratio_to_teacher": 0.9792416341428047
+    },
+    "detail": {
+     "mean": 0.04581793863326311,
+     "ratio_to_teacher": 0.6514727460243042
+    }
+   },
+   "init_main": {
+    "contrast": {
+     "mean": 0.26013975590467453,
+     "ratio_to_teacher": 0.9976977066845283
+    },
+    "detail": {
+     "mean": 0.06991697568446398,
+     "ratio_to_teacher": 0.9947581263121016
+    }
+   },
+   "main": {
+    "contrast": {
+     "mean": 0.2552459351718426,
+     "ratio_to_teacher": 0.9788892611654295
+    },
+    "detail": {
+     "mean": 0.04616868868470192,
+     "ratio_to_teacher": 0.6527950389550339
+    }
+   },
+   "refined": {
+    "contrast": {
+     "mean": 0.25531682185828686,
+     "ratio_to_teacher": 0.9791831744808542
+    },
+    "detail": {
+     "mean": 0.047486336436122656,
+     "ratio_to_teacher": 0.6753145925374315
+    }
+   },
+   "ablation_endpoints": {
+    "contrast": {
+     "mean": 0.26008122228085995,
+     "ratio_to_teacher": 0.997489868355665
+    },
+    "detail": {
+     "mean": 0.07180579472333193,
+     "ratio_to_teacher": 1.024590231612169
+    }
+   }
+  },
+  "8": {
+   "teacher": {
+    "contrast": {
+     "mean": 0.26091468334198,
+     "ratio_to_teacher": 1.0
+    },
+    "detail": {
+     "mean": 0.0755666452459991,
+     "ratio_to_teacher": 1.0
+    }
+   },
+   "ibw": {
+    "contrast": {
+     "mean": 0.25975887663662434,
+     "ratio_to_teacher": 0.9958497035483925
+    },
+    "detail": {
+     "mean": 0.08741831220686436,
+     "ratio_to_teacher": 1.214561656508333
+    }
+   },
+   "init_main": {
+    "contrast": {
+     "mean": 0.2607458531856537,
+     "ratio_to_teacher": 0.9993547965321484
+    },
+    "detail": {
+     "mean": 0.07887369766831398,
+     "ratio_to_teacher": 1.0783600792304946
+    }
+   },
+   "main": {
+    "contrast": {
+     "mean": 0.2598069775849581,
+     "ratio_to_teacher": 0.9959570156830497
+    },
+    "detail": {
+     "mean": 0.08668085932731628,
+     "ratio_to_teacher": 1.2029442939225024
+    }
+   },
+   "refined": {
+    "contrast": {
+     "mean": 0.2598156984895468,
+     "ratio_to_teacher": 0.995987950719383
+    },
+    "detail": {
+     "mean": 0.08680582046508789,
+     "ratio_to_teacher": 1.20344475241222
+    }
+   },
+   "ablation_endpoints": {
+    "contrast": {
+     "mean": 0.2606391441076994,
+     "ratio_to_teacher": 0.9989110318316339
+    },
+    "detail": {
+     "mean": 0.07252476690337062,
+     "ratio_to_teacher": 0.9813243983947317
+    }
+   }
+  },
+  "9": {
+   "teacher": {
+    "contrast": {
+     "mean": 0.26113362051546574,
+     "ratio_to_teacher": 1.0
+    },
+    "detail": {
+     "mean": 0.08107213024049997,
+     "ratio_to_teacher": 1.0
+    }
+   },
+   "ibw": {
+    "contrast": {
+     "mean": 0.2610676474869251,
+     "ratio_to_teacher": 0.9998135257637291
+    },
+    "detail": {
+     "mean": 0.08214418590068817,
+     "ratio_to_teacher": 1.023968082766638
+    }
+   },
+   "init_main": {
+    "contrast": {
+     "mean": 0.26106802374124527,
+     "ratio_to_teacher": 0.9997576581968961
+    },
+    "detail": {
+     "mean": 0.08513740636408329,
+     "ratio_to_teacher": 1.0651271965314386
+    }
+   },
+   "main": {
+    "contrast": {
+     "mean": 0.26104857958853245,
+     "ratio_to_teacher": 0.9997300146371108
+    },
+    "detail": {
+     "mean": 0.08515819348394871,
+     "ratio_to_teacher": 1.0683992879735085
+    }
+   },
+   "refined": {
+    "contrast": {
+     "mean": 0.2610600832849741,
+     "ratio_to_teacher": 0.9997785680946292
+    },
+    "detail": {
+     "mean": 0.08552588801831007,
+     "ratio_to_teacher": 1.0737083631198305
+    }
+   },
+   "ablation_endpoints": {
+    "contrast": {
+     "mean": 0.2610885836184025,
+     "ratio_to_teacher": 0.9998503189402124
+    },
+    "detail": {
+     "mean": 0.08670425741001964,
+     "ratio_to_teacher": 1.0881818563106456
+    }
+   }
+  }
+ },
+ "rows": [
+  {
+   "n": 0,
+   "j": 0,
+   "teacher": {
+    "contrast": 0.4511007070541382,
+    "detail": 2.006850481033325
+   },
+   "ibw": {
+    "contrast": 0.21000146865844727,
+    "detail": 0.6810550689697266
+   },
+   "init_main": {
+    "contrast": 0.24874521791934967,
+    "detail": 0.9303873777389526
+   },
+   "main": {
+    "contrast": 0.2468944787979126,
+    "detail": 0.9238307476043701
+   },
+   "refined": {
+    "contrast": 0.36902838945388794,
+    "detail": 1.6020302772521973
+   },
+   "ablation_endpoints": {
+    "contrast": 0.3943762183189392,
+    "detail": 1.7046658992767334
+   }
+  },
+  {
+   "n": 0,
+   "j": 1,
+   "teacher": {
+    "contrast": 0.41530126333236694,
+    "detail": 1.8223462104797363
+   },
+   "ibw": {
+    "contrast": 0.19913601875305176,
+    "detail": 0.49805063009262085
+   },
+   "init_main": {
+    "contrast": 0.3436250686645508,
+    "detail": 1.4527593851089478
+   },
+   "main": {
+    "contrast": 0.21490752696990967,
+    "detail": 0.6727383732795715
+   },
+   "refined": {
+    "contrast": 0.32806873321533203,
+    "detail": 1.3650624752044678
+   },
+   "ablation_endpoints": {
+    "contrast": 0.34523382782936096,
+    "detail": 1.4216598272323608
+   }
+  },
+  {
+   "n": 0,
+   "j": 2,
+   "teacher": {
+    "contrast": 0.35552388429641724,
+    "detail": 1.4480578899383545
+   },
+   "ibw": {
+    "contrast": 0.19172906875610352,
+    "detail": 0.3703685402870178
+   },
+   "init_main": {
+    "contrast": 0.31808844208717346,
+    "detail": 1.2807133197784424
+   },
+   "main": {
+    "contrast": 0.18715810775756836,
+    "detail": 0.37188720703125
+   },
+   "refined": {
+    "contrast": 0.23430682718753815,
+    "detail": 0.7192343473434448
+   },
+   "ablation_endpoints": {
+    "contrast": 0.35418006777763367,
+    "detail": 1.4865727424621582
+   }
+  },
+  {
+   "n": 0,
+   "j": 3,
+   "teacher": {
+    "contrast": 0.2482830286026001,
+    "detail": 0.8106040358543396
+   },
+   "ibw": {
+    "contrast": 0.1562141478061676,
+    "detail": 0.1838115006685257
+   },
+   "init_main": {
+    "contrast": 0.22161686420440674,
+    "detail": 0.732123613357544
+   },
+   "main": {
+    "contrast": 0.14519533514976501,
+    "detail": 0.1251291185617447
+   },
+   "refined": {
+    "contrast": 0.1536012589931488,
+    "detail": 0.22230780124664307
+   },
+   "ablation_endpoints": {
+    "contrast": 0.24997562170028687,
+    "detail": 0.9181385040283203
+   }
+  },
+  {
+   "n": 0,
+   "j": 4,
+   "teacher": {
+    "contrast": 0.18154245615005493,
+    "detail": 0.3919145464897156
+   },
+   "ibw": {
+    "contrast": 0.11900390684604645,
+    "detail": 0.08867020159959793
+   },
+   "init_main": {
+    "contrast": 0.16179028153419495,
+    "detail": 0.37198346853256226
+   },
+   "main": {
+    "contrast": 0.11613312363624573,
+    "detail": 0.0438651442527771
+   },
+   "refined": {
+    "contrast": 0.16554179787635803,
+    "detail": 0.4682011008262634
+   },
+   "ablation_endpoints": {
+    "contrast": 0.16946972906589508,
+    "detail": 0.44811248779296875
+   }
+  },
+  {
+   "n": 0,
+   "j": 5,
+   "teacher": {
+    "contrast": 0.18757811188697815,
+    "detail": 0.16381704807281494
+   },
+   "ibw": {
+    "contrast": 0.1594495177268982,
+    "detail": 0.04398532956838608
+   },
+   "init_main": {
+    "contrast": 0.17865538597106934,
+    "detail": 0.16426768898963928
+   },
+   "main": {
+    "contrast": 0.15851953625679016,
+    "detail": 0.03349059075117111
+   },
+   "refined": {
+    "contrast": 0.16711929440498352,
+    "detail": 0.19531553983688354
+   },
+   "ablation_endpoints": {
+    "contrast": 0.18016469478607178,
+    "detail": 0.202591210603714
+   }
+  },
+  {
+   "n": 0,
+   "j": 6,
+   "teacher": {
+    "contrast": 0.18832740187644958,
+    "detail": 0.08135202527046204
+   },
+   "ibw": {
+    "contrast": 0.17656166851520538,
+    "detail": 0.03166523203253746
+   },
+   "init_main": {
+    "contrast": 0.18536731600761414,
+    "detail": 0.08424298465251923
+   },
+   "main": {
+    "contrast": 0.1767544448375702,
+    "detail": 0.02503148652613163
+   },
+   "refined": {
+    "contrast": 0.17796297371387482,
+    "detail": 0.0630073994398117
+   },
+   "ablation_endpoints": {
+    "contrast": 0.1857427954673767,
+    "detail": 0.09984491020441055
+   }
+  },
+  {
+   "n": 0,
+   "j": 7,
+   "teacher": {
+    "contrast": 0.19040921330451965,
+    "detail": 0.06122878938913345
+   },
+   "ibw": {
+    "contrast": 0.18647916615009308,
+    "detail": 0.0416000671684742
+   },
+   "init_main": {
+    "contrast": 0.18951070308685303,
+    "detail": 0.05854909121990204
+   },
+   "main": {
+    "contrast": 0.18609243631362915,
+    "detail": 0.03964966535568237
+   },
+   "refined": {
+    "contrast": 0.18622907996177673,
+    "detail": 0.043530385941267014
+   },
+   "ablation_endpoints": {
+    "contrast": 0.18948747217655182,
+    "detail": 0.0610254630446434
+   }
+  },
+  {
+   "n": 0,
+   "j": 8,
+   "teacher": {
+    "contrast": 0.191277414560318,
+    "detail": 0.07177867740392685
+   },
+   "ibw": {
+    "contrast": 0.19128099083900452,
+    "detail": 0.08655006438493729
+   },
+   "init_main": {
+    "contrast": 0.1910322904586792,
+    "detail": 0.07330768555402756
+   },
+   "main": {
+    "contrast": 0.1910874843597412,
+    "detail": 0.08410459011793137
+   },
+   "refined": {
+    "contrast": 0.19114187359809875,
+    "detail": 0.0845051184296608
+   },
+   "ablation_endpoints": {
+    "contrast": 0.19089308381080627,
+    "detail": 0.06750223785638809
+   }
+  },
+  {
+   "n": 0,
+   "j": 9,
+   "teacher": {
+    "contrast": 0.19152261316776276,
+    "detail": 0.07992881536483765
+   },
+   "ibw": {
+    "contrast": 0.19167345762252808,
+    "detail": 0.0799044519662857
+   },
+   "init_main": {
+    "contrast": 0.19141240417957306,
+    "detail": 0.08141974359750748
+   },
+   "main": {
+    "contrast": 0.1916462928056717,
+    "detail": 0.0827498733997345
+   },
+   "refined": {
+    "contrast": 0.19165034592151642,
+    "detail": 0.08383120596408844
+   },
+   "ablation_endpoints": {
+    "contrast": 0.1914581060409546,
+    "detail": 0.08304720371961594
+   }
+  },
+  {
+   "n": 1,
+   "j": 0,
+   "teacher": {
+    "contrast": 0.4243929982185364,
+    "detail": 1.8708640336990356
+   },
+   "ibw": {
+    "contrast": 0.23631331324577332,
+    "detail": 0.8063918352127075
+   },
+   "init_main": {
+    "contrast": 0.2447778731584549,
+    "detail": 0.8683080077171326
+   },
+   "main": {
+    "contrast": 0.2487933188676834,
+    "detail": 0.9167776107788086
+   },
+   "refined": {
+    "contrast": 0.25471824407577515,
+    "detail": 0.9440263509750366
+   },
+   "ablation_endpoints": {
+    "contrast": 0.3597395420074463,
+    "detail": 1.5102615356445312
+   }
+  },
+  {
+   "n": 1,
+   "j": 1,
+   "teacher": {
+    "contrast": 0.4045032858848572,
+    "detail": 1.7674871683120728
+   },
+   "ibw": {
+    "contrast": 0.21684151887893677,
+    "detail": 0.6098589301109314
+   },
+   "init_main": {
+    "contrast": 0.33933913707733154,
+    "detail": 1.414074420928955
+   },
+   "main": {
+    "contrast": 0.23531736433506012,
+    "detail": 0.7573965787887573
+   },
+   "refined": {
+    "contrast": 0.33009782433509827,
+    "detail": 1.344578504562378
+   },
+   "ablation_endpoints": {
+    "contrast": 0.39024320244789124,
+    "detail": 1.6903786659240723
+   }
+  },
+  {
+   "n": 1,
+   "j": 2,
+   "teacher": {
+    "contrast": 0.35965827107429504,
+    "detail": 1.481642723083496
+   },
+   "ibw": {
+    "contrast": 0.2172790765762329,
+    "detail": 0.4006870985031128
+   },
+   "init_main": {
+    "contrast": 0.33312538266181946,
+    "detail": 1.343733787536621
+   },
+   "main": {
+    "contrast": 0.22480082511901855,
+    "detail": 0.4956885278224945
+   },
+   "refined": {
+    "contrast": 0.256511926651001,
+    "detail": 0.7712876796722412
+   },
+   "ablation_endpoints": {
+    "contrast": 0.35722237825393677,
+    "detail": 1.4816291332244873
+   }
+  },
+  {
+   "n": 1,
+   "j": 3,
+   "teacher": {
+    "contrast": 0.3164368271827698,
+    "detail": 0.870133101940155
+   },
+   "ibw": {
+    "contrast": 0.2470310628414154,
+    "detail": 0.19859005510807037
+   },
+   "init_main": {
+    "contrast": 0.29860877990722656,
+    "detail": 0.7999410033226013
+   },
+   "main": {
+    "contrast": 0.23926028609275818,
+    "detail": 0.17589691281318665
+   },
+   "refined": {
+    "contrast": 0.25011157989501953,
+    "detail": 0.30491650104522705
+   },
+   "ablation_endpoints": {
+    "contrast": 0.3114098310470581,
+    "detail": 0.949688196182251
+   }
+  },
+  {
+   "n": 1,
+   "j": 4,
+   "teacher": {
+    "contrast": 0.3117990791797638,
+    "detail": 0.4488632380962372
+   },
+   "ibw": {
+    "contrast": 0.2645708918571472,
+    "detail": 0.1101764440536499
+   },
+   "init_main": {
+    "contrast": 0.305563747882843,
+    "detail": 0.44942209124565125
+   },
+   "main": {
+    "contrast": 0.2683422565460205,
+    "detail": 0.1364985853433609
+   },
+   "refined": {
+    "contrast": 0.26974785327911377,
+    "detail": 0.15870526432991028
+   },
+   "ablation_endpoints": {
+    "contrast": 0.30839747190475464,
+    "detail": 0.5090005993843079
+   }
+  },
+  {
+   "n": 1,
+   "j": 5,
+   "teacher": {
+    "contrast": 0.3031925559043884,
+    "detail": 0.21641889214515686
+   },
+   "ibw": {
+    "contrast": 0.27798229455947876,
+    "detail": 0.05688522011041641
+   },
+   "init_main": {
+    "contrast": 0.2998334765434265,
+    "detail": 0.23031851649284363
+   },
+   "main": {
+    "contrast": 0.27823394536972046,
+    "detail": 0.05667896941304207
+   },
+   "refined": {
+    "contrast": 0.2787741720676422,
+    "detail": 0.07261871546506882
+   },
+   "ablation_endpoints": {
+    "contrast": 0.30076152086257935,
+    "detail": 0.2620998024940491
+   }
+  },
+  {
+   "n": 1,
+   "j": 6,
+   "teacher": {
+    "contrast": 0.30485278367996216,
+    "detail": 0.1055624783039093
+   },
+   "ibw": {
+    "contrast": 0.29271870851516724,
+    "detail": 0.03912840411067009
+   },
+   "init_main": {
+    "contrast": 0.30412325263023376,
+    "detail": 0.11291265487670898
+   },
+   "main": {
+    "contrast": 0.2927413582801819,
+    "detail": 0.03755585104227066
+   },
+   "refined": {
+    "contrast": 0.292903333902359,
+    "detail": 0.04234477877616882
+   },
+   "ablation_endpoints": {
+    "contrast": 0.304154634475708,
+    "detail": 0.1189676895737648
+   }
+  },
+  {
+   "n": 1,
+   "j": 7,
+   "teacher": {
+    "contrast": 0.3059040307998657,
+    "detail": 0.08806069195270538
+   },
+   "ibw": {
+    "contrast": 0.30011314153671265,
+    "detail": 0.0482664629817009
+   },
+   "init_main": {
+    "contrast": 0.3052031099796295,
+    "detail": 0.07664422690868378
+   },
+   "main": {
+    "contrast": 0.30002692341804504,
+    "detail": 0.04922010377049446
+   },
+   "refined": {
+    "contrast": 0.3001099228858948,
+    "detail": 0.051400575786828995
+   },
+   "ablation_endpoints": {
+    "contrast": 0.3051374852657318,
+    "detail": 0.07718822360038757
+   }
+  },
+  {
+   "n": 1,
+   "j": 8,
+   "teacher": {
+    "contrast": 0.3065941035747528,
+    "detail": 0.09379779547452927
+   },
+   "ibw": {
+    "contrast": 0.30483952164649963,
+    "detail": 0.09359575062990189
+   },
+   "init_main": {
+    "contrast": 0.3063110113143921,
+    "detail": 0.08948502689599991
+   },
+   "main": {
+    "contrast": 0.30513039231300354,
+    "detail": 0.09340012073516846
+   },
+   "refined": {
+    "contrast": 0.305153489112854,
+    "detail": 0.0940447449684143
+   },
+   "ablation_endpoints": {
+    "contrast": 0.30624067783355713,
+    "detail": 0.08407437801361084
+   }
+  },
+  {
+   "n": 1,
+   "j": 9,
+   "teacher": {
+    "contrast": 0.30677473545074463,
+    "detail": 0.10158050060272217
+   },
+   "ibw": {
+    "contrast": 0.3066834807395935,
+    "detail": 0.09949391335248947
+   },
+   "init_main": {
+    "contrast": 0.30669116973876953,
+    "detail": 0.10208134353160858
+   },
+   "main": {
+    "contrast": 0.30674809217453003,
+    "detail": 0.10140205174684525
+   },
+   "refined": {
+    "contrast": 0.30674344301223755,
+    "detail": 0.10186995565891266
+   },
+   "ablation_endpoints": {
+    "contrast": 0.30669593811035156,
+    "detail": 0.10306753218173981
+   }
+  },
+  {
+   "n": 2,
+   "j": 0,
+   "teacher": {
+    "contrast": 0.44411882758140564,
+    "detail": 1.9728922843933105
+   },
+   "ibw": {
+    "contrast": 0.22544646263122559,
+    "detail": 0.7822356820106506
+   },
+   "init_main": {
+    "contrast": 0.206723153591156,
+    "detail": 0.6751044392585754
+   },
+   "main": {
+    "contrast": 0.205933079123497,
+    "detail": 0.6724053621292114
+   },
+   "refined": {
+    "contrast": 0.33419230580329895,
+    "detail": 1.3981800079345703
+   },
+   "ablation_endpoints": {
+    "contrast": 0.39746251702308655,
+    "detail": 1.7224009037017822
+   }
+  },
+  {
+   "n": 2,
+   "j": 1,
+   "teacher": {
+    "contrast": 0.4164937734603882,
+    "detail": 1.8320395946502686
+   },
+   "ibw": {
+    "contrast": 0.20877647399902344,
+    "detail": 0.6453942060470581
+   },
+   "init_main": {
+    "contrast": 0.35377103090286255,
+    "detail": 1.5128462314605713
+   },
+   "main": {
+    "contrast": 0.23710596561431885,
+    "detail": 0.7913943529129028
+   },
+   "refined": {
+    "contrast": 0.30746427178382874,
+    "detail": 1.2668125629425049
+   },
+   "ablation_endpoints": {
+    "contrast": 0.399130642414093,
+    "detail": 1.7336013317108154
+   }
+  },
+  {
+   "n": 2,
+   "j": 2,
+   "teacher": {
+    "contrast": 0.3470376133918762,
+    "detail": 1.3924221992492676
+   },
+   "ibw": {
+    "contrast": 0.21831129491329193,
+    "detail": 0.3932560980319977
+   },
+   "init_main": {
+    "contrast": 0.3005238175392151,
+    "detail": 1.1839141845703125
+   },
+   "main": {
+    "contrast": 0.1789967566728592,
+    "detail": 0.3779071569442749
+   },
+   "refined": {
+    "contrast": 0.22169417142868042,
+    "detail": 0.6155274510383606
+   },
+   "ablation_endpoints": {
+    "contrast": 0.33437955379486084,
+    "detail": 1.3726532459259033
+   }
+  },
+  {
+   "n": 2,
+   "j": 3,
+   "teacher": {
+    "contrast": 0.28650522232055664,
+    "detail": 0.8069568276405334
+   },
+   "ibw": {
+    "contrast": 0.2010507881641388,
+    "detail": 0.1864776313304901
+   },
+   "init_main": {
+    "contrast": 0.2604827582836151,
+    "detail": 0.725709080696106
+   },
+   "main": {
+    "contrast": 0.19065512716770172,
+    "detail": 0.11635344475507736
+   },
+   "refined": {
+    "contrast": 0.2060679793357849,
+    "detail": 0.2880204916000366
+   },
+   "ablation_endpoints": {
+    "contrast": 0.28202882409095764,
+    "detail": 0.8941289782524109
+   }
+  },
+  {
+   "n": 2,
+   "j": 4,
+   "teacher": {
+    "contrast": 0.2746431231498718,
+    "detail": 0.4108130931854248
+   },
+   "ibw": {
+    "contrast": 0.22980964183807373,
+    "detail": 0.09439633786678314
+   },
+   "init_main": {
+    "contrast": 0.26375582814216614,
+    "detail": 0.39970260858535767
+   },
+   "main": {
+    "contrast": 0.22199220955371857,
+    "detail": 0.05131668224930763
+   },
+   "refined": {
+    "contrast": 0.23966649174690247,
+    "detail": 0.2769020199775696
+   },
+   "ablation_endpoints": {
+    "contrast": 0.2691662013530731,
+    "detail": 0.4793667197227478
+   }
+  },
+  {
+   "n": 2,
+   "j": 5,
+   "teacher": {
+    "contrast": 0.27110719680786133,
+    "detail": 0.18037497997283936
+   },
+   "ibw": {
+    "contrast": 0.243172287940979,
+    "detail": 0.04939982295036316
+   },
+   "init_main": {
+    "contrast": 0.26660168170928955,
+    "detail": 0.18558989465236664
+   },
+   "main": {
+    "contrast": 0.24386943876743317,
+    "detail": 0.0283335093408823
+   },
+   "refined": {
+    "contrast": 0.246217280626297,
+    "detail": 0.07972444593906403
+   },
+   "ablation_endpoints": {
+    "contrast": 0.2674148380756378,
+    "detail": 0.22846931219100952
+   }
+  },
+  {
+   "n": 2,
+   "j": 6,
+   "teacher": {
+    "contrast": 0.2665866017341614,
+    "detail": 0.08981926739215851
+   },
+   "ibw": {
+    "contrast": 0.2559404969215393,
+    "detail": 0.03644297271966934
+   },
+   "init_main": {
+    "contrast": 0.26565927267074585,
+    "detail": 0.0947532206773758
+   },
+   "main": {
+    "contrast": 0.25548064708709717,
+    "detail": 0.0306582972407341
+   },
+   "refined": {
+    "contrast": 0.25528469681739807,
+    "detail": 0.034211769700050354
+   },
+   "ablation_endpoints": {
+    "contrast": 0.2656852602958679,
+    "detail": 0.10741700232028961
+   }
+  },
+  {
+   "n": 2,
+   "j": 7,
+   "teacher": {
+    "contrast": 0.2689659595489502,
+    "detail": 0.06196549907326698
+   },
+   "ibw": {
+    "contrast": 0.2640436887741089,
+    "detail": 0.04268581420183182
+   },
+   "init_main": {
+    "contrast": 0.26851212978363037,
+    "detail": 0.06511190533638
+   },
+   "main": {
+    "contrast": 0.26384860277175903,
+    "detail": 0.04158918559551239
+   },
+   "refined": {
+    "contrast": 0.26393306255340576,
+    "detail": 0.04372473806142807
+   },
+   "ablation_endpoints": {
+    "contrast": 0.2685394883155823,
+    "detail": 0.06731727719306946
+   }
+  },
+  {
+   "n": 2,
+   "j": 8,
+   "teacher": {
+    "contrast": 0.26892176270484924,
+    "detail": 0.06024656444787979
+   },
+   "ibw": {
+    "contrast": 0.2682381272315979,
+    "detail": 0.07737521827220917
+   },
+   "init_main": {
+    "contrast": 0.26891136169433594,
+    "detail": 0.06902030110359192
+   },
+   "main": {
+    "contrast": 0.2681910991668701,
+    "detail": 0.07679678499698639
+   },
+   "refined": {
+    "contrast": 0.26825594902038574,
+    "detail": 0.07800501585006714
+   },
+   "ablation_endpoints": {
+    "contrast": 0.26881879568099976,
+    "detail": 0.06227799504995346
+   }
+  },
+  {
+   "n": 2,
+   "j": 9,
+   "teacher": {
+    "contrast": 0.26918530464172363,
+    "detail": 0.06331532448530197
+   },
+   "ibw": {
+    "contrast": 0.2693168520927429,
+    "detail": 0.06652340292930603
+   },
+   "init_main": {
+    "contrast": 0.2692018449306488,
+    "detail": 0.07083931565284729
+   },
+   "main": {
+    "contrast": 0.26927855610847473,
+    "detail": 0.07136206328868866
+   },
+   "refined": {
+    "contrast": 0.26929956674575806,
+    "detail": 0.07227407395839691
+   },
+   "ablation_endpoints": {
+    "contrast": 0.2692370116710663,
+    "detail": 0.07317899167537689
+   }
+  },
+  {
+   "n": 3,
+   "j": 0,
+   "teacher": {
+    "contrast": 0.4502222239971161,
+    "detail": 2.0011487007141113
+   },
+   "ibw": {
+    "contrast": 0.25186386704444885,
+    "detail": 0.9304860830307007
+   },
+   "init_main": {
+    "contrast": 0.2704947292804718,
+    "detail": 1.0356515645980835
+   },
+   "main": {
+    "contrast": 0.26947396993637085,
+    "detail": 1.0315697193145752
+   },
+   "refined": {
+    "contrast": 0.3935902714729309,
+    "detail": 1.7155344486236572
+   },
+   "ablation_endpoints": {
+    "contrast": 0.41006961464881897,
+    "detail": 1.7861934900283813
+   }
+  },
+  {
+   "n": 3,
+   "j": 1,
+   "teacher": {
+    "contrast": 0.4148236811161041,
+    "detail": 1.8184646368026733
+   },
+   "ibw": {
+    "contrast": 0.24332061409950256,
+    "detail": 0.7389417886734009
+   },
+   "init_main": {
+    "contrast": 0.35734838247299194,
+    "detail": 1.5017995834350586
+   },
+   "main": {
+    "contrast": 0.22912873327732086,
+    "detail": 0.5987293720245361
+   },
+   "refined": {
+    "contrast": 0.3388192653656006,
+    "detail": 1.382020115852356
+   },
+   "ablation_endpoints": {
+    "contrast": 0.3716346323490143,
+    "detail": 1.5418846607208252
+   }
+  },
+  {
+   "n": 3,
+   "j": 2,
+   "teacher": {
+    "contrast": 0.37045034766197205,
+    "detail": 1.4888137578964233
+   },
+   "ibw": {
+    "contrast": 0.24256324768066406,
+    "detail": 0.38875970244407654
+   },
+   "init_main": {
+    "contrast": 0.3364575505256653,
+    "detail": 1.3090476989746094
+   },
+   "main": {
+    "contrast": 0.23586365580558777,
+    "detail": 0.43031173944473267
+   },
+   "refined": {
+    "contrast": 0.2538658380508423,
+    "detail": 0.6438713073730469
+   },
+   "ablation_endpoints": {
+    "contrast": 0.360847532749176,
+    "detail": 1.457831859588623
+   }
+  },
+  {
+   "n": 3,
+   "j": 3,
+   "teacher": {
+    "contrast": 0.2726673483848572,
+    "detail": 0.9314858913421631
+   },
+   "ibw": {
+    "contrast": 0.1448327600955963,
+    "detail": 0.2362189143896103
+   },
+   "init_main": {
+    "contrast": 0.2453031837940216,
+    "detail": 0.8768186569213867
+   },
+   "main": {
+    "contrast": 0.14777356386184692,
+    "detail": 0.22785210609436035
+   },
+   "refined": {
+    "contrast": 0.18319013714790344,
+    "detail": 0.4811777174472809
+   },
+   "ablation_endpoints": {
+    "contrast": 0.2778093218803406,
+    "detail": 1.0733095407485962
+   }
+  },
+  {
+   "n": 3,
+   "j": 4,
+   "teacher": {
+    "contrast": 0.23333744704723358,
+    "detail": 0.496757447719574
+   },
+   "ibw": {
+    "contrast": 0.1763859987258911,
+    "detail": 0.12074615061283112
+   },
+   "init_main": {
+    "contrast": 0.22312533855438232,
+    "detail": 0.5057041645050049
+   },
+   "main": {
+    "contrast": 0.17558559775352478,
+    "detail": 0.1643257737159729
+   },
+   "refined": {
+    "contrast": 0.2001880556344986,
+    "detail": 0.39904433488845825
+   },
+   "ablation_endpoints": {
+    "contrast": 0.2277807891368866,
+    "detail": 0.5588743686676025
+   }
+  },
+  {
+   "n": 3,
+   "j": 5,
+   "teacher": {
+    "contrast": 0.23986433446407318,
+    "detail": 0.19469112157821655
+   },
+   "ibw": {
+    "contrast": 0.2184607982635498,
+    "detail": 0.053388774394989014
+   },
+   "init_main": {
+    "contrast": 0.23656073212623596,
+    "detail": 0.20474481582641602
+   },
+   "main": {
+    "contrast": 0.21617430448532104,
+    "detail": 0.05042034387588501
+   },
+   "refined": {
+    "contrast": 0.2180827260017395,
+    "detail": 0.08830419927835464
+   },
+   "ablation_endpoints": {
+    "contrast": 0.23724982142448425,
+    "detail": 0.23710137605667114
+   }
+  },
+  {
+   "n": 3,
+   "j": 6,
+   "teacher": {
+    "contrast": 0.2383202463388443,
+    "detail": 0.09519541263580322
+   },
+   "ibw": {
+    "contrast": 0.22736111283302307,
+    "detail": 0.036433957517147064
+   },
+   "init_main": {
+    "contrast": 0.23721688985824585,
+    "detail": 0.10547014325857162
+   },
+   "main": {
+    "contrast": 0.22743254899978638,
+    "detail": 0.03524472936987877
+   },
+   "refined": {
+    "contrast": 0.22700032591819763,
+    "detail": 0.03526180237531662
+   },
+   "ablation_endpoints": {
+    "contrast": 0.2373569905757904,
+    "detail": 0.11650079488754272
+   }
+  },
+  {
+   "n": 3,
+   "j": 7,
+   "teacher": {
+    "contrast": 0.237171933054924,
+    "detail": 0.05872837081551552
+   },
+   "ibw": {
+    "contrast": 0.2328595519065857,
+    "detail": 0.04203719645738602
+   },
+   "init_main": {
+    "contrast": 0.23683205246925354,
+    "detail": 0.06424211710691452
+   },
+   "main": {
+    "contrast": 0.2326575070619583,
+    "detail": 0.04128597676753998
+   },
+   "refined": {
+    "contrast": 0.23275959491729736,
+    "detail": 0.04297541081905365
+   },
+   "ablation_endpoints": {
+    "contrast": 0.23671647906303406,
+    "detail": 0.0667247325181961
+   }
+  },
+  {
+   "n": 3,
+   "j": 8,
+   "teacher": {
+    "contrast": 0.2374734878540039,
+    "detail": 0.05185405910015106
+   },
+   "ibw": {
+    "contrast": 0.23729440569877625,
+    "detail": 0.07933726906776428
+   },
+   "init_main": {
+    "contrast": 0.2374168187379837,
+    "detail": 0.06330601125955582
+   },
+   "main": {
+    "contrast": 0.23727069795131683,
+    "detail": 0.07679913192987442
+   },
+   "refined": {
+    "contrast": 0.23715925216674805,
+    "detail": 0.07626883685588837
+   },
+   "ablation_endpoints": {
+    "contrast": 0.23727069795131683,
+    "detail": 0.05527840182185173
+   }
+  },
+  {
+   "n": 3,
+   "j": 9,
+   "teacher": {
+    "contrast": 0.23757821321487427,
+    "detail": 0.05456434190273285
+   },
+   "ibw": {
+    "contrast": 0.2377590835094452,
+    "detail": 0.06049371510744095
+   },
+   "init_main": {
+    "contrast": 0.23759034276008606,
+    "detail": 0.06319323182106018
+   },
+   "main": {
+    "contrast": 0.23779666423797607,
+    "detail": 0.06491066515445709
+   },
+   "refined": {
+    "contrast": 0.2378135621547699,
+    "detail": 0.06586235761642456
+   },
+   "ablation_endpoints": {
+    "contrast": 0.23762960731983185,
+    "detail": 0.06565609574317932
+   }
+  },
+  {
+   "n": 4,
+   "j": 0,
+   "teacher": {
+    "contrast": 0.44485291838645935,
+    "detail": 1.9784735441207886
+   },
+   "ibw": {
+    "contrast": 0.2419092208147049,
+    "detail": 0.8789734244346619
+   },
+   "init_main": {
+    "contrast": 0.254496693611145,
+    "detail": 0.9388648867607117
+   },
+   "main": {
+    "contrast": 0.249968022108078,
+    "detail": 0.9091951847076416
+   },
+   "refined": {
+    "contrast": 0.38897866010665894,
+    "detail": 1.6952812671661377
+   },
+   "ablation_endpoints": {
+    "contrast": 0.4095475673675537,
+    "detail": 1.804424524307251
+   }
+  },
+  {
+   "n": 4,
+   "j": 1,
+   "teacher": {
+    "contrast": 0.4393382668495178,
+    "detail": 1.9459749460220337
+   },
+   "ibw": {
+    "contrast": 0.24035710096359253,
+    "detail": 0.7845253944396973
+   },
+   "init_main": {
+    "contrast": 0.40572506189346313,
+    "detail": 1.7784255743026733
+   },
+   "main": {
+    "contrast": 0.27805083990097046,
+    "detail": 1.003795862197876
+   },
+   "refined": {
+    "contrast": 0.3340751528739929,
+    "detail": 1.3149265050888062
+   },
+   "ablation_endpoints": {
+    "contrast": 0.4298301935195923,
+    "detail": 1.885379433631897
+   }
+  },
+  {
+   "n": 4,
+   "j": 2,
+   "teacher": {
+    "contrast": 0.380856990814209,
+    "detail": 1.5532127618789673
+   },
+   "ibw": {
+    "contrast": 0.2640572190284729,
+    "detail": 0.4075929820537567
+   },
+   "init_main": {
+    "contrast": 0.3598422706127167,
+    "detail": 1.4159680604934692
+   },
+   "main": {
+    "contrast": 0.2737806737422943,
+    "detail": 0.5842626690864563
+   },
+   "refined": {
+    "contrast": 0.2991180419921875,
+    "detail": 0.8757559061050415
+   },
+   "ablation_endpoints": {
+    "contrast": 0.3811642527580261,
+    "detail": 1.5606164932250977
+   }
+  },
+  {
+   "n": 4,
+   "j": 3,
+   "teacher": {
+    "contrast": 0.3243381083011627,
+    "detail": 1.0168027877807617
+   },
+   "ibw": {
+    "contrast": 0.22724178433418274,
+    "detail": 0.24830012023448944
+   },
+   "init_main": {
+    "contrast": 0.31190475821495056,
+    "detail": 0.9835013747215271
+   },
+   "main": {
+    "contrast": 0.231600821018219,
+    "detail": 0.34979984164237976
+   },
+   "refined": {
+    "contrast": 0.24955452978610992,
+    "detail": 0.5432449579238892
+   },
+   "ablation_endpoints": {
+    "contrast": 0.3240138292312622,
+    "detail": 1.110207438468933
+   }
+  },
+  {
+   "n": 4,
+   "j": 4,
+   "teacher": {
+    "contrast": 0.33415114879608154,
+    "detail": 0.46138596534729004
+   },
+   "ibw": {
+    "contrast": 0.293275386095047,
+    "detail": 0.11187292635440826
+   },
+   "init_main": {
+    "contrast": 0.3303004801273346,
+    "detail": 0.4665837585926056
+   },
+   "main": {
+    "contrast": 0.29276415705680847,
+    "detail": 0.16106681525707245
+   },
+   "refined": {
+    "contrast": 0.29468363523483276,
+    "detail": 0.20007140934467316
+   },
+   "ablation_endpoints": {
+    "contrast": 0.33227038383483887,
+    "detail": 0.5202808976173401
+   }
+  },
+  {
+   "n": 4,
+   "j": 5,
+   "teacher": {
+    "contrast": 0.3323217034339905,
+    "detail": 0.21188372373580933
+   },
+   "ibw": {
+    "contrast": 0.30536219477653503,
+    "detail": 0.06007985770702362
+   },
+   "init_main": {
+    "contrast": 0.32941901683807373,
+    "detail": 0.2288457751274109
+   },
+   "main": {
+    "contrast": 0.30723321437835693,
+    "detail": 0.06826820969581604
+   },
+   "refined": {
+    "contrast": 0.30811041593551636,
+    "detail": 0.09888836741447449
+   },
+   "ablation_endpoints": {
+    "contrast": 0.32998400926589966,
+    "detail": 0.2571960687637329
+   }
+  },
+  {
+   "n": 4,
+   "j": 6,
+   "teacher": {
+    "contrast": 0.33543747663497925,
+    "detail": 0.10413537174463272
+   },
+   "ibw": {
+    "contrast": 0.32272762060165405,
+    "detail": 0.040612392127513885
+   },
+   "init_main": {
+    "contrast": 0.33425989747047424,
+    "detail": 0.10842391848564148
+   },
+   "main": {
+    "contrast": 0.32210981845855713,
+    "detail": 0.04139290004968643
+   },
+   "refined": {
+    "contrast": 0.3221595287322998,
+    "detail": 0.05337898060679436
+   },
+   "ablation_endpoints": {
+    "contrast": 0.3341050148010254,
+    "detail": 0.12049838900566101
+   }
+  },
+  {
+   "n": 4,
+   "j": 7,
+   "teacher": {
+    "contrast": 0.33724820613861084,
+    "detail": 0.0850275382399559
+   },
+   "ibw": {
+    "contrast": 0.3300730288028717,
+    "detail": 0.051691845059394836
+   },
+   "init_main": {
+    "contrast": 0.33660274744033813,
+    "detail": 0.07663024216890335
+   },
+   "main": {
+    "contrast": 0.3301088213920593,
+    "detail": 0.053813427686691284
+   },
+   "refined": {
+    "contrast": 0.3301638662815094,
+    "detail": 0.05528067424893379
+   },
+   "ablation_endpoints": {
+    "contrast": 0.33643534779548645,
+    "detail": 0.07951335608959198
+   }
+  },
+  {
+   "n": 4,
+   "j": 8,
+   "teacher": {
+    "contrast": 0.3373787999153137,
+    "detail": 0.09659124910831451
+   },
+   "ibw": {
+    "contrast": 0.33488309383392334,
+    "detail": 0.09612520039081573
+   },
+   "init_main": {
+    "contrast": 0.33707040548324585,
+    "detail": 0.0927448496222496
+   },
+   "main": {
+    "contrast": 0.3351161777973175,
+    "detail": 0.09634119272232056
+   },
+   "refined": {
+    "contrast": 0.33514413237571716,
+    "detail": 0.0969434529542923
+   },
+   "ablation_endpoints": {
+    "contrast": 0.33704042434692383,
+    "detail": 0.08780395984649658
+   }
+  },
+  {
+   "n": 4,
+   "j": 9,
+   "teacher": {
+    "contrast": 0.3376067876815796,
+    "detail": 0.10210631787776947
+   },
+   "ibw": {
+    "contrast": 0.33720293641090393,
+    "detail": 0.09995079040527344
+   },
+   "init_main": {
+    "contrast": 0.3373912274837494,
+    "detail": 0.102536141872406
+   },
+   "main": {
+    "contrast": 0.33719128370285034,
+    "detail": 0.10182028263807297
+   },
+   "refined": {
+    "contrast": 0.3371645212173462,
+    "detail": 0.10199050605297089
+   },
+   "ablation_endpoints": {
+    "contrast": 0.3373701572418213,
+    "detail": 0.10387149453163147
+   }
+  },
+  {
+   "n": 5,
+   "j": 0,
+   "teacher": {
+    "contrast": 0.43549835681915283,
+    "detail": 1.9249240159988403
+   },
+   "ibw": {
+    "contrast": 0.21868717670440674,
+    "detail": 0.7518008947372437
+   },
+   "init_main": {
+    "contrast": 0.2318028211593628,
+    "detail": 0.8375251889228821
+   },
+   "main": {
+    "contrast": 0.23639100790023804,
+    "detail": 0.8643897771835327
+   },
+   "refined": {
+    "contrast": 0.29851460456848145,
+    "detail": 1.1948398351669312
+   },
+   "ablation_endpoints": {
+    "contrast": 0.391737163066864,
+    "detail": 1.7020214796066284
+   }
+  },
+  {
+   "n": 5,
+   "j": 1,
+   "teacher": {
+    "contrast": 0.41839271783828735,
+    "detail": 1.8384785652160645
+   },
+   "ibw": {
+    "contrast": 0.21540632843971252,
+    "detail": 0.6366226673126221
+   },
+   "init_main": {
+    "contrast": 0.35674434900283813,
+    "detail": 1.5181362628936768
+   },
+   "main": {
+    "contrast": 0.2231416404247284,
+    "detail": 0.6991780996322632
+   },
+   "refined": {
+    "contrast": 0.3401939272880554,
+    "detail": 1.3893718719482422
+   },
+   "ablation_endpoints": {
+    "contrast": 0.3803691267967224,
+    "detail": 1.6123005151748657
+   }
+  },
+  {
+   "n": 5,
+   "j": 2,
+   "teacher": {
+    "contrast": 0.378085732460022,
+    "detail": 1.5581647157669067
+   },
+   "ibw": {
+    "contrast": 0.2527366280555725,
+    "detail": 0.43630361557006836
+   },
+   "init_main": {
+    "contrast": 0.3523280620574951,
+    "detail": 1.4196054935455322
+   },
+   "main": {
+    "contrast": 0.24947118759155273,
+    "detail": 0.5971189737319946
+   },
+   "refined": {
+    "contrast": 0.2710253894329071,
+    "detail": 0.7961280345916748
+   },
+   "ablation_endpoints": {
+    "contrast": 0.3648420572280884,
+    "detail": 1.5029929876327515
+   }
+  },
+  {
+   "n": 5,
+   "j": 3,
+   "teacher": {
+    "contrast": 0.30253803730010986,
+    "detail": 0.8326445817947388
+   },
+   "ibw": {
+    "contrast": 0.22542797029018402,
+    "detail": 0.19317114353179932
+   },
+   "init_main": {
+    "contrast": 0.2853050231933594,
+    "detail": 0.7646994590759277
+   },
+   "main": {
+    "contrast": 0.2161635309457779,
+    "detail": 0.1455046832561493
+   },
+   "refined": {
+    "contrast": 0.22318151593208313,
+    "detail": 0.21746419370174408
+   },
+   "ablation_endpoints": {
+    "contrast": 0.3021399974822998,
+    "detail": 0.9270631670951843
+   }
+  },
+  {
+   "n": 5,
+   "j": 4,
+   "teacher": {
+    "contrast": 0.28394919633865356,
+    "detail": 0.3714855909347534
+   },
+   "ibw": {
+    "contrast": 0.23748815059661865,
+    "detail": 0.09261134266853333
+   },
+   "init_main": {
+    "contrast": 0.2713453471660614,
+    "detail": 0.3536369502544403
+   },
+   "main": {
+    "contrast": 0.23294508457183838,
+    "detail": 0.047725703567266464
+   },
+   "refined": {
+    "contrast": 0.233870267868042,
+    "detail": 0.03936067968606949
+   },
+   "ablation_endpoints": {
+    "contrast": 0.2763589024543762,
+    "detail": 0.4521528482437134
+   }
+  },
+  {
+   "n": 5,
+   "j": 5,
+   "teacher": {
+    "contrast": 0.2763083577156067,
+    "detail": 0.17869287729263306
+   },
+   "ibw": {
+    "contrast": 0.25456178188323975,
+    "detail": 0.05084609240293503
+   },
+   "init_main": {
+    "contrast": 0.2728525996208191,
+    "detail": 0.18748588860034943
+   },
+   "main": {
+    "contrast": 0.24994972348213196,
+    "detail": 0.03483619540929794
+   },
+   "refined": {
+    "contrast": 0.2506585419178009,
+    "detail": 0.03733278065919876
+   },
+   "ablation_endpoints": {
+    "contrast": 0.27316585183143616,
+    "detail": 0.2271106243133545
+   }
+  },
+  {
+   "n": 5,
+   "j": 6,
+   "teacher": {
+    "contrast": 0.2734411060810089,
+    "detail": 0.09042070806026459
+   },
+   "ibw": {
+    "contrast": 0.26147890090942383,
+    "detail": 0.03883088380098343
+   },
+   "init_main": {
+    "contrast": 0.2721022665500641,
+    "detail": 0.09747003018856049
+   },
+   "main": {
+    "contrast": 0.26107320189476013,
+    "detail": 0.03536728024482727
+   },
+   "refined": {
+    "contrast": 0.2607933580875397,
+    "detail": 0.03398086503148079
+   },
+   "ablation_endpoints": {
+    "contrast": 0.2721219062805176,
+    "detail": 0.11242003738880157
+   }
+  },
+  {
+   "n": 5,
+   "j": 7,
+   "teacher": {
+    "contrast": 0.2750735282897949,
+    "detail": 0.06421460956335068
+   },
+   "ibw": {
+    "contrast": 0.26914429664611816,
+    "detail": 0.04572342336177826
+   },
+   "init_main": {
+    "contrast": 0.27458086609840393,
+    "detail": 0.0665472000837326
+   },
+   "main": {
+    "contrast": 0.26936572790145874,
+    "detail": 0.04553314298391342
+   },
+   "refined": {
+    "contrast": 0.26939159631729126,
+    "detail": 0.04463590681552887
+   },
+   "ablation_endpoints": {
+    "contrast": 0.2744596004486084,
+    "detail": 0.06912861764431
+   }
+  },
+  {
+   "n": 5,
+   "j": 8,
+   "teacher": {
+    "contrast": 0.27492785453796387,
+    "detail": 0.07075940817594528
+   },
+   "ibw": {
+    "contrast": 0.2738076448440552,
+    "detail": 0.08501159399747849
+   },
+   "init_main": {
+    "contrast": 0.2747681140899658,
+    "detail": 0.07541074603796005
+   },
+   "main": {
+    "contrast": 0.2738344371318817,
+    "detail": 0.08355193585157394
+   },
+   "refined": {
+    "contrast": 0.2738601565361023,
+    "detail": 0.08365343511104584
+   },
+   "ablation_endpoints": {
+    "contrast": 0.27467867732048035,
+    "detail": 0.06929513067007065
+   }
+  },
+  {
+   "n": 5,
+   "j": 9,
+   "teacher": {
+    "contrast": 0.27507129311561584,
+    "detail": 0.07532054930925369
+   },
+   "ibw": {
+    "contrast": 0.27499932050704956,
+    "detail": 0.07630571722984314
+   },
+   "init_main": {
+    "contrast": 0.27500319480895996,
+    "detail": 0.08068478107452393
+   },
+   "main": {
+    "contrast": 0.2749409079551697,
+    "detail": 0.07981865108013153
+   },
+   "refined": {
+    "contrast": 0.27499592304229736,
+    "detail": 0.07983162999153137
+   },
+   "ablation_endpoints": {
+    "contrast": 0.27500832080841064,
+    "detail": 0.08201639354228973
+   }
+  },
+  {
+   "n": 6,
+   "j": 0,
+   "teacher": {
+    "contrast": 0.4185793399810791,
+    "detail": 1.8305354118347168
+   },
+   "ibw": {
+    "contrast": 0.232423335313797,
+    "detail": 0.7996512651443481
+   },
+   "init_main": {
+    "contrast": 0.2538364827632904,
+    "detail": 0.9450255036354065
+   },
+   "main": {
+    "contrast": 0.2588071823120117,
+    "detail": 0.9729956388473511
+   },
+   "refined": {
+    "contrast": 0.27386653423309326,
+    "detail": 1.038153886795044
+   },
+   "ablation_endpoints": {
+    "contrast": 0.3486855626106262,
+    "detail": 1.4412122964859009
+   }
+  },
+  {
+   "n": 6,
+   "j": 1,
+   "teacher": {
+    "contrast": 0.41969454288482666,
+    "detail": 1.8429096937179565
+   },
+   "ibw": {
+    "contrast": 0.22043338418006897,
+    "detail": 0.6188806295394897
+   },
+   "init_main": {
+    "contrast": 0.34234094619750977,
+    "detail": 1.4344512224197388
+   },
+   "main": {
+    "contrast": 0.2465382218360901,
+    "detail": 0.8002845048904419
+   },
+   "refined": {
+    "contrast": 0.3256835341453552,
+    "detail": 1.3349946737289429
+   },
+   "ablation_endpoints": {
+    "contrast": 0.3949600160121918,
+    "detail": 1.6980493068695068
+   }
+  },
+  {
+   "n": 6,
+   "j": 2,
+   "teacher": {
+    "contrast": 0.349174439907074,
+    "detail": 1.4448542594909668
+   },
+   "ibw": {
+    "contrast": 0.21591071784496307,
+    "detail": 0.42887383699417114
+   },
+   "init_main": {
+    "contrast": 0.3197023868560791,
+    "detail": 1.2676794528961182
+   },
+   "main": {
+    "contrast": 0.2357373833656311,
+    "detail": 0.44315987825393677
+   },
+   "refined": {
+    "contrast": 0.27801498770713806,
+    "detail": 0.9303171038627625
+   },
+   "ablation_endpoints": {
+    "contrast": 0.34944063425064087,
+    "detail": 1.448627233505249
+   }
+  },
+  {
+   "n": 6,
+   "j": 3,
+   "teacher": {
+    "contrast": 0.26707708835601807,
+    "detail": 0.8626231551170349
+   },
+   "ibw": {
+    "contrast": 0.20110641419887543,
+    "detail": 0.23093530535697937
+   },
+   "init_main": {
+    "contrast": 0.25871217250823975,
+    "detail": 0.8164013624191284
+   },
+   "main": {
+    "contrast": 0.2034689486026764,
+    "detail": 0.28199341893196106
+   },
+   "refined": {
+    "contrast": 0.2155454456806183,
+    "detail": 0.4325384199619293
+   },
+   "ablation_endpoints": {
+    "contrast": 0.2767803966999054,
+    "detail": 0.9545986652374268
+   }
+  },
+  {
+   "n": 6,
+   "j": 4,
+   "teacher": {
+    "contrast": 0.2533382773399353,
+    "detail": 0.45831096172332764
+   },
+   "ibw": {
+    "contrast": 0.21419359743595123,
+    "detail": 0.12783282995224
+   },
+   "init_main": {
+    "contrast": 0.2490750253200531,
+    "detail": 0.46603840589523315
+   },
+   "main": {
+    "contrast": 0.21909570693969727,
+    "detail": 0.18003559112548828
+   },
+   "refined": {
+    "contrast": 0.22438400983810425,
+    "detail": 0.24734121561050415
+   },
+   "ablation_endpoints": {
+    "contrast": 0.2516258955001831,
+    "detail": 0.5129092931747437
+   }
+  },
+  {
+   "n": 6,
+   "j": 5,
+   "teacher": {
+    "contrast": 0.24601882696151733,
+    "detail": 0.22666533291339874
+   },
+   "ibw": {
+    "contrast": 0.22608324885368347,
+    "detail": 0.06562548875808716
+   },
+   "init_main": {
+    "contrast": 0.24485856294631958,
+    "detail": 0.2413969337940216
+   },
+   "main": {
+    "contrast": 0.22332444787025452,
+    "detail": 0.09169189631938934
+   },
+   "refined": {
+    "contrast": 0.22402983903884888,
+    "detail": 0.09303499758243561
+   },
+   "ablation_endpoints": {
+    "contrast": 0.24421432614326477,
+    "detail": 0.2579401433467865
+   }
+  },
+  {
+   "n": 6,
+   "j": 6,
+   "teacher": {
+    "contrast": 0.24098855257034302,
+    "detail": 0.11548800766468048
+   },
+   "ibw": {
+    "contrast": 0.228790283203125,
+    "detail": 0.04508901759982109
+   },
+   "init_main": {
+    "contrast": 0.23995161056518555,
+    "detail": 0.12304048240184784
+   },
+   "main": {
+    "contrast": 0.22834894061088562,
+    "detail": 0.04732845723628998
+   },
+   "refined": {
+    "contrast": 0.22822222113609314,
+    "detail": 0.049012232571840286
+   },
+   "ablation_endpoints": {
+    "contrast": 0.23986734449863434,
+    "detail": 0.1309976577758789
+   }
+  },
+  {
+   "n": 6,
+   "j": 7,
+   "teacher": {
+    "contrast": 0.24070428311824799,
+    "detail": 0.10758675634860992
+   },
+   "ibw": {
+    "contrast": 0.2341856062412262,
+    "detail": 0.05811586603522301
+   },
+   "init_main": {
+    "contrast": 0.23990705609321594,
+    "detail": 0.09040749818086624
+   },
+   "main": {
+    "contrast": 0.23444995284080505,
+    "detail": 0.06130605936050415
+   },
+   "refined": {
+    "contrast": 0.2343796193599701,
+    "detail": 0.05902814120054245
+   },
+   "ablation_endpoints": {
+    "contrast": 0.23986658453941345,
+    "detail": 0.09023633599281311
+   }
+  },
+  {
+   "n": 6,
+   "j": 8,
+   "teacher": {
+    "contrast": 0.24030917882919312,
+    "detail": 0.11393432319164276
+   },
+   "ibw": {
+    "contrast": 0.23828057944774628,
+    "detail": 0.11222082376480103
+   },
+   "init_main": {
+    "contrast": 0.23996102809906006,
+    "detail": 0.10793308913707733
+   },
+   "main": {
+    "contrast": 0.2383858561515808,
+    "detail": 0.11252600699663162
+   },
+   "refined": {
+    "contrast": 0.2383648008108139,
+    "detail": 0.11211811006069183
+   },
+   "ablation_endpoints": {
+    "contrast": 0.23983758687973022,
+    "detail": 0.1027468591928482
+   }
+  },
+  {
+   "n": 6,
+   "j": 9,
+   "teacher": {
+    "contrast": 0.2405381202697754,
+    "detail": 0.11857244372367859
+   },
+   "ibw": {
+    "contrast": 0.24017955362796783,
+    "detail": 0.11759422719478607
+   },
+   "init_main": {
+    "contrast": 0.24046970903873444,
+    "detail": 0.12014929950237274
+   },
+   "main": {
+    "contrast": 0.24011912941932678,
+    "detail": 0.11855915188789368
+   },
+   "refined": {
+    "contrast": 0.2401314228773117,
+    "detail": 0.11827372014522552
+   },
+   "ablation_endpoints": {
+    "contrast": 0.2405015379190445,
+    "detail": 0.12059039622545242
+   }
+  },
+  {
+   "n": 7,
+   "j": 0,
+   "teacher": {
+    "contrast": 0.45323285460472107,
+    "detail": 2.0134389400482178
+   },
+   "ibw": {
+    "contrast": 0.25033116340637207,
+    "detail": 0.8980920314788818
+   },
+   "init_main": {
+    "contrast": 0.29586708545684814,
+    "detail": 1.1343395709991455
+   },
+   "main": {
+    "contrast": 0.2896658778190613,
+    "detail": 1.0994181632995605
+   },
+   "refined": {
+    "contrast": 0.40889301896095276,
+    "detail": 1.7887589931488037
+   },
+   "ablation_endpoints": {
+    "contrast": 0.40307116508483887,
+    "detail": 1.7606661319732666
+   }
+  },
+  {
+   "n": 7,
+   "j": 1,
+   "teacher": {
+    "contrast": 0.41531628370285034,
+    "detail": 1.8264451026916504
+   },
+   "ibw": {
+    "contrast": 0.20840710401535034,
+    "detail": 0.5490455627441406
+   },
+   "init_main": {
+    "contrast": 0.3625129461288452,
+    "detail": 1.543175220489502
+   },
+   "main": {
+    "contrast": 0.21702183783054352,
+    "detail": 0.519084095954895
+   },
+   "refined": {
+    "contrast": 0.3265455365180969,
+    "detail": 1.2985687255859375
+   },
+   "ablation_endpoints": {
+    "contrast": 0.39373910427093506,
+    "detail": 1.6928826570510864
+   }
+  },
+  {
+   "n": 7,
+   "j": 2,
+   "teacher": {
+    "contrast": 0.36250412464141846,
+    "detail": 1.5053372383117676
+   },
+   "ibw": {
+    "contrast": 0.22111710906028748,
+    "detail": 0.4024239778518677
+   },
+   "init_main": {
+    "contrast": 0.32796406745910645,
+    "detail": 1.3128478527069092
+   },
+   "main": {
+    "contrast": 0.23318082094192505,
+    "detail": 0.5257351398468018
+   },
+   "refined": {
+    "contrast": 0.2634817957878113,
+    "detail": 0.807369589805603
+   },
+   "ablation_endpoints": {
+    "contrast": 0.3489242196083069,
+    "detail": 1.4360707998275757
+   }
+  },
+  {
+   "n": 7,
+   "j": 3,
+   "teacher": {
+    "contrast": 0.2911350727081299,
+    "detail": 0.924486517906189
+   },
+   "ibw": {
+    "contrast": 0.20406359434127808,
+    "detail": 0.2344578206539154
+   },
+   "init_main": {
+    "contrast": 0.27750885486602783,
+    "detail": 0.9031230211257935
+   },
+   "main": {
+    "contrast": 0.20868542790412903,
+    "detail": 0.33787456154823303
+   },
+   "refined": {
+    "contrast": 0.22808703780174255,
+    "detail": 0.4887332320213318
+   },
+   "ablation_endpoints": {
+    "contrast": 0.29153645038604736,
+    "detail": 1.0090279579162598
+   }
+  },
+  {
+   "n": 7,
+   "j": 4,
+   "teacher": {
+    "contrast": 0.24108856916427612,
+    "detail": 0.41934067010879517
+   },
+   "ibw": {
+    "contrast": 0.19324220716953278,
+    "detail": 0.10083097219467163
+   },
+   "init_main": {
+    "contrast": 0.23149482905864716,
+    "detail": 0.42058664560317993
+   },
+   "main": {
+    "contrast": 0.19406218826770782,
+    "detail": 0.10100238025188446
+   },
+   "refined": {
+    "contrast": 0.2063688486814499,
+    "detail": 0.26011449098587036
+   },
+   "ablation_endpoints": {
+    "contrast": 0.23589062690734863,
+    "detail": 0.49487319588661194
+   }
+  },
+  {
+   "n": 7,
+   "j": 5,
+   "teacher": {
+    "contrast": 0.23022055625915527,
+    "detail": 0.19520632922649384
+   },
+   "ibw": {
+    "contrast": 0.20503544807434082,
+    "detail": 0.051636628806591034
+   },
+   "init_main": {
+    "contrast": 0.22769969701766968,
+    "detail": 0.20776209235191345
+   },
+   "main": {
+    "contrast": 0.20611876249313354,
+    "detail": 0.030770067125558853
+   },
+   "refined": {
+    "contrast": 0.20588254928588867,
+    "detail": 0.04767872765660286
+   },
+   "ablation_endpoints": {
+    "contrast": 0.22808818519115448,
+    "detail": 0.2405240535736084
+   }
+  },
+  {
+   "n": 7,
+   "j": 6,
+   "teacher": {
+    "contrast": 0.2325221300125122,
+    "detail": 0.08931219577789307
+   },
+   "ibw": {
+    "contrast": 0.22117197513580322,
+    "detail": 0.03249632567167282
+   },
+   "init_main": {
+    "contrast": 0.23191559314727783,
+    "detail": 0.100415900349617
+   },
+   "main": {
+    "contrast": 0.22104303538799286,
+    "detail": 0.02928623929619789
+   },
+   "refined": {
+    "contrast": 0.2209782898426056,
+    "detail": 0.028870118781924248
+   },
+   "ablation_endpoints": {
+    "contrast": 0.23219165205955505,
+    "detail": 0.11298416554927826
+   }
+  },
+  {
+   "n": 7,
+   "j": 7,
+   "teacher": {
+    "contrast": 0.23026201128959656,
+    "detail": 0.05062643811106682
+   },
+   "ibw": {
+    "contrast": 0.22563354671001434,
+    "detail": 0.03642283380031586
+   },
+   "init_main": {
+    "contrast": 0.22996938228607178,
+    "detail": 0.061203524470329285
+   },
+   "main": {
+    "contrast": 0.22541750967502594,
+    "detail": 0.0369519479572773
+   },
+   "refined": {
+    "contrast": 0.22556783258914948,
+    "detail": 0.03931485861539841
+   },
+   "ablation_endpoints": {
+    "contrast": 0.2300073206424713,
+    "detail": 0.0633123517036438
+   }
+  },
+  {
+   "n": 7,
+   "j": 8,
+   "teacher": {
+    "contrast": 0.2304348647594452,
+    "detail": 0.045571085065603256
+   },
+   "ibw": {
+    "contrast": 0.2294466495513916,
+    "detail": 0.06913057714700699
+   },
+   "init_main": {
+    "contrast": 0.23049579560756683,
+    "detail": 0.05978187173604965
+   },
+   "main": {
+    "contrast": 0.22943967580795288,
+    "detail": 0.06992711126804352
+   },
+   "refined": {
+    "contrast": 0.2294459342956543,
+    "detail": 0.06890784949064255
+   },
+   "ablation_endpoints": {
+    "contrast": 0.23033320903778076,
+    "detail": 0.05121917277574539
+   }
+  },
+  {
+   "n": 7,
+   "j": 9,
+   "teacher": {
+    "contrast": 0.23079189658164978,
+    "detail": 0.0531887486577034
+   },
+   "ibw": {
+    "contrast": 0.23072649538516998,
+    "detail": 0.056887269020080566
+   },
+   "init_main": {
+    "contrast": 0.23078429698944092,
+    "detail": 0.06019539386034012
+   },
+   "main": {
+    "contrast": 0.23066771030426025,
+    "detail": 0.06064280867576599
+   },
+   "refined": {
+    "contrast": 0.2306818813085556,
+    "detail": 0.060273654758930206
+   },
+   "ablation_endpoints": {
+    "contrast": 0.23080798983573914,
+    "detail": 0.062205951660871506
+   }
+  }
+ ]
+}

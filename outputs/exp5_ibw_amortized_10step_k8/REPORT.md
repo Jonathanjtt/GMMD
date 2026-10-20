@@ -92,9 +92,12 @@ that follows:
   per-pair correlation 0.995).
 
 **Absolute quality of the targets.** Even the selected targets are far from the teacher's kernel
-at mid and low noise: per-interval DINOv2 excess 0.13–0.30 at j3–j7, 0.31–0.45 at j8–j9 (≈ 0.7 at
-j0–j2 is dominated by an artifact: the teacher's own states denoise to colour-noisy images, so
-DINOv2-on-Tweedie cannot be read as fidelity there; pixel excess ≈ 0 at j0–j3). Every isotropic
+at mid and low noise: per-interval DINOv2 excess 0.13–0.30 at j3–j7, 0.31–0.45 at j8–j9, and ≈ 0.7
+at j0–j2 (pixel excess ≈ 0 at j0–j3). I first read the j0–j2 values as a denoising artifact. The
+held-out test (§4) refutes that: the endpoint-trained ablation scores 0.02–0.08 there with the
+same metric, and the IBW excess at j0 matches that of a kernel with the same, 2 % too small,
+isotropic variance. At high noise the metric measures the end state's noise level more than its
+content. Every isotropic
 kernel is under-dispersed in content directions (pixel dispersion vs teacher 0.92 at j4 → 0.62 at
 j9; `figures/diag/samples_val000_j{4,7,9}_*.png`: at j4 the teacher's interval produces different
 faces, every IBW snapshot near-identical blurry ones).
@@ -231,8 +234,67 @@ Paired over anchors, main is above the ablation at every interval for 8 / 8 anch
   cannot add what the targets lack. Refinement (§6) changes this by at most ±1 × 10⁻³ at j1–j8
   (worse at j1–j5 for 8 / 8 anchors, n.s. at j6–j7) and −4 ± 3.5 at j9.
 
-_(Stage A / B / C on the 80 test pairs with the replicate floor for main, refined, ablation and the
-untrained init: pending — the evaluation is running.)_
+**Stage A / B / C on the held-out test anchors** (8 test trajectories × 10 intervals = 80 pairs,
+never used for training or selection; per pair 2 × 32 fp32 teacher rollouts; full per-interval
+tables with SDs, detection rates and weight perplexities in `tables.md`; figures
+`figures/fig_stage_abc_{main,refined,ablation_endpoints,init_main}_test`,
+`figures/fig_kernels_vs_teacher_test`). Excess MMD² as in §2 (DINOv2 / 8×-pooled pixels), mean
+over the 8 anchors of each interval. B floor = the IBW fit against an independent replicate IBW fit
+of the same anchor (fresh init and noise seeds), the best stage B an amortisation of these targets
+can reach.
+
+| j | A: teacher → IBW | B: IBW → main | B floor | KL(q_IBW ‖ ·) / dim: main / replicate | C: teacher → kernel, DINOv2: main / refined / ablation / init | C, pixels: main / ablation / init | pooled-pixel dispersion / teacher's: IBW / main / ablation / init |
+|---|---|---|---|---|---|---|---|
+| 0 | 0.653 / −0.0001 | 0.006 / −0.0000 | 0.001 / −0.0003 | 0.0000 / 0.0000 | 0.606 / 0.385 / 0.076 / 0.653 | 0.0001 / 0.0003 / 0.0001 | 0.99 / 0.99 / 1.00 / 0.99 |
+| 1 | 0.802 / 0.0002 | 0.076 / 0.0003 | 0.008 / −0.0000 | 0.0001 / 0.0000 | 0.621 / 0.286 / 0.032 / 0.485 | 0.0004 / 0.0003 / 0.0003 | 0.98 / 0.99 / 1.00 / 0.98 |
+| 2 | 0.678 / 0.0004 | 0.058 / 0.0003 | 0.013 / 0.0002 | 0.0001 / 0.0000 | 0.560 / 0.355 / 0.018 / 0.210 | 0.0003 / 0.0001 / 0.0004 | 0.97 / 0.98 / 1.00 / 0.98 |
+| 3 | 0.170 / 0.0019 | 0.039 / 0.0011 | 0.034 / 0.0009 | 0.0001 / 0.0000 | 0.155 / 0.118 / 0.045 / 0.042 | 0.0017 / 0.0004 / 0.0013 | 0.96 / 0.96 / 0.99 / 0.96 |
+| 4 | 0.169 / 0.0088 | 0.087 / 0.0035 | 0.018 / 0.0024 | 0.0002 / 0.0001 | 0.168 / 0.129 / 0.062 / 0.060 | 0.0076 / 0.0010 / 0.0027 | 0.92 / 0.92 / 0.95 / 0.92 |
+| 5 | 0.252 / 0.0243 | 0.095 / 0.0086 | 0.038 / 0.0073 | 0.0004 / 0.0003 | 0.248 / 0.214 / 0.073 / 0.066 | 0.0223 / 0.0031 / 0.0062 | 0.85 / 0.86 / 0.90 / 0.85 |
+| 6 | 0.335 / 0.0496 | 0.104 / 0.0173 | 0.056 / 0.0158 | 0.0012 / 0.0011 | 0.352 / 0.292 / 0.085 / 0.076 | 0.0443 / 0.0070 / 0.0112 | 0.78 / 0.78 / 0.82 / 0.77 |
+| 7 | 0.205 / 0.0931 | 0.078 / 0.0280 | 0.040 / 0.0269 | 0.0030 / 0.0034 | 0.176 / 0.163 / 0.138 / 0.124 | 0.0783 / 0.0116 / 0.0160 | 0.70 / 0.70 / 0.74 / 0.69 |
+| 8 | 0.638 / 0.1342 | 0.024 / 0.0203 | 0.011 / 0.0229 | 0.0069 / 0.0108 | 0.634 / 0.637 / 0.186 / 0.313 | 0.1126 / 0.0149 / 0.0144 | 0.71 / 0.75 / 0.68 / 0.69 |
+| 9 | 0.530 / 0.1028 | 0.127 / 0.0268 | 0.011 / 0.0225 | — | 0.595 / 0.608 / 0.467 / 0.451 | 0.0956 / 0.0267 / 0.0326 | 0.66 / 0.57 / 0.52 / 0.45 |
+| all | 0.443 / 0.0415 | 0.069 / 0.0106 | 0.023 / 0.0099 | | 0.412 / 0.319 / 0.118 / 0.248 | 0.0363 / 0.0066 / 0.0085 | |
+
+(Columns A, B and B floor are DINOv2 / pixels.) Every one-step kernel is detected against the
+teacher's 200 steps at every test anchor (DINOv2 permutation p < 0.05; the teacher-vs-teacher
+floor detects 0–1 of 8 anchors per interval), except the ablation at j1 and j2 (4 and 3 of 8
+anchors) — non-detection at n = 32 vs 32 + 32 is not equality.
+
+* **Amortisation (stage B) works.** In pixels the student is at the replicate floor at j3–j9 (e.g.
+  j7 0.0280 vs 0.0269, j8 0.0203 vs 0.0229), and in forward KL it is as close to each IBW fit as an
+  independent IBW fit of the same anchor (≤ 0.0004 nats/dim at j0–j5, 0.0030 vs 0.0034 at j7,
+  0.0069 vs 0.0108 at j8). In DINOv2 stage B is 2–5× the floor at j1–j7 (0.04–0.10 vs
+  0.01–0.06) and 0.13 vs 0.01 at the terminal step, so the network is not a perfect copy, but its
+  error is a small fraction of stage A at every interval.
+* **Stage C ≈ stage A**: teacher → main equals teacher → IBW targets at every interval (overall
+  0.412 vs 0.443 DINOv2, 0.036 vs 0.042 pixels). The held-out conclusion of the pilot holds on 80
+  test pairs: the network reproduces its targets, and the targets are far from the teacher.
+* **Other kernels at the same anchors.** The ablation (stage C 0.118 / 0.0066 overall, 3.5× / 5.5×
+  below main) and the untrained init (0.248 / 0.0085) are closer to the teacher than the IBW
+  targets at every interval and in both representations, except DINOv2 at j0 where the init equals
+  IBW (0.653) and j9 where the init, the ablation and main are within their SDs. Refinement lowers
+  stage C in DINOv2 at j0–j6 (overall 0.319 vs 0.412) but not in pixels (0.038 vs 0.036).
+* **High noise (j0–j2): a real difference, not a metric artifact.** At j0 the IBW fit (all eight
+  components merged, mean bias ≈ 0) and the untrained init are nearly the same kernel and score the
+  same 0.653, while the ablation scores 0.076; the two differ from the ablation mainly in variance
+  (0.98 vs 1.00 of the teacher's, likelihood table above). The Tweedie-denoised state at σ = 122 is
+  very sensitive to the end state's noise level; 8×-pooled pixel MMD does not see it (excess
+  ≈ 0 at j0–j3 for every kernel). This corrects my reading of §2 (P1), where I had called the
+  j0–j2 values an artifact.
+* **Every isotropic kernel under-disperses image content.** The 8×-pooled pixel dispersion falls
+  to 0.69–0.82 of the teacher's at j6–j7 and 0.45–0.75 at j8–j9 for every kernel — including the
+  ablation (0.74 at j7), although its per-coordinate total variance matches the teacher's (1.01).
+  An isotropic kernel with the right total variance spreads it evenly over all 196,608 directions,
+  so it has too little in the low-frequency content directions that pooling keeps and too much at
+  high frequency: the ablation's Tweedie-denoised end states carry 1.11–1.22 × the teacher's
+  Laplacian energy at j3–j6 (`figures/fig_detail_per_interval_test`). This is a limit of the
+  isotropic family, not of the IBW targets, and it is why even the ablation stops at FID 74.
+* **Fine detail on test** (`gmmd/exp5/diag_detail.py`, 8 anchors × 32 samples per kernel; ratio
+  to the teacher's kernel from the same anchor) reproduces validation: the IBW targets keep 0.24–0.35
+  of the teacher's Laplacian detail at j1–j5 (0.39 / 0.65 at j6 / j7) and main copies them
+  (0.24–0.40); the untrained init keeps 0.83–1.07, the ablation 0.90–1.22, refined 0.42–0.73.
 
 ## 5. End to end: 1,024 images per method
 
@@ -241,19 +303,41 @@ recall against all 30,000 CelebA-HQ 256 images, paired bootstrap over images; re
 n = 1,024 is 15.1, so every value carries a common small-n bias and only paired differences are
 interpreted.
 
-| method | network evals / image | teacher evals / image | FID ↓ | precision | recall | contrast |
-|---|---|---|---|---|---|---|
-| teacher (2,000-step SMLD) | 2,000 | 2,000 | 22.55 ± 0.71 | 0.769 | 0.464 | 0.257 |
-| untrained init (Tweedie Gaussian) | 10 | 0 | 77.61 ± 0.80 | 0.577 | 0.001 | 0.176 |
-| ancestral, 10 steps | 10 | 10 | 94.38 ± 0.99 | 0.522 | 0.000 | 0.174 |
-| **IBW–GMMD student (main)** | 10 | 0 | **111.73 ± 0.81** | 0.649 | 0.000 | 0.125 |
-| SMLD predictor, 10 steps | 10 | 10 | 442.16 ± 0.62 | 0.000 | 0.000 | 0.500 |
+All numbers from one file and one bootstrap (`fid_n1024.json`, 2,000 replicates; earlier partial
+files agree to the printed precision). The students' network is the teacher's NCSN++ with wider
+output convolutions (66.3 M vs 65.6 M parameters), so one student evaluation costs about one
+teacher evaluation; measured times are in §8.
 
-Paired 95 % intervals: main − ancestral-10 [+15.0, +19.9]; main − untrained init [+32.5, +36.2];
-untrained init − ancestral-10 [−19.3, −14.2]. The amortised IBW–GMMD sampler is significantly
-worse than the cheapest supported 10-evaluation teacher sampler and than its own initialisation.
-(`fid_n1024_first.json`, `fid_n1024_init.json`; sample grids `figures/fig_samples_same_xT_prelim`;
-intermediate states `figures/fig_trajectory_student_main`.)
+| method | network evals / image | teacher evals / image | FID ↓ | precision | recall | contrast | Laplacian RMS |
+|---|---|---|---|---|---|---|---|
+| teacher (2,000-step SMLD) | 2,000 | 2,000 | 22.55 ± 0.71 | 0.769 | 0.464 | 0.257 | 0.089 |
+| ancestral, 50 steps | 50 | 50 | 44.25 ± 0.81 | 0.850 | 0.162 | 0.223 | 0.039 |
+| ancestral, 20 steps | 20 | 20 | 69.13 ± 0.94 | 0.743 | 0.018 | 0.198 | 0.023 |
+| ablation: same network, endpoint NLL (§7) | 10 | 0 | 74.34 ± 0.85 | 0.660 | 0.017 | 0.176 | 0.076 |
+| untrained init (Tweedie Gaussian) | 10 | 0 | 77.61 ± 0.82 | 0.577 | 0.001 | 0.176 | 0.062 |
+| ancestral, 10 steps | 10 | 10 | 94.38 ± 0.99 | 0.522 | 0.000 | 0.174 | 0.016 |
+| **IBW–GMMD student (main)** | 10 | 0 | **111.73 ± 0.81** | 0.649 | 0.000 | 0.125 | 0.060 |
+| IBW–GMMD student, refined (§6) | 10 | 0 | 117.46 ± 1.16 | 0.679 | 0.000 | 0.124 | 0.086 |
+| SMLD predictor, 10 steps | 10 | 10 | 442.16 ± 0.62 | 0.000 | 0.000 | 0.500 | 2.235 |
+
+Paired 95 % intervals (percentile, over images): main − ancestral-10 [+15.1, +20.0]; main −
+ancestral-20 [+39.5, +44.2]; main − ancestral-50 [+63.4, +67.8]; main − untrained init [+32.4,
++36.2]; refined − main [+4.2, +8.2]; ablation − main [−38.9, −35.0]; ablation − ancestral-10
+[−21.9, −16.9]; ablation − ancestral-20 [+2.5, +7.3]; untrained init − ancestral-10 [−19.1,
+−14.3]. Resampling images with replacement inflates FID by a method-dependent amount, so an
+interval can sit off its point estimate (most visibly against the teacher: teacher − ablation
+−51.8, interval [−50.5, −46.6]); only signs and rough sizes are interpreted, and every
+conclusion here has a margin of several FID points.
+
+**Reading.** The amortised IBW–GMMD sampler is significantly worse than the cheapest supported
+teacher sampler at the same number of network evaluations (ancestral, 10 steps) and than its own
+untrained initialisation; it is ~42 FID behind ancestral sampling with 20 evaluations and ~68
+behind 50. The same network and sampler trained on teacher endpoints (the ablation) beat
+ancestral-10 by 20 FID but not ancestral-20 (+5.2). Images: `figures/fig_samples_same_xT`
+(the first 8 x_T per method, no selection; the students share x_T and per-image draw generators,
+so their rows show the same identities, while the teacher and the ancestral sampler draw their own
+noise), 8 × 8 mosaics `figures/grid_<method>_64.png`, FID against network evaluations
+`figures/fig_quality_vs_nfe_n1024`, intermediate states `figures/fig_trajectory_student_*`.
 
 **The last draw is not the problem** (post-hoc diagnostic). From the same terminal-interval
 anchor, the teacher's own 200-step terminal kernel leaves a per-pixel spread of 0.0107 around its
@@ -264,9 +348,6 @@ states; a diagnostic, not the method) lowers FID by 1.6 for main (110.16, paired
 for refined and 2.5 for the untrained init (`fid_n1024_meanlast.json`): the final noise accounts
 for about 2 of the 89 FID points between the student and the teacher.
 
-Refined student (§6): FID 117.46 ± 1.16, P 0.679, R 0.000, contrast 0.124; refined − main
-[+4.2, +8.2] (`fid_n1024_refined.json`). _(Endpoint-NLL ablation, ancestral 20 / 50 steps:
-pending — one final FID file with every method.)_
 
 ## 6. Rollout shift and refinement
 
@@ -368,7 +449,11 @@ and 52 behind the teacher: ten isotropic K = 8 transitions fitted by likelihood 
 per anchor reproduce the teacher kernels' second moments, not their structure. Its images keep
 more contrast and fine detail than main's but are darker than the teacher's (mean intensity 0.362
 vs 0.418), clip more (3.1 % of raw values outside [0, 1], range −0.56 … 1.05), and some rollouts
-drift into dark, posterised images (`figures/fig_trajectory_student_ablation_endpoints`, row 1).
+collapse into dark, posterised or black images (`figures/fig_trajectory_student_ablation_endpoints`,
+row 1; `figures/fig_samples_same_xT`): 49 of its 1,024 images have mean intensity below 0.10
+(teacher 1, main 11, untrained init 0, ancestral-10/20/50 0/1/0). The collapse starts in its
+high-noise transitions: every hybrid sampler below with the ablation at j0–j2 has 39–48 such
+images, and every one with main at j0–j2 has 11–12.
 Not tried, for budget: more endpoints per anchor (E = 4 overfits), more anchors, or tuning — the
 ablation ran with main's hyperparameters.
 
@@ -424,11 +509,14 @@ teachers constructed, 0 IBW iterations, inference mode, no gradients, 0 optimize
   pairs from 4 trajectories; converged fits scored worse. Their quality depends on the init seed,
   which is why stage B is compared with an independent replicate fit, not with a second sample set
   of the same fit.
-* **Metric reach.** DINOv2 on Tweedie-denoised states is not a fidelity measure at j0–j2 (the
-  teacher's own states denoise to colour noise there); 8×-pooled pixel MMD has little power at high
-  noise. Each conditional comparison uses 32 vs 32 + 32 samples, so a non-significant test is not
-  equality. FID at n = 1,024 carries a common upward bias (real-vs-real 15.1); only paired
-  differences between methods on the same 1,024 x_T are interpreted.
+* **Metric reach.** At j0–j2, DINOv2 on Tweedie-denoised states is dominated by the end state's
+  noise level: a ~2 % variance deficit is enough for an excess of 0.65 at j0 (§4). It is a
+  sensitive test there, but not a measure of image content, and its size is not comparable across
+  noise levels. 8×-pooled pixel MMD has little power at high noise. Each conditional comparison
+  uses 32 vs 32 + 32 samples, so a non-significant test is not equality. FID at n = 1,024 carries a
+  common upward bias (real-vs-real 15.1); only paired differences between methods on the same
+  1,024 x_T are interpreted, with percentile intervals of a bootstrap over images that can sit off
+  the point estimate (resampling with replacement inflates FID by a method-dependent amount, §5).
 * **Scope.** One teacher (CelebA-HQ 256, VE, predictor-only SMLD), one partition (10 × 200 steps),
   K = 8, one refinement round (32 trajectories), one endpoint budget for the ablation (E = 4).
   GPUs 0 and 1 were shared with other users' jobs, so wall-clock costs include contention.

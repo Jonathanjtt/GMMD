@@ -277,9 +277,9 @@ def fig_detail_per_interval(cfg, split="val", kinds=("ibw", "init_main", "main")
         ax.set_ylabel(f"{name}\nkernel / teacher")
         ax.set_ylim(0, 1.45)
     n_anc = len({r["n"] for r in rows})
-    axes[0].text(0, 0.04, "denoising\nartifact", ha="center", va="bottom", fontsize=5.5, color="0.35")
-    fig.legend(*axes[0].get_legend_handles_labels(), loc="outside lower center", ncol=len(kinds), fontsize=6.5,
-               frameon=False)
+    axes[0].text(0, 0.04, "set by the\nnoise level", ha="center", va="bottom", fontsize=5.5, color="0.35")
+    fig.legend(*axes[0].get_legend_handles_labels(), loc="outside lower center", ncol=min(len(kinds), 3),
+               fontsize=6.5, frameon=False)
     add_panel_labels(axes, x=-0.2, y=1.04)
     print(f"detail figure: {split}, {n_anc} anchors per interval, {d['n_per_set']} samples per kernel")
     return save_figure(fig, _fig_dir(cfg) / (basename or f"fig_detail_per_interval_{split}"))
@@ -423,8 +423,9 @@ def fig_quality_vs_nfe(cfg, fid_tags, basename=None, order=None):
         ax.errorbar([x[m] for m in anc], [methods[m]["fid"] for m in anc],
                     yerr=[methods[m]["bootstrap"]["sd"] for m in anc], color=color, ls=ls, marker=mk, ms=4, lw=1.0,
                     capsize=2, label=f"ancestral ({', '.join(m.split(':')[2] for m in anc)} steps)")
+    extra = iter(((PALETTE["gray"], None, "X"), (PALETTE["black"], None, "*")))   # past the 6-style cycle
     for m in singles:
-        color, _, mk = style_for_series(i)
+        color, _, mk = style_for_series(i) if i < 6 else next(extra)
         i += 1
         ax.errorbar([x[m]], [methods[m]["fid"]], yerr=[methods[m]["bootstrap"]["sd"]],
                     color=color, ls="none", marker=mk, ms=4, capsize=2, label=method_label(m))
@@ -485,6 +486,12 @@ FINAL_METHODS = ("teacher", "student:main", "student:refined", "student:ablation
                  "coarse:ancestral:10", "coarse:ancestral:20", "coarse:ancestral:50", "coarse:reverse_diffusion:10")
 
 
+SHORT_LABELS = {"teacher": "teacher\n(2,000 steps)", "student:main": "IBW–GMMD\n(main)", "student:refined": "IBW–GMMD\nrefined",
+                "student:ablation_endpoints": "ablation\n(endpoint NLL)", "student:init_main": "untrained\ninit",
+                "coarse:ancestral:10": "ancestral\n10 steps", "coarse:ancestral:20": "ancestral\n20 steps",
+                "coarse:ancestral:50": "ancestral\n50 steps"}
+
+
 def _many(results):
     return results[-1]
 
@@ -503,7 +510,7 @@ FIGURES = {"ibw_p0": lambda cfg: fig_ibw_step_size(cfg),
                cfg, list(FINAL_STUDENTS), [method_label(f"student:{t}") for t in FINAL_STUDENTS], "test"),
            "hybrid_blocks": lambda cfg: fig_hybrid_blocks(cfg),
            "samples_final": lambda cfg: fig_samples(cfg, list(FINAL_METHODS[:-1]),
-                                                    [method_label(m) for m in FINAL_METHODS[:-1]], "fig_samples_same_xT"),
+                                                    [SHORT_LABELS[m] for m in FINAL_METHODS[:-1]], "fig_samples_same_xT"),
            "grids_final": lambda cfg: _many([save_grid(cfg, m) for m in FINAL_METHODS]),
            "quality_vs_nfe_final": lambda cfg: fig_quality_vs_nfe(cfg, ["n1024"], basename="fig_quality_vs_nfe_n1024",
                                                                   order=list(FINAL_METHODS))}
