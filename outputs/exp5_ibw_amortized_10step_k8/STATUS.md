@@ -60,10 +60,15 @@ fp32 37 ms/img/NFE, TF32 11 ms, bf16 10 ms (batch 64–128); training fwd+bwd 10
       pixel excess at b9 0.038 -> 0.021. `eval/shift_student_refined.json`, `figures/fig_training_refined`,
       `figures/fig_trajectory_student_refined`. BUT FID n = 1,024 gets worse: refined 117.46 vs main
       111.73, paired CI [+4.2, +8.2]; contrast unchanged 0.124 (`fid_n1024_refined.json`).
+- [x] Post-hoc checks (commits 7781a3a, fe3c539; NOTES "post-hoc checks while the ablation runs"):
+      TF32 vs fp32 IBW fits with identical seeds -> no effect (`figures/diag/precision_check_test.json`);
+      terminal step -> the teacher's own terminal spread is LARGER than the students', a noise-free last
+      step gains only ~2 FID (`fid_n1024_meanlast.json`, `figures/diag/terminal_spread.json`).
+      Early test eval (main/refined/init_main, 16-17 pairs) done; the part-2 script fills the rest.
 
 ## Running (tmux; check `tail outputs/exp5_ibw_amortized_10step_k8/RUNLOG`)
 - `exp5-main0b` (GPU0): `run/exp5_main_part2.sh` -- (refinement: done) -> ablation (train endpoints E = 4,
-  ~5.3 h from 22:15, student `ablation_endpoints` ~1.8 h, 1,024 images) -> FID n1024_students -> test refs (shared) ->
+  ETA ~05:15 UTC 10-20, student `ablation_endpoints` ~1.8 h, 1,024 images) -> FID n1024_students -> test refs (shared) ->
   evalstudent on test (main, refined, ablation_endpoints, init_main) -> detail on test -> timing.
 - `exp5-main1` (GPU1, shared with another user): `ONLY=gpu1 bash run/exp5_main.sh` -- test refs
   (80 pairs, fp32) -> endpoints (shared claims) -> ANC20/50 1,024 images -> (IBW chain: done).
